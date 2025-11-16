@@ -17,8 +17,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #f2f2f7;
-            padding-bottom: 80px;
             color: #000;
+            min-height: 100vh;
         }
 
         /* Header */
@@ -32,208 +32,128 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .system-info {
-            font-size: 0.9rem;
-            opacity: 0.9;
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
             gap: 12px;
-            flex-wrap: wrap;
+        }
+
+        .back-btn, .settings-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
         }
 
         .settings-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
+            width: 40px;
+            height: 40px;
+            padding: 0;
             justify-content: center;
-            transition: all 0.2s;
+            font-size: 1.2rem;
         }
 
-        .settings-btn:active {
-            background: rgba(255,255,255,0.3);
+        .breadcrumb {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            opacity: 0.9;
         }
 
-        .system-info input {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            flex: 1;
-            min-width: 150px;
-            max-width: 250px;
-        }
-
-        .system-info input::placeholder {
-            color: rgba(255,255,255,0.7);
-        }
-
-        .system-info-right {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        /* Element Tabs */
-        .element-tabs {
-            display: flex;
-            overflow-x: auto;
-            background: white;
-            padding: 8px 8px 0 8px;
-            gap: 6px;
-            -webkit-overflow-scrolling: touch;
-            border-bottom: 1px solid #e5e5ea;
-        }
-
-        .element-tabs::-webkit-scrollbar {
+        /* Screens */
+        .screen {
             display: none;
+            min-height: calc(100vh - 100px);
+            padding-bottom: 80px;
         }
 
-        .tab-btn {
-            flex-shrink: 0;
-            background: #f2f2f7;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px 12px 0 0;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #8e8e93;
-            cursor: pointer;
-            transition: all 0.2s;
+        .screen.active {
+            display: block;
         }
 
-        .tab-btn.active {
-            background: #2a5298;
-            color: white;
-        }
-
-        /* Main Content */
+        /* Content */
         .content {
             padding: 16px;
         }
 
-        .element-section {
-            display: none;
-        }
-
-        .element-section.active {
-            display: block;
-        }
-
-        /* Quick Add Button */
-        .quick-add-btn {
-            background: #2a5298;
-            color: white;
-            border: none;
-            border-radius: 16px;
-            padding: 16px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            width: 100%;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        /* Note Card */
-        .note-card {
+        /* Cards */
+        .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .note-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f2f2f7;
+        .card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
         }
 
-        .note-time {
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2a5298;
+        }
+
+        .card-meta {
             font-size: 0.85rem;
             color: #8e8e93;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .note-priority {
-            padding: 4px 12px;
+        .card-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 600;
         }
 
-        .priority-low { background: #e3f2fd; color: #1976d2; }
-        .priority-medium { background: #fff3cd; color: #856404; }
-        .priority-high { background: #f8d7da; color: #721c24; }
-
-        .note-text {
-            font-size: 1rem;
-            line-height: 1.5;
-            margin-bottom: 12px;
-            white-space: pre-wrap;
-        }
-
-        .note-photos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 12px;
-            max-width: 100%;
-        }
-
-        .note-photo {
-            width: 100%;
-            height: 100%;
-            aspect-ratio: 1;
-            border-radius: 8px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
-        .note-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #f2f2f7;
-        }
-
-        .note-action-btn {
-            flex: 1;
-            background: #f2f2f7;
+        /* Add Button */
+        .add-btn {
+            position: fixed;
+            bottom: max(env(safe-area-inset-bottom), 20px);
+            right: 20px;
+            background: #2a5298;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             border: none;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            color: #2a5298;
-            font-weight: 500;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.4);
             cursor: pointer;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Quick Entry Modal */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -322,6 +242,45 @@
             background: white;
         }
 
+        .save-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .voice-btn {
+            background: #34c759;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .voice-btn.recording {
+            background: #ff3b30;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
         /* Priority Buttons */
         .priority-buttons {
             display: grid;
@@ -395,82 +354,6 @@
             cursor: pointer;
         }
 
-        /* Voice Note Button */
-        .voice-btn {
-            background: #34c759;
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            width: 100%;
-            margin-bottom: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .voice-btn.recording {
-            background: #ff3b30;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Save Button */
-        .save-btn {
-            background: #2a5298;
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        /* Bottom Toolbar */
-        .bottom-toolbar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid #e5e5ea;
-            padding: 12px;
-            padding-bottom: max(env(safe-area-inset-bottom), 12px);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            z-index: 99;
-        }
-
-        .toolbar-btn {
-            background: #f2f2f7;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .toolbar-btn.primary {
-            background: #2a5298;
-            color: white;
-        }
-
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -483,20 +366,143 @@
             margin-bottom: 16px;
         }
 
-        /* Location Tag */
-        .location-tag {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 8px;
+        /* Element Tabs */
+        .element-tabs {
+            display: flex;
+            overflow-x: auto;
+            background: white;
+            padding: 8px 8px 0 8px;
+            gap: 6px;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid #e5e5ea;
         }
 
-        /* Badge for note count */
+        .element-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+            background: #f2f2f7;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px 12px 0 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+
+        /* Note Card */
+        .note-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .note-time {
+            font-size: 0.85rem;
+            color: #8e8e93;
+        }
+
+        .note-priority {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .priority-low { background: #e3f2fd; color: #1976d2; }
+        .priority-medium { background: #fff3cd; color: #856404; }
+        .priority-high { background: #f8d7da; color: #721c24; }
+
+        .note-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+
+        .note-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+            max-width: 100%;
+        }
+
+        .note-photo {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f2f2f7;
+        }
+
+        .note-action-btn {
+            flex: 1;
+            background: #f2f2f7;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #2a5298;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .quick-add-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .element-section {
+            display: none;
+        }
+
+        .element-section.active {
+            display: block;
+        }
+
         .note-count-badge {
             background: #ff3b30;
             color: white;
@@ -510,121 +516,107 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>🚰 Field Notes</h1>
-        <div class="system-info">
-            <input type="text" id="systemName" placeholder="System Name" value="">
-            <div class="system-info-right">
-                <span id="currentDate"></span>
-                <button onclick="showSettings()" class="settings-btn">⚙</button>
+        <div class="header-content">
+            <h1 id="headerTitle">🚰 Systems</h1>
+            <div class="header-actions">
+                <button class="back-btn" id="backBtn" style="display: none;" onclick="goBack()">← Back</button>
+                <button class="settings-btn" onclick="showSettings()">⚙</button>
+            </div>
+        </div>
+        <div class="breadcrumb" id="breadcrumb" style="display: none;"></div>
+    </div>
+
+    <!-- Systems Screen -->
+    <div class="screen active" id="systemsScreen">
+        <div class="content" id="systemsList"></div>
+        <button class="add-btn" onclick="showAddSystemModal()">+</button>
+    </div>
+
+    <!-- Inspections Screen -->
+    <div class="screen" id="inspectionsScreen">
+        <div class="content" id="inspectionsList"></div>
+        <button class="add-btn" onclick="showAddInspectionModal()">+</button>
+    </div>
+
+    <!-- Field Notes Screen -->
+    <div class="screen" id="fieldNotesScreen">
+        <div class="element-tabs">
+            <button class="tab-btn active" data-element="overview" onclick="switchElement('overview')">Overview</button>
+            <button class="tab-btn" data-element="sources" onclick="switchElement('sources')">Sources</button>
+            <button class="tab-btn" data-element="treatment" onclick="switchElement('treatment')">Treatment</button>
+            <button class="tab-btn" data-element="distribution" onclick="switchElement('distribution')">Distribution</button>
+            <button class="tab-btn" data-element="storage" onclick="switchElement('storage')">Storage</button>
+            <button class="tab-btn" data-element="pumps" onclick="switchElement('pumps')">Pumps</button>
+            <button class="tab-btn" data-element="management" onclick="switchElement('management')">Management</button>
+            <button class="tab-btn" data-element="operators" onclick="switchElement('operators')">Operators</button>
+        </div>
+        <div class="content">
+            <div class="element-section active" id="overview-section">
+                <button class="quick-add-btn" onclick="openNoteModal('overview')">➕ Add Note</button>
+                <div id="overview-notes"></div>
+            </div>
+            <div class="element-section" id="sources-section">
+                <button class="quick-add-btn" onclick="openNoteModal('sources')">➕ Add Note</button>
+                <div id="sources-notes"></div>
+            </div>
+            <div class="element-section" id="treatment-section">
+                <button class="quick-add-btn" onclick="openNoteModal('treatment')">➕ Add Note</button>
+                <div id="treatment-notes"></div>
+            </div>
+            <div class="element-section" id="distribution-section">
+                <button class="quick-add-btn" onclick="openNoteModal('distribution')">➕ Add Note</button>
+                <div id="distribution-notes"></div>
+            </div>
+            <div class="element-section" id="storage-section">
+                <button class="quick-add-btn" onclick="openNoteModal('storage')">➕ Add Note</button>
+                <div id="storage-notes"></div>
+            </div>
+            <div class="element-section" id="pumps-section">
+                <button class="quick-add-btn" onclick="openNoteModal('pumps')">➕ Add Note</button>
+                <div id="pumps-notes"></div>
+            </div>
+            <div class="element-section" id="management-section">
+                <button class="quick-add-btn" onclick="openNoteModal('management')">➕ Add Note</button>
+                <div id="management-notes"></div>
+            </div>
+            <div class="element-section" id="operators-section">
+                <button class="quick-add-btn" onclick="openNoteModal('operators')">➕ Add Note</button>
+                <div id="operators-notes"></div>
             </div>
         </div>
     </div>
 
-    <!-- Element Tabs -->
-    <div class="element-tabs">
-        <button class="tab-btn active" data-element="overview">Overview</button>
-        <button class="tab-btn" data-element="sources">Sources</button>
-        <button class="tab-btn" data-element="treatment">Treatment</button>
-        <button class="tab-btn" data-element="distribution">Distribution</button>
-        <button class="tab-btn" data-element="storage">Storage</button>
-        <button class="tab-btn" data-element="pumps">Pumps</button>
-        <button class="tab-btn" data-element="management">Management</button>
-        <button class="tab-btn" data-element="operators">Operators</button>
-    </div>
-
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Overview Section -->
-        <div class="element-section active" id="overview-section">
-            <button class="quick-add-btn" onclick="openNoteModal('overview')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="overview-notes"></div>
-        </div>
-
-        <!-- Sources Section -->
-        <div class="element-section" id="sources-section">
-            <button class="quick-add-btn" onclick="openNoteModal('sources')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="sources-notes"></div>
-        </div>
-
-        <!-- Treatment Section -->
-        <div class="element-section" id="treatment-section">
-            <button class="quick-add-btn" onclick="openNoteModal('treatment')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="treatment-notes"></div>
-        </div>
-
-        <!-- Distribution Section -->
-        <div class="element-section" id="distribution-section">
-            <button class="quick-add-btn" onclick="openNoteModal('distribution')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="distribution-notes"></div>
-        </div>
-
-        <!-- Storage Section -->
-        <div class="element-section" id="storage-section">
-            <button class="quick-add-btn" onclick="openNoteModal('storage')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="storage-notes"></div>
-        </div>
-
-        <!-- Pumps Section -->
-        <div class="element-section" id="pumps-section">
-            <button class="quick-add-btn" onclick="openNoteModal('pumps')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="pumps-notes"></div>
-        </div>
-
-        <!-- Management Section -->
-        <div class="element-section" id="management-section">
-            <button class="quick-add-btn" onclick="openNoteModal('management')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="management-notes"></div>
-        </div>
-
-        <!-- Operators Section -->
-        <div class="element-section" id="operators-section">
-            <button class="quick-add-btn" onclick="openNoteModal('operators')">
-                <span>➕</span> Add Note
-            </button>
-            <div id="operators-notes"></div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
+    <!-- Add System Modal -->
+    <div class="modal" id="addSystemModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">⚙ Settings</h2>
-                <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+                <h2 class="modal-title">New System</h2>
+                <button class="close-btn" onclick="closeAddSystemModal()">×</button>
             </div>
-            
-            <div style="padding: 20px 0;">
+            <form id="addSystemForm" onsubmit="saveSystem(event)">
                 <div class="form-group">
-                    <label class="form-label">Data Management</label>
-                    <button class="form-input" onclick="clearAllData()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea; color: #ff3b30;">
-                        🗑 Clear All Notes
-                    </button>
-                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Permanently delete all field notes (use Export first!)</small>
+                    <label class="form-label">System Name</label>
+                    <input type="text" class="form-input" id="systemNameInput" placeholder="e.g., Pine Valley Water District" required>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label">About</label>
-                    <div style="background: #f2f2f7; padding: 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;">
-                        <p><strong>DDW Field Notes v1.0</strong></p>
-                        <p style="margin-top: 8px;">Mobile-first note taking for California DDW water system inspections.</p>
-                        <p style="margin-top: 8px; color: #8e8e93;">All data stored locally on your device.</p>
-                    </div>
-                </div>
+                <button type="submit" class="save-btn">Create System</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Inspection Modal -->
+    <div class="modal" id="addInspectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">New Inspection</h2>
+                <button class="close-btn" onclick="closeAddInspectionModal()">×</button>
             </div>
+            <form id="addInspectionForm" onsubmit="saveInspection(event)">
+                <div class="form-group">
+                    <label class="form-label">Inspection Date</label>
+                    <input type="date" class="form-input" id="inspectionDateInput" required>
+                </div>
+                <button type="submit" class="save-btn">Start Inspection</button>
+            </form>
         </div>
     </div>
 
@@ -633,33 +625,29 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">New Field Note</h2>
-                <button class="close-btn" onclick="closeNoteModal()">✕</button>
+                <button class="close-btn" onclick="closeNoteModal()">×</button>
             </div>
-
-            <form id="noteForm">
+            <form id="noteForm" onsubmit="saveNote(event)">
                 <div class="form-group">
                     <label class="form-label">Location/Asset</label>
                     <input type="text" class="form-input" id="noteLocation" placeholder="e.g., Well #3, Zone 2 Booster, Main St Tank">
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Observation</label>
                     <button type="button" class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()">
                         <span id="voiceIcon">🎤</span>
                         <span id="voiceText">Tap to use voice</span>
                     </button>
-                    <textarea class="form-textarea" id="noteText" placeholder="Describe what you observed..."></textarea>
+                    <textarea class="form-textarea" id="noteText" placeholder="Describe what you observed..." required></textarea>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Priority</label>
                     <div class="priority-buttons">
                         <button type="button" class="priority-btn low" onclick="selectPriority('low')">✓ Good</button>
-                        <button type="button" class="priority-btn medium" onclick="selectPriority('medium')">⚠ Follow-up</button>
+                        <button type="button" class="priority-btn medium selected" onclick="selectPriority('medium')">⚠ Follow-up</button>
                         <button type="button" class="priority-btn high" onclick="selectPriority('high')">⚠️ Issue</button>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Photos</label>
                     <input type="file" id="photoInput" accept="image/*" multiple capture="environment" style="display: none;" onchange="handlePhotoUpload(event)">
@@ -668,60 +656,81 @@
                     </div>
                     <div class="photo-preview-grid" id="photoPreviewGrid"></div>
                 </div>
-
                 <button type="submit" class="save-btn">Save Note</button>
             </form>
         </div>
     </div>
 
-    <!-- Bottom Toolbar -->
-    <div class="bottom-toolbar">
-        <button class="toolbar-btn" onclick="exportNotes()">
-            📤 Export
-        </button>
-        <button class="toolbar-btn primary" onclick="viewSummary()">
-            📊 Summary
-        </button>
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙ Settings</h2>
+                <button class="close-btn" onclick="closeSettingsModal()">×</button>
+            </div>
+            <div style="padding: 20px 0;">
+                <div class="form-group">
+                    <label class="form-label">Export Data</label>
+                    <button class="form-input" onclick="exportAllData()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea;">
+                        📤 Export All Data
+                    </button>
+                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Download all systems, inspections, and notes as JSON</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data Management</label>
+                    <button class="form-input" onclick="clearAllData()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea; color: #ff3b30;">
+                        🗑 Clear All Data
+                    </button>
+                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Permanently delete all data (use Export first!)</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">About</label>
+                    <div style="background: #f2f2f7; padding: 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;">
+                        <p><strong>DDW Field Notes v2.0</strong></p>
+                        <p style="margin-top: 8px;">Hierarchical note taking for California DDW water system inspections.</p>
+                        <p style="margin-top: 8px; color: #8e8e93;">All data stored locally on your device.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // Global state
+        let currentScreen = 'systems';
+        let currentSystemId = null;
+        let currentInspectionId = null;
         let currentElement = 'overview';
         let currentPriority = 'medium';
         let currentPhotos = [];
-        let allNotes = JSON.parse(localStorage.getItem('fieldNotes') || '[]');
         let recognition = null;
+
+        // Data structure
+        let appData = {
+            systems: []
+        };
+
+        // Load data
+        function loadData() {
+            const savedData = localStorage.getItem('ddwFieldNotes');
+            if (savedData) {
+                appData = JSON.parse(savedData);
+            }
+        }
+
+        // Save data
+        function saveData() {
+            localStorage.setItem('ddwFieldNotes', JSON.stringify(appData));
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Set current date
-            document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+            loadData();
             
-            // Load system name
-            const savedSystemName = localStorage.getItem('systemName');
-            if (savedSystemName) {
-                document.getElementById('systemName').value = savedSystemName;
-            }
+            // Set default inspection date to today
+            document.getElementById('inspectionDateInput').valueAsDate = new Date();
             
-            // Save system name on change
-            document.getElementById('systemName').addEventListener('change', function() {
-                localStorage.setItem('systemName', this.value);
-            });
-
-            // Setup tabs
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    switchElement(this.dataset.element);
-                });
-            });
-
-            // Setup form
-            document.getElementById('noteForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveNote();
-            });
-
-            // Initialize speech recognition if available
+            // Initialize speech recognition
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
@@ -729,61 +738,227 @@
                 recognition.interimResults = false;
                 recognition.lang = 'en-US';
                 
-                recognition.onstart = function() {
-                    console.log('Voice recognition started');
-                };
-                
                 recognition.onresult = function(event) {
                     const transcript = event.results[0][0].transcript;
                     const noteText = document.getElementById('noteText');
                     noteText.value += (noteText.value ? ' ' : '') + transcript;
-                    console.log('Transcript:', transcript);
                 };
                 
                 recognition.onerror = function(event) {
-                    console.error('Speech recognition error:', event.error);
                     const voiceBtn = document.getElementById('voiceBtn');
                     voiceBtn.classList.remove('recording');
                     document.getElementById('voiceText').textContent = 'Tap to use voice';
                     document.getElementById('voiceIcon').textContent = '🎤';
                     
-                    if (event.error === 'no-speech') {
-                        // Don't alert for no speech - just stop quietly
-                        console.log('No speech detected');
-                    } else if (event.error === 'not-allowed') {
+                    if (event.error === 'not-allowed') {
                         alert('Microphone access denied. Please allow microphone access when your browser asks.');
-                    } else if (event.error === 'aborted') {
-                        // User stopped it, no alert needed
-                        console.log('Voice recording aborted by user');
-                    } else {
-                        console.log('Voice recognition error: ' + event.error);
                     }
                 };
                 
                 recognition.onend = function() {
-                    console.log('Voice recognition ended');
                     const voiceBtn = document.getElementById('voiceBtn');
                     voiceBtn.classList.remove('recording');
                     document.getElementById('voiceText').textContent = 'Tap to use voice';
                     document.getElementById('voiceIcon').textContent = '🎤';
                 };
             }
+            
+            renderSystems();
+        });
 
-            // Render all notes
+        // Navigation
+        function showScreen(screen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screen + 'Screen').classList.add('active');
+            currentScreen = screen;
+            updateHeader();
+        }
+
+        function updateHeader() {
+            const backBtn = document.getElementById('backBtn');
+            const headerTitle = document.getElementById('headerTitle');
+            const breadcrumb = document.getElementById('breadcrumb');
+            
+            if (currentScreen === 'systems') {
+                backBtn.style.display = 'none';
+                headerTitle.textContent = '🚰 Systems';
+                breadcrumb.style.display = 'none';
+            } else if (currentScreen === 'inspections') {
+                backBtn.style.display = 'flex';
+                const system = appData.systems.find(s => s.id === currentSystemId);
+                headerTitle.textContent = system ? system.name : 'Inspections';
+                breadcrumb.style.display = 'block';
+                breadcrumb.textContent = 'Select an inspection';
+            } else if (currentScreen === 'fieldNotes') {
+                backBtn.style.display = 'flex';
+                const system = appData.systems.find(s => s.id === currentSystemId);
+                const inspection = system?.inspections.find(i => i.id === currentInspectionId);
+                headerTitle.textContent = inspection ? new Date(inspection.date).toLocaleDateString() : 'Field Notes';
+                breadcrumb.style.display = 'block';
+                breadcrumb.textContent = system ? system.name : '';
+            }
+        }
+
+        function goBack() {
+            if (currentScreen === 'fieldNotes') {
+                currentInspectionId = null;
+                showInspections(currentSystemId);
+            } else if (currentScreen === 'inspections') {
+                currentSystemId = null;
+                showScreen('systems');
+                renderSystems();
+            }
+        }
+
+        // Systems
+        function renderSystems() {
+            const container = document.getElementById('systemsList');
+            
+            if (appData.systems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🚰</div>
+                        <div>No systems yet</div>
+                        <div style="font-size: 0.85rem; margin-top: 8px;">Tap + to add your first water system</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = appData.systems.map(system => {
+                    const inspectionCount = system.inspections.length;
+                    const totalNotes = system.inspections.reduce((sum, insp) => sum + insp.notes.length, 0);
+                    
+                    return `
+                        <div class="card" onclick="showInspections('${system.id}')">
+                            <div class="card-title">${system.name}</div>
+                            <div class="card-meta">
+                                <span>${inspectionCount} inspection${inspectionCount !== 1 ? 's' : ''}</span>
+                                <span class="card-badge">${totalNotes} notes</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function showAddSystemModal() {
+            document.getElementById('addSystemModal').classList.add('active');
+            document.getElementById('systemNameInput').focus();
+        }
+
+        function closeAddSystemModal() {
+            document.getElementById('addSystemModal').classList.remove('active');
+            document.getElementById('addSystemForm').reset();
+        }
+
+        function saveSystem(event) {
+            event.preventDefault();
+            
+            const system = {
+                id: Date.now().toString(),
+                name: document.getElementById('systemNameInput').value,
+                inspections: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            appData.systems.push(system);
+            saveData();
+            closeAddSystemModal();
+            renderSystems();
+        }
+
+        // Inspections
+        function showInspections(systemId) {
+            currentSystemId = systemId;
+            const system = appData.systems.find(s => s.id === systemId);
+            
+            if (!system) return;
+            
+            showScreen('inspections');
+            renderInspections();
+        }
+
+        function renderInspections() {
+            const container = document.getElementById('inspectionsList');
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            
+            if (!system) return;
+            
+            if (system.inspections.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div>No inspections yet</div>
+                        <div style="font-size: 0.85rem; margin-top: 8px;">Tap + to start a new inspection</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = system.inspections
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .map(inspection => {
+                        const noteCount = inspection.notes.length;
+                        const issueCount = inspection.notes.filter(n => n.priority === 'high').length;
+                        
+                        return `
+                            <div class="card" onclick="showFieldNotes('${inspection.id}')">
+                                <div class="card-title">${new Date(inspection.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                <div class="card-meta">
+                                    <span>${noteCount} notes</span>
+                                    ${issueCount > 0 ? `<span class="card-badge" style="background: #f8d7da; color: #721c24;">⚠️ ${issueCount} issues</span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            }
+        }
+
+        function showAddInspectionModal() {
+            document.getElementById('addInspectionModal').classList.add('active');
+            document.getElementById('inspectionDateInput').focus();
+        }
+
+        function closeAddInspectionModal() {
+            document.getElementById('addInspectionModal').classList.remove('active');
+            document.getElementById('addInspectionForm').reset();
+            document.getElementById('inspectionDateInput').valueAsDate = new Date();
+        }
+
+        function saveInspection(event) {
+            event.preventDefault();
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = {
+                id: Date.now().toString(),
+                date: document.getElementById('inspectionDateInput').value,
+                notes: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            system.inspections.push(inspection);
+            saveData();
+            closeAddInspectionModal();
+            
+            // Automatically open the new inspection
+            showFieldNotes(inspection.id);
+        }
+
+        // Field Notes
+        function showFieldNotes(inspectionId) {
+            currentInspectionId = inspectionId;
+            showScreen('fieldNotes');
             renderAllNotes();
             updateNoteCounts();
-        });
+        }
 
         function switchElement(element) {
             currentElement = element;
             
-            // Update tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            document.querySelector(`[data-element="${element}"]`).classList.add('active');
             
-            // Update sections
             document.querySelectorAll('.element-section').forEach(section => {
                 section.classList.remove('active');
             });
@@ -803,6 +978,7 @@
             document.getElementById('photoPreviewGrid').innerHTML = '';
             currentPriority = 'medium';
             document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector('.priority-btn.medium').classList.add('selected');
         }
 
         function selectPriority(priority) {
@@ -822,42 +998,12 @@
             const voiceBtn = document.getElementById('voiceBtn');
             
             if (voiceBtn.classList.contains('recording')) {
-                // Stop recording
                 recognition.stop();
-                voiceBtn.classList.remove('recording');
-                document.getElementById('voiceText').textContent = 'Tap to use voice';
-                document.getElementById('voiceIcon').textContent = '🎤';
             } else {
-                // Start recording directly
-                startVoiceRecording();
-            }
-        }
-
-        function startVoiceRecording() {
-            const voiceBtn = document.getElementById('voiceBtn');
-            try {
-                console.log('Starting voice recording...');
                 voiceBtn.classList.add('recording');
                 document.getElementById('voiceText').textContent = 'Listening... (tap to stop)';
                 document.getElementById('voiceIcon').textContent = '🔴';
-                
-                // Give user feedback that permission might be requested
-                console.log('About to call recognition.start() - browser may show permission dialog');
                 recognition.start();
-                console.log('recognition.start() called successfully');
-            } catch (error) {
-                console.error('Error starting recognition:', error);
-                voiceBtn.classList.remove('recording');
-                document.getElementById('voiceText').textContent = 'Tap to use voice';
-                document.getElementById('voiceIcon').textContent = '🎤';
-                
-                let errorMessage = 'Error starting voice recognition.\n\n';
-                if (error.name === 'InvalidStateError') {
-                    errorMessage += 'Voice recognition is already running. Please wait a moment and try again.';
-                } else {
-                    errorMessage += 'Please make sure you\'re using a supported browser (Chrome, Edge, or Safari).\n\nError: ' + error.message;
-                }
-                alert(errorMessage);
             }
         }
 
@@ -889,7 +1035,15 @@
             renderPhotoPreview();
         }
 
-        function saveNote() {
+        function saveNote(event) {
+            event.preventDefault();
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
             const note = {
                 id: Date.now(),
                 element: currentElement,
@@ -897,12 +1051,11 @@
                 text: document.getElementById('noteText').value,
                 priority: currentPriority,
                 photos: [...currentPhotos],
-                timestamp: new Date().toISOString(),
-                systemName: document.getElementById('systemName').value
+                timestamp: new Date().toISOString()
             };
-
-            allNotes.unshift(note);
-            localStorage.setItem('fieldNotes', JSON.stringify(allNotes));
+            
+            inspection.notes.unshift(note);
+            saveData();
             
             closeNoteModal();
             renderAllNotes();
@@ -910,11 +1063,17 @@
         }
 
         function renderAllNotes() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
             const elements = ['overview', 'sources', 'treatment', 'distribution', 'storage', 'pumps', 'management', 'operators'];
             
             elements.forEach(element => {
                 const container = document.getElementById(element + '-notes');
-                const notes = allNotes.filter(note => note.element === element);
+                const notes = inspection.notes.filter(note => note.element === element);
                 
                 if (notes.length === 0) {
                     container.innerHTML = `
@@ -957,25 +1116,35 @@
 
         function deleteNote(id) {
             if (confirm('Delete this note?')) {
-                allNotes = allNotes.filter(note => note.id !== id);
-                localStorage.setItem('fieldNotes', JSON.stringify(allNotes));
+                const system = appData.systems.find(s => s.id === currentSystemId);
+                if (!system) return;
+                
+                const inspection = system.inspections.find(i => i.id === currentInspectionId);
+                if (!inspection) return;
+                
+                inspection.notes = inspection.notes.filter(note => note.id !== id);
+                saveData();
                 renderAllNotes();
                 updateNoteCounts();
             }
         }
 
         function updateNoteCounts() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
             const elements = ['overview', 'sources', 'treatment', 'distribution', 'storage', 'pumps', 'management', 'operators'];
             
             elements.forEach(element => {
-                const count = allNotes.filter(note => note.element === element).length;
+                const count = inspection.notes.filter(note => note.element === element).length;
                 const btn = document.querySelector(`[data-element="${element}"]`);
                 
-                // Remove existing badge
                 const existingBadge = btn.querySelector('.note-count-badge');
                 if (existingBadge) existingBadge.remove();
                 
-                // Add new badge if count > 0
                 if (count > 0) {
                     const badge = document.createElement('span');
                     badge.className = 'note-count-badge';
@@ -986,58 +1155,11 @@
         }
 
         function viewPhoto(photoData) {
-            // Open photo in new window/tab
             const w = window.open();
             w.document.write(`<img src="${photoData}" style="max-width: 100%; height: auto;">`);
         }
 
-        function exportNotes() {
-            const systemName = document.getElementById('systemName').value || 'Unknown_System';
-            const date = new Date().toISOString().split('T')[0];
-            const filename = `${systemName}_FieldNotes_${date}.json`;
-            
-            const dataStr = JSON.stringify(allNotes, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportLink = document.createElement('a');
-            exportLink.setAttribute('href', dataUri);
-            exportLink.setAttribute('download', filename);
-            exportLink.click();
-        }
-
-        function viewSummary() {
-            const summary = {
-                systemName: document.getElementById('systemName').value,
-                totalNotes: allNotes.length,
-                byPriority: {
-                    issues: allNotes.filter(n => n.priority === 'high').length,
-                    followups: allNotes.filter(n => n.priority === 'medium').length,
-                    good: allNotes.filter(n => n.priority === 'low').length
-                },
-                byElement: {}
-            };
-            
-            ['overview', 'sources', 'treatment', 'distribution', 'storage', 'pumps', 'management', 'operators'].forEach(el => {
-                summary.byElement[el] = allNotes.filter(n => n.element === el).length;
-            });
-            
-            let message = `Field Notes Summary\n\n`;
-            message += `System: ${summary.systemName || 'Not set'}\n`;
-            message += `Total Notes: ${summary.totalNotes}\n\n`;
-            message += `⚠️ Issues: ${summary.byPriority.issues}\n`;
-            message += `⚠ Follow-ups: ${summary.byPriority.followups}\n`;
-            message += `✓ Good: ${summary.byPriority.good}\n\n`;
-            message += `Use Export to save all notes`;
-            
-            alert(message);
-        }
-
-        function resetVoicePermission() {
-            localStorage.removeItem('hasUsedVoice');
-            alert('Voice permission reset. Next time you tap the voice button, you\'ll see the permission guide again.');
-            closeSettingsModal();
-        }
-
+        // Settings
         function showSettings() {
             document.getElementById('settingsModal').classList.add('active');
         }
@@ -1046,112 +1168,29 @@
             document.getElementById('settingsModal').classList.remove('active');
         }
 
+        function exportAllData() {
+            const filename = `DDW_FieldNotes_${new Date().toISOString().split('T')[0]}.json`;
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportLink = document.createElement('a');
+            exportLink.setAttribute('href', dataUri);
+            exportLink.setAttribute('download', filename);
+            exportLink.click();
+        }
+
         function clearAllData() {
-            if (confirm('Are you sure you want to delete ALL field notes?\n\nThis cannot be undone!\n\nConsider using Export first.')) {
+            if (confirm('Are you sure you want to delete ALL data?\n\nThis cannot be undone!\n\nConsider using Export first.')) {
                 if (confirm('Really delete everything? This is your last chance!')) {
-                    allNotes = [];
-                    localStorage.setItem('fieldNotes', '[]');
-                    renderAllNotes();
-                    updateNoteCounts();
+                    appData = { systems: [] };
+                    saveData();
                     closeSettingsModal();
-                    alert('All notes deleted.');
+                    currentSystemId = null;
+                    currentInspectionId = null;
+                    showScreen('systems');
+                    renderSystems();
+                    alert('All data deleted.');
                 }
-            }
-        }
-
-        function showPermissionFixModal() {
-            // Close note modal if it's open
-            document.getElementById('noteModal').classList.remove('active');
-            // Show the fix modal
-            document.getElementById('permissionFixModal').classList.add('active');
-        }
-
-        function closePermissionFixModal() {
-            document.getElementById('permissionFixModal').classList.remove('active');
-        }
-
-        function refreshPage() {
-            location.reload();
-        }
-
-        function testMicrophone() {
-            if (!recognition) {
-                alert('Voice input not supported on this browser.\n\nPlease use:\n• Chrome (recommended for Android)\n• Edge\n• Safari (iOS 14.5+)');
-                return;
-            }
-
-            const testBtn = document.getElementById('testMicBtn');
-            const originalHTML = testBtn.innerHTML;
-            
-            testBtn.innerHTML = '<span>🔴</span><span>Listening... speak now!</span>';
-            testBtn.classList.add('recording');
-            
-            // Create a test result div if it doesn't exist
-            let resultDiv = document.getElementById('micTestResult');
-            if (!resultDiv) {
-                resultDiv = document.createElement('div');
-                resultDiv.id = 'micTestResult';
-                resultDiv.style.cssText = 'background: #f2f2f7; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 0.9rem; line-height: 1.6;';
-                testBtn.parentElement.appendChild(resultDiv);
-            }
-            
-            resultDiv.innerHTML = '<strong>Status:</strong> Waiting for your voice...<br><small>If you see a permission popup, tap "Allow"</small>';
-            
-            // One-time test recognition
-            const testRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            testRecognition.continuous = false;
-            testRecognition.interimResults = false;
-            testRecognition.lang = 'en-US';
-            
-            testRecognition.onstart = function() {
-                console.log('Test microphone started');
-                resultDiv.innerHTML = '<strong>✅ Microphone active!</strong><br>Speak a few words to test...';
-            };
-            
-            testRecognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                console.log('Test transcript:', transcript);
-                resultDiv.innerHTML = `<strong>✅ SUCCESS!</strong><br>You said: "${transcript}"<br><br><small>Voice notes are working! Close this and try adding a note.</small>`;
-                resultDiv.style.background = '#d4edda';
-                resultDiv.style.color = '#155724';
-            };
-            
-            testRecognition.onerror = function(event) {
-                console.error('Test microphone error:', event.error);
-                let errorMsg = '';
-                
-                if (event.error === 'not-allowed') {
-                    // Close settings and show the fix modal
-                    closeSettingsModal();
-                    showPermissionFixModal();
-                    return;
-                } else if (event.error === 'no-speech') {
-                    errorMsg = '<strong>⚠️ No Speech Detected</strong><br><br>';
-                    errorMsg += 'Make sure your microphone is working and try speaking louder.';
-                } else {
-                    errorMsg = `<strong>❌ Error: ${event.error}</strong><br><br>`;
-                    errorMsg += 'Try using Chrome browser for best voice support.';
-                }
-                
-                resultDiv.innerHTML = errorMsg;
-                resultDiv.style.background = '#f8d7da';
-                resultDiv.style.color = '#721c24';
-            };
-            
-            testRecognition.onend = function() {
-                console.log('Test microphone ended');
-                testBtn.innerHTML = originalHTML;
-                testBtn.classList.remove('recording');
-            };
-            
-            try {
-                testRecognition.start();
-            } catch (error) {
-                console.error('Error starting test:', error);
-                testBtn.innerHTML = originalHTML;
-                testBtn.classList.remove('recording');
-                resultDiv.innerHTML = '<strong>❌ Error starting microphone</strong><br><br>Make sure you\'re using Chrome, Edge, or Safari.';
-                resultDiv.style.background = '#f8d7da';
             }
         }
     </script>
