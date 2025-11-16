@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>DDW Field Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f2f2f7;
+            padding-bottom: 80px;
+            color: #000;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3a6b 100%);
+            color: white;
+            padding: max(env(safe-area-inset-top), 20px) 20px 20px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .system-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .settings-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .system-info input {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 150px;
+            max-width: 250px;
+        }
+
+        .system-info input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .system-info-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        /* Element Tabs */
+        .element-tabs {
+            display: flex;
+            overflow-x: auto;
+            background: white;
+            padding: 8px 8px 0 8px;
+            gap: 6px;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid #e5e5ea;
+        }
+
+        .element-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+            background: #f2f2f7;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px 12px 0 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 16px;
+        }
+
+        .element-section {
+            display: none;
+        }
+
+        .element-section.active {
+            display: block;
+        }
+
+        /* Quick Add Button */
+        .quick-add-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Note Card */
+        .note-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .note-time {
+            font-size: 0.85rem;
+            color: #8e8e93;
+        }
+
+        .note-priority {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .priority-low { background: #e3f2fd; color: #1976d2; }
+        .priority-medium { background: #fff3cd; color: #856404; }
+        .priority-high { background: #f8d7da; color: #721c24; }
+
+        .note-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+
+        .note-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+            max-width: 100%;
+        }
+
+        .note-photo {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f2f2f7;
+        }
+
+        .note-action-btn {
+            flex: 1;
+            background: #f2f2f7;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #2a5298;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Quick Entry Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: flex-end;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: max(env(safe-area-inset-bottom), 20px);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: #f2f2f7;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #8e8e93;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: #f2f2f7;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #2a5298;
+            background: white;
+        }
+
+        /* Priority Buttons */
+        .priority-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .priority-btn {
+            padding: 12px;
+            border: 2px solid #e5e5ea;
+            border-radius: 12px;
+            background: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .priority-btn.selected {
+            border-color: currentColor;
+        }
+
+        .priority-btn.low.selected { background: #e3f2fd; color: #1976d2; }
+        .priority-btn.medium.selected { background: #fff3cd; color: #856404; }
+        .priority-btn.high.selected { background: #f8d7da; color: #721c24; }
+
+        /* Photo Upload */
+        .photo-upload-area {
+            border: 2px dashed #e5e5ea;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f2f2f7;
+        }
+
+        .photo-upload-area:active {
+            background: #e5e5ea;
+        }
+
+        .photo-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .photo-preview {
+            position: relative;
+            aspect-ratio: 1;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        /* Voice Note Button */
+        .voice-btn {
+            background: #34c759;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .voice-btn.recording {
+            background: #ff3b30;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Save Button */
+        .save-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Bottom Toolbar */
+        .bottom-toolbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e5ea;
+            padding: 12px;
+            padding-bottom: max(env(safe-area-inset-bottom), 12px);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            z-index: 99;
+        }
+
+        .toolbar-btn {
+            background: #f2f2f7;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .toolbar-btn.primary {
+            background: #2a5298;
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e93;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        /* Location Tag */
+        .location-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        /* Badge for note count */
+        .note-count-badge {
+            background: #ff3b30;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+
+        /* Info banner */
+        .info-banner {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #90caf9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-banner.hidden {
+            display: none;
+        }
+
+        .close-banner {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #1976d2;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🚰 Field Notes</h1>
+        <div class="system-info">
+            <input type="text" id="systemName" placeholder="System Name" value="">
+            <div class="system-info-right">
+                <span id="currentDate"></span>
+                <button onclick="showSettings()" class="settings-btn">⚙</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner" id="infoBanner">
+        <span>💡</span>
+        <span>Need voice notes? Tap ⚙️ Settings for setup guide</span>
+        <button class="close-banner" onclick="closeBanner()">×</button>
+    </div>
+
+    <!-- Element Tabs -->
+    <div class="element-tabs">
+        <button class="tab-btn active" data-element="overview">Overview</button>
+        <button class="tab-btn" data-element="sources">Sources</button>
+        <button class="tab-btn" data-element="treatment">Treatment</button>
+        <button class="tab-btn" data-element="distribution">Distribution</button>
+        <button class="tab-btn" data-element="storage">Storage</button>
+        <button class="tab-btn" data-element="pumps">Pumps</button>
+        <button class="tab-btn" data-element="management">Management</button>
+        <button class="tab-btn" data-element="operators">Operators</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Overview Section -->
+        <div class="element-section active" id="overview-section">
+            <button class="quick-add-btn" onclick="openNoteModal('overview')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="overview-notes"></div>
+        </div>
+
+        <!-- Sources Section -->
+        <div class="element-section" id="sources-section">
+            <button class="quick-add-btn" onclick="openNoteModal('sources')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="sources-notes"></div>
+        </div>
+
+        <!-- Treatment Section -->
+        <div class="element-section" id="treatment-section">
+            <button class="quick-add-btn" onclick="openNoteModal('treatment')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="treatment-notes"></div>
+        </div>
+
+        <!-- Distribution Section -->
+        <div class="element-section" id="distribution-section">
+            <button class="quick-add-btn" onclick="openNoteModal('distribution')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="distribution-notes"></div>
+        </div>
+
+        <!-- Storage Section -->
+        <div class="element-section" id="storage-section">
+            <button class="quick-add-btn" onclick="openNoteModal('storage')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="storage-notes"></div>
+        </div>
+
+        <!-- Pumps Section -->
+        <div class="element-section" id="pumps-section">
+            <button class="quick-add-btn" onclick="openNoteModal('pumps')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="pumps-notes"></div>
+        </div>
+
+        <!-- Management Section -->
+        <div class="element-section" id="management-section">
+            <button class="quick-add-btn" onclick="openNoteModal('management')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="management-notes"></div>
+        </div>
+
+        <!-- Operators Section -->
+        <div class="element-section" id="operators-section">
+            <button class="quick-add-btn" onclick="openNoteModal('operators')">
+                <span>➕</span> Add Note
+            </button>
+            <div id="operators-notes"></div>
+        </div>
+    </div>
+
+    <!-- Permission Fix Modal -->
+    <div class="modal" id="permissionFixModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔧 Fix Microphone Access</h2>
+                <button class="close-btn" onclick="closePermissionFixModal()">✕</button>
+            </div>
+            
+            <div style="padding: 20px 0;">
+                <div style="background: #fff3cd; padding: 16px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 8px;">⚠️</div>
+                    <p style="font-weight: 600; margin-bottom: 8px;">Microphone is blocked</p>
+                    <p style="font-size: 0.9rem;">Follow the steps below to enable it</p>
+                </div>
+                
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 16px;">📱 Chrome on Android:</p>
+                    
+                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Step 1: Find the lock icon</p>
+                        <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; margin-bottom: 8px; text-align: center;">
+                            🔒 <span style="color: #666;">yoursite.com</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #666;">Look at the top of your screen in the address bar</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Step 2: Tap the lock icon 🔒</p>
+                        <p style="font-size: 0.85rem; color: #666;">A menu will appear</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Step 3: Tap "Permissions" or "Site settings"</p>
+                        <p style="font-size: 0.85rem; color: #666;">You'll see a list of permissions</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Step 4: Find "Microphone"</p>
+                        <p style="font-size: 0.85rem; color: #666;">It might say "Blocked" or "Denied"</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Step 5: Change to "Allow"</p>
+                        <p style="font-size: 0.85rem; color: #666;">Tap on it and select "Allow" or "Ask"</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 16px; border-radius: 8px;">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Step 6: Refresh this page</p>
+                        <p style="font-size: 0.85rem; color: #666;">Pull down on the page or tap the refresh button</p>
+                    </div>
+                </div>
+                
+                <div style="background: #f2f2f7; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                    <p style="font-weight: 600; margin-bottom: 12px;">🍎 iPhone/Safari:</p>
+                    <ol style="margin-left: 20px; line-height: 2; font-size: 0.9rem;">
+                        <li>Close this app</li>
+                        <li>Open Settings app on your iPhone</li>
+                        <li>Scroll down to "Safari"</li>
+                        <li>Tap "Camera & Microphone"</li>
+                        <li>Set to "Allow" or "Ask"</li>
+                        <li>Come back here and refresh</li>
+                    </ol>
+                </div>
+                
+                <button class="save-btn" onclick="refreshPage()">
+                    🔄 I've Changed It - Refresh Now
+                </button>
+                
+                <div style="text-align: center; margin-top: 16px;">
+                    <button style="background: none; border: none; color: #2a5298; font-size: 0.9rem; cursor: pointer; text-decoration: underline;" onclick="closePermissionFixModal()">
+                        I'll do this later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙ Settings</h2>
+                <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+            </div>
+            
+            <div style="padding: 20px 0;">
+                <div class="form-group">
+                    <label class="form-label">🎤 Voice Notes Help</label>
+                    
+                    <!-- Browser Check -->
+                    <div id="browserCheckDiv" style="background: #f2f2f7; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem;">
+                        <strong>Browser Status:</strong> <span id="browserStatus">Checking...</span>
+                    </div>
+                    
+                    <!-- Android Quick Start -->
+                    <div style="background: #e3f2fd; padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                        <p style="font-weight: 600; margin-bottom: 12px;">📱 Android Quick Start:</p>
+                        <ol style="margin-left: 20px; line-height: 2;">
+                            <li>Tap "Test Microphone" below</li>
+                            <li>When browser asks, tap <strong>"Allow"</strong></li>
+                            <li>Speak a few words to test</li>
+                            <li>If it works, you're all set!</li>
+                        </ol>
+                        
+                        <div style="background: white; padding: 12px; border-radius: 8px; margin-top: 12px;">
+                            <p style="font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Where to find the permission:</p>
+                            <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; margin-bottom: 8px;">
+                                [🔒 example.com] 🎤 ⓘ
+                                <div style="margin-top: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;">↑ Look here in your address bar ↑</div>
+                            </div>
+                            <p style="font-size: 0.8rem; color: #666;">The 🎤 icon appears when permission is needed. Tap it and choose "Allow"</p>
+                        </div>
+                    </div>
+                    
+                    <button class="voice-btn" id="testMicBtn" onclick="testMicrophone()" style="margin-bottom: 16px;">
+                        <span>🎤</span>
+                        <span>Test Microphone Now</span>
+                    </button>
+                    
+                    <details style="margin-bottom: 16px; background: #fff3cd; padding: 12px; border-radius: 8px;">
+                        <summary style="font-weight: 600; cursor: pointer;">🔧 Troubleshooting (tap to expand)</summary>
+                        <div style="margin-top: 12px; line-height: 1.8;">
+                            <p style="margin-bottom: 8px;"><strong>If "Allow" doesn't appear:</strong></p>
+                            <ol style="margin-left: 20px; margin-bottom: 12px;">
+                                <li>Look for a <strong>microphone icon</strong> in your address bar (top of browser)</li>
+                                <li>Tap it and select "Allow"</li>
+                                <li>Refresh this page</li>
+                            </ol>
+                            
+                            <p style="margin-bottom: 8px;"><strong>If you accidentally blocked:</strong></p>
+                            <ol style="margin-left: 20px; margin-bottom: 12px;">
+                                <li>Tap the <strong>lock icon</strong> (or "i" icon) in address bar</li>
+                                <li>Find "Microphone" or "Permissions"</li>
+                                <li>Change to "Allow"</li>
+                                <li>Refresh this page</li>
+                            </ol>
+                            
+                            <p style="margin-bottom: 8px;"><strong>Still not working?</strong></p>
+                            <p style="margin-left: 20px;">Try Chrome browser - it has the best voice support on Android</p>
+                        </div>
+                    </details>
+                    
+                    <button class="form-input" onclick="resetVoicePermission()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea;">
+                        🔄 Reset Voice Tutorial
+                    </button>
+                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Shows the welcome guide again</small>
+                    
+                    <button class="form-input" onclick="showPermissionFixModal(); closeSettingsModal();" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea; margin-top: 12px;">
+                        🔧 How to Enable Microphone
+                    </button>
+                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Step-by-step guide to fix blocked microphone</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Data Management</label>
+                    <button class="form-input" onclick="clearAllData()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea; color: #ff3b30;">
+                        🗑 Clear All Notes
+                    </button>
+                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Permanently delete all field notes (use Export first!)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">About</label>
+                    <div style="background: #f2f2f7; padding: 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;">
+                        <p><strong>DDW Field Notes v1.0</strong></p>
+                        <p style="margin-top: 8px;">Mobile-first note taking for California DDW water system inspections.</p>
+                        <p style="margin-top: 8px; color: #8e8e93;">All data stored locally on your device.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Microphone Permission Modal -->
+    <div class="modal" id="micPermissionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🎤 Enable Voice Notes</h2>
+                <button class="close-btn" onclick="closeMicModal()">✕</button>
+            </div>
+            
+            <div style="padding: 20px 0;">
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 12px;">🎤</div>
+                    <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 12px;">Quick Setup</p>
+                    <ol style="text-align: left; margin-left: 40px; line-height: 2; font-size: 1rem;">
+                        <li>Tap "Enable" below</li>
+                        <li>Browser will ask for permission</li>
+                        <li><strong>Tap "Allow"</strong> ✅</li>
+                        <li>Start speaking!</li>
+                    </ol>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+                    <strong>💡 Tip:</strong> Look for a microphone icon 🎤 in your browser's address bar if you don't see a popup
+                </div>
+                
+                <button class="save-btn" onclick="requestMicrophonePermission()">
+                    🎤 Enable Voice Notes
+                </button>
+                
+                <details style="margin-top: 20px; padding: 12px; background: #f2f2f7; border-radius: 8px;">
+                    <summary style="font-weight: 600; cursor: pointer; font-size: 0.9rem;">Having trouble? (tap for help)</summary>
+                    <div style="margin-top: 12px; font-size: 0.85rem; line-height: 1.6;">
+                        <p style="margin-bottom: 8px;"><strong>Android:</strong></p>
+                        <ol style="margin-left: 20px; margin-bottom: 12px;">
+                            <li>Check your address bar for a 🎤 icon</li>
+                            <li>Tap it and select "Allow"</li>
+                            <li>Or tap the lock icon 🔒 > Permissions > Microphone > Allow</li>
+                        </ol>
+                        <p style="margin-bottom: 8px;"><strong>iPhone/Safari:</strong></p>
+                        <ol style="margin-left: 20px;">
+                            <li>Go to Settings app</li>
+                            <li>Scroll to Safari</li>
+                            <li>Tap "Camera & Microphone"</li>
+                            <li>Set to "Allow"</li>
+                        </ol>
+                        <p style="margin-top: 12px; padding: 8px; background: #e3f2fd; border-radius: 6px;">
+                            Still stuck? Tap ⚙️ Settings > Test Microphone for more help
+                        </p>
+                    </div>
+                </details>
+                
+                <div style="text-align: center; margin-top: 16px;">
+                    <button style="background: none; border: none; color: #8e8e93; text-decoration: underline; font-size: 0.9rem; cursor: pointer;" onclick="skipMicPermission()">
+                        Skip for now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Note Modal -->
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">New Field Note</h2>
+                <button class="close-btn" onclick="closeNoteModal()">✕</button>
+            </div>
+
+            <form id="noteForm">
+                <div class="form-group">
+                    <label class="form-label">Location/Asset</label>
+                    <input type="text" class="form-input" id="noteLocation" placeholder="e.g., Well #3, Zone 2 Booster, Main St Tank">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Observation</label>
+                    <button type="button" class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()">
+                        <span id="voiceIcon">🎤</span>
+                        <span id="voiceText">Tap to use voice</span>
+                    </button>
+                    <textarea class="form-textarea" id="noteText" placeholder="Describe what you observed..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <div class="priority-buttons">
+                        <button type="button" class="priority-btn low" onclick="selectPriority('low')">✓ Good</button>
+                        <button type="button" class="priority-btn medium" onclick="selectPriority('medium')">⚠ Follow-up</button>
+                        <button type="button" class="priority-btn high" onclick="selectPriority('high')">⚠️ Issue</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Photos</label>
+                    <input type="file" id="photoInput" accept="image/*" multiple capture="environment" style="display: none;" onchange="handlePhotoUpload(event)">
+                    <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
+                        <div>📷 Tap to add photos</div>
+                    </div>
+                    <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+                </div>
+
+                <button type="submit" class="save-btn">Save Note</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Toolbar -->
+    <div class="bottom-toolbar">
+        <button class="toolbar-btn" onclick="exportNotes()">
+            📤 Export
+        </button>
+        <button class="toolbar-btn primary" onclick="viewSummary()">
+            📊 Summary
+        </button>
+    </div>
+
+    <script>
+        // Global state
+        let currentElement = 'overview';
+        let currentPriority = 'medium';
+        let currentPhotos = [];
+        let allNotes = JSON.parse(localStorage.getItem('fieldNotes') || '[]');
+        let recognition = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+            
+            // Check if banner was dismissed
+            if (localStorage.getItem('bannerDismissed') === 'true') {
+                document.getElementById('infoBanner').classList.add('hidden');
+            }
+            
+            // Load system name
+            const savedSystemName = localStorage.getItem('systemName');
+            if (savedSystemName) {
+                document.getElementById('systemName').value = savedSystemName;
+            }
+            
+            // Save system name on change
+            document.getElementById('systemName').addEventListener('change', function() {
+                localStorage.setItem('systemName', this.value);
+            });
+
+            // Setup tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchElement(this.dataset.element);
+                });
+            });
+
+            // Setup form
+            document.getElementById('noteForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveNote();
+            });
+
+            // Initialize speech recognition if available
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                
+                recognition.onstart = function() {
+                    console.log('Voice recognition started');
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const noteText = document.getElementById('noteText');
+                    noteText.value += (noteText.value ? ' ' : '') + transcript;
+                    console.log('Transcript:', transcript);
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    const voiceBtn = document.getElementById('voiceBtn');
+                    voiceBtn.classList.remove('recording');
+                    document.getElementById('voiceText').textContent = 'Tap to use voice';
+                    document.getElementById('voiceIcon').textContent = '🎤';
+                    
+                    if (event.error === 'no-speech') {
+                        alert('No speech detected. Please try again.');
+                    } else if (event.error === 'not-allowed') {
+                        // Show detailed fix instructions
+                        showPermissionFixModal();
+                    } else if (event.error === 'aborted') {
+                        // User stopped it, no need for alert
+                        console.log('Voice recording aborted by user');
+                    } else {
+                        alert('Voice recognition error: ' + event.error);
+                    }
+                };
+                
+                recognition.onend = function() {
+                    console.log('Voice recognition ended');
+                    const voiceBtn = document.getElementById('voiceBtn');
+                    voiceBtn.classList.remove('recording');
+                    document.getElementById('voiceText').textContent = 'Tap to use voice';
+                    document.getElementById('voiceIcon').textContent = '🎤';
+                };
+            }
+
+            // Render all notes
+            renderAllNotes();
+            updateNoteCounts();
+        });
+
+        function closeBanner() {
+            document.getElementById('infoBanner').classList.add('hidden');
+            localStorage.setItem('bannerDismissed', 'true');
+        }
+
+        function switchElement(element) {
+            currentElement = element;
+            
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update sections
+            document.querySelectorAll('.element-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(element + '-section').classList.add('active');
+        }
+
+        function openNoteModal(element) {
+            currentElement = element;
+            document.getElementById('noteModal').classList.add('active');
+            document.getElementById('noteLocation').focus();
+        }
+
+        function closeNoteModal() {
+            document.getElementById('noteModal').classList.remove('active');
+            document.getElementById('noteForm').reset();
+            currentPhotos = [];
+            document.getElementById('photoPreviewGrid').innerHTML = '';
+            currentPriority = 'medium';
+            document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
+        }
+
+        function selectPriority(priority) {
+            currentPriority = priority;
+            document.querySelectorAll('.priority-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        function toggleVoiceInput() {
+            if (!recognition) {
+                alert('Voice input not supported on this device. Speech recognition requires Chrome, Edge, or Safari on iOS 14.5+');
+                return;
+            }
+            
+            const voiceBtn = document.getElementById('voiceBtn');
+            
+            if (voiceBtn.classList.contains('recording')) {
+                // Stop recording
+                recognition.stop();
+                voiceBtn.classList.remove('recording');
+                document.getElementById('voiceText').textContent = 'Tap to use voice';
+                document.getElementById('voiceIcon').textContent = '🎤';
+            } else {
+                // Check if this is first time using voice
+                const hasUsedVoice = localStorage.getItem('hasUsedVoice');
+                if (!hasUsedVoice) {
+                    // Show permission modal first
+                    document.getElementById('micPermissionModal').classList.add('active');
+                } else {
+                    // Start recording directly
+                    startVoiceRecording();
+                }
+            }
+        }
+
+        function startVoiceRecording() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            try {
+                console.log('Starting voice recording...');
+                voiceBtn.classList.add('recording');
+                document.getElementById('voiceText').textContent = 'Listening... (tap to stop)';
+                document.getElementById('voiceIcon').textContent = '🔴';
+                
+                // Give user feedback that permission might be requested
+                console.log('About to call recognition.start() - browser may show permission dialog');
+                recognition.start();
+                console.log('recognition.start() called successfully');
+            } catch (error) {
+                console.error('Error starting recognition:', error);
+                voiceBtn.classList.remove('recording');
+                document.getElementById('voiceText').textContent = 'Tap to use voice';
+                document.getElementById('voiceIcon').textContent = '🎤';
+                
+                let errorMessage = 'Error starting voice recognition.\n\n';
+                if (error.name === 'InvalidStateError') {
+                    errorMessage += 'Voice recognition is already running. Please wait a moment and try again.';
+                } else {
+                    errorMessage += 'Please make sure you\'re using a supported browser (Chrome, Edge, or Safari).\n\nError: ' + error.message;
+                }
+                alert(errorMessage);
+            }
+        }
+
+        function requestMicrophonePermission() {
+            // Close the modal
+            document.getElementById('micPermissionModal').classList.remove('active');
+            
+            // Mark that user has seen the permission flow
+            localStorage.setItem('hasUsedVoice', 'true');
+            
+            // Start voice recording (this will trigger browser's permission prompt)
+            startVoiceRecording();
+        }
+
+        function skipMicPermission() {
+            document.getElementById('micPermissionModal').classList.remove('active');
+            localStorage.setItem('hasUsedVoice', 'true');
+        }
+
+        function closeMicModal() {
+            document.getElementById('micPermissionModal').classList.remove('active');
+        }
+
+        function handlePhotoUpload(event) {
+            const files = Array.from(event.target.files);
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentPhotos.push(e.target.result);
+                    renderPhotoPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderPhotoPreview() {
+            const grid = document.getElementById('photoPreviewGrid');
+            grid.innerHTML = currentPhotos.map((photo, index) => `
+                <div class="photo-preview">
+                    <img src="${photo}" alt="Photo ${index + 1}">
+                    <button class="photo-remove" onclick="removePhoto(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removePhoto(index) {
+            currentPhotos.splice(index, 1);
+            renderPhotoPreview();
+        }
+
+        function saveNote() {
+            const note = {
+                id: Date.now(),
+                element: currentElement,
+                location: document.getElementById('noteLocation').value,
+                text: document.getElementById('noteText').value,
+                priority: currentPriority,
+                photos: [...currentPhotos],
+                timestamp: new Date().toISOString(),
+                systemName: document.getElementById('systemName').value
+            };
+
+            allNotes.unshift(note);
+            localStorage.setItem('fieldNotes', JSON.stringify(allNotes));
+            
+            closeNoteModal();
+            renderAllNotes();
+            updateNoteCounts();
+        }
+
+        function renderAllNotes() {
+            const elements = ['overview', 'sources', 'treatment', 'distribution', 'storage', 'pumps', 'management', 'operators'];
+            
+            elements.forEach(element => {
+                const container = document.getElementById(element + '-notes');
+                const notes = allNotes.filter(note => note.element === element);
+                
+                if (notes.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📝</div>
+                            <div>No notes yet</div>
+                            <div style="font-size: 0.85rem; margin-top: 8px;">Tap "Add Note" to get started</div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = notes.map(note => renderNoteCard(note)).join('');
+                }
+            });
+        }
+
+        function renderNoteCard(note) {
+            const time = new Date(note.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const priorityClass = `priority-${note.priority}`;
+            const priorityLabel = note.priority === 'low' ? '✓ Good' : note.priority === 'medium' ? '⚠ Follow-up' : '⚠️ Issue';
+            
+            return `
+                <div class="note-card">
+                    <div class="note-header">
+                        <div class="note-time">${time}</div>
+                        <div class="note-priority ${priorityClass}">${priorityLabel}</div>
+                    </div>
+                    ${note.location ? `<div style="font-weight: 600; margin-bottom: 8px; color: #2a5298;">📍 ${note.location}</div>` : ''}
+                    <div class="note-text">${note.text}</div>
+                    ${note.photos.length > 0 ? `
+                        <div class="note-photos">
+                            ${note.photos.map(photo => `<img src="${photo}" class="note-photo" onclick="viewPhoto('${photo}')">`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="note-actions">
+                        <button class="note-action-btn" onclick="deleteNote(${note.id})">🗑 Delete</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function deleteNote(id) {
+            if (confirm('Delete this note?')) {
+                allNotes = allNotes.filter(note => note.id !== id);
+                localStorage.setItem('fieldNotes', JSON.stringify(allNotes));
+                renderAllNotes();
+                updateNoteCounts();
+            }
+        }
+
+        function updateNoteCounts() {
+            const elements = ['overview', 'sources', 'treatment', 'distribution', 'storage', 'pumps', 'management', 'operators'];
+            
+            elements.forEach(element => {
+                const count = allNotes.filter(note => note.element === element).length;
+                const btn = document.querySelector(`[data-element="${element}"]`);
+                
+                // Remove existing badge
+                const existingBadge = btn.querySelector('.note-count-badge');
+                if (existingBadge) existingBadge.remove();
+                
+                // Add new badge if count > 0
+                if (count > 0) {
+                    const badge = document.createElement('span');
+                    badge.className = 'note-count-badge';
+                    badge.textContent = count;
+                    btn.appendChild(badge);
+                }
+            });
+        }
+
+        function viewPhoto(photoData) {
+            // Open photo in new window/tab
+            const w = window.open();
+            w.document.write(`<img src="${photoData}" style="max-width: 100%; height: auto;">`);
+        }
+
+        function exportNotes() {
+            const systemName = document.getElementById('systemName').value || 'Unknown_System';
+            const date = new Date().toISOString().split('T')[0];
+            const filename = `${systemName}_FieldNotes_${date}.json`;
+            
+            const dataStr = JSON.stringify(allNotes, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportLink = document.createElement('a');
+            exportLink.setAttribute('href', dataUri);
+            exportLink.setAttribute('download', filename);
+            exportLink.click();
+        }
+
+        function viewSummary() {
+            const summary = {
+                systemName: document.getElementById('systemName').value,
+                totalNotes: allNotes.length,
+                byPriority: {
+                    issues: allNotes.filter(n => n.priority === 'high').length,
+                    followups: allNotes.filter(n => n.priority === 'medium').length,
+                    good: allNotes.filter(n => n.priority === 'low').length
+                },
+                byElement: {}
+            };
+            
+            ['overview', 'sources', 'treatment', 'distribution', 'storage', 'pumps', 'management', 'operators'].forEach(el => {
+                summary.byElement[el] = allNotes.filter(n => n.element === el).length;
+            });
+            
+            let message = `Field Notes Summary\n\n`;
+            message += `System: ${summary.systemName || 'Not set'}\n`;
+            message += `Total Notes: ${summary.totalNotes}\n\n`;
+            message += `⚠️ Issues: ${summary.byPriority.issues}\n`;
+            message += `⚠ Follow-ups: ${summary.byPriority.followups}\n`;
+            message += `✓ Good: ${summary.byPriority.good}\n\n`;
+            message += `Use Export to save all notes`;
+            
+            alert(message);
+        }
+
+        function resetVoicePermission() {
+            localStorage.removeItem('hasUsedVoice');
+            alert('Voice permission reset. Next time you tap the voice button, you\'ll see the permission guide again.');
+            closeSettingsModal();
+        }
+
+        function showSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+            updateBrowserStatus();
+        }
+
+        function updateBrowserStatus() {
+            const statusSpan = document.getElementById('browserStatus');
+            const checkDiv = document.getElementById('browserCheckDiv');
+            
+            if (!statusSpan) return;
+            
+            if (recognition) {
+                statusSpan.innerHTML = '✅ Voice notes supported';
+                checkDiv.style.background = '#d4edda';
+                checkDiv.style.color = '#155724';
+            } else {
+                const userAgent = navigator.userAgent.toLowerCase();
+                let browserName = 'Unknown browser';
+                
+                if (userAgent.includes('chrome')) browserName = 'Chrome';
+                else if (userAgent.includes('firefox')) browserName = 'Firefox';
+                else if (userAgent.includes('safari')) browserName = 'Safari';
+                else if (userAgent.includes('edge')) browserName = 'Edge';
+                
+                statusSpan.innerHTML = `❌ Not supported in ${browserName}`;
+                checkDiv.style.background = '#f8d7da';
+                checkDiv.style.color = '#721c24';
+                
+                // Add helpful message
+                const helpMsg = document.createElement('div');
+                helpMsg.style.cssText = 'margin-top: 8px; font-size: 0.85rem;';
+                helpMsg.innerHTML = 'Voice notes require Chrome, Edge, or Safari (iOS 14.5+)';
+                checkDiv.appendChild(helpMsg);
+            }
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to delete ALL field notes?\n\nThis cannot be undone!\n\nConsider using Export first.')) {
+                if (confirm('Really delete everything? This is your last chance!')) {
+                    allNotes = [];
+                    localStorage.setItem('fieldNotes', '[]');
+                    renderAllNotes();
+                    updateNoteCounts();
+                    closeSettingsModal();
+                    alert('All notes deleted.');
+                }
+            }
+        }
+
+        function showPermissionFixModal() {
+            // Close note modal if it's open
+            document.getElementById('noteModal').classList.remove('active');
+            // Show the fix modal
+            document.getElementById('permissionFixModal').classList.add('active');
+        }
+
+        function closePermissionFixModal() {
+            document.getElementById('permissionFixModal').classList.remove('active');
+        }
+
+        function refreshPage() {
+            location.reload();
+        }
+
+        function testMicrophone() {
+            if (!recognition) {
+                alert('Voice input not supported on this browser.\n\nPlease use:\n• Chrome (recommended for Android)\n• Edge\n• Safari (iOS 14.5+)');
+                return;
+            }
+
+            const testBtn = document.getElementById('testMicBtn');
+            const originalHTML = testBtn.innerHTML;
+            
+            testBtn.innerHTML = '<span>🔴</span><span>Listening... speak now!</span>';
+            testBtn.classList.add('recording');
+            
+            // Create a test result div if it doesn't exist
+            let resultDiv = document.getElementById('micTestResult');
+            if (!resultDiv) {
+                resultDiv = document.createElement('div');
+                resultDiv.id = 'micTestResult';
+                resultDiv.style.cssText = 'background: #f2f2f7; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 0.9rem; line-height: 1.6;';
+                testBtn.parentElement.appendChild(resultDiv);
+            }
+            
+            resultDiv.innerHTML = '<strong>Status:</strong> Waiting for your voice...<br><small>If you see a permission popup, tap "Allow"</small>';
+            
+            // One-time test recognition
+            const testRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            testRecognition.continuous = false;
+            testRecognition.interimResults = false;
+            testRecognition.lang = 'en-US';
+            
+            testRecognition.onstart = function() {
+                console.log('Test microphone started');
+                resultDiv.innerHTML = '<strong>✅ Microphone active!</strong><br>Speak a few words to test...';
+            };
+            
+            testRecognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                console.log('Test transcript:', transcript);
+                resultDiv.innerHTML = `<strong>✅ SUCCESS!</strong><br>You said: "${transcript}"<br><br><small>Voice notes are working! Close this and try adding a note.</small>`;
+                resultDiv.style.background = '#d4edda';
+                resultDiv.style.color = '#155724';
+            };
+            
+            testRecognition.onerror = function(event) {
+                console.error('Test microphone error:', event.error);
+                let errorMsg = '';
+                
+                if (event.error === 'not-allowed') {
+                    // Close settings and show the fix modal
+                    closeSettingsModal();
+                    showPermissionFixModal();
+                    return;
+                } else if (event.error === 'no-speech') {
+                    errorMsg = '<strong>⚠️ No Speech Detected</strong><br><br>';
+                    errorMsg += 'Make sure your microphone is working and try speaking louder.';
+                } else {
+                    errorMsg = `<strong>❌ Error: ${event.error}</strong><br><br>`;
+                    errorMsg += 'Try using Chrome browser for best voice support.';
+                }
+                
+                resultDiv.innerHTML = errorMsg;
+                resultDiv.style.background = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+            };
+            
+            testRecognition.onend = function() {
+                console.log('Test microphone ended');
+                testBtn.innerHTML = originalHTML;
+                testBtn.classList.remove('recording');
+            };
+            
+            try {
+                testRecognition.start();
+            } catch (error) {
+                console.error('Error starting test:', error);
+                testBtn.innerHTML = originalHTML;
+                testBtn.classList.remove('recording');
+                resultDiv.innerHTML = '<strong>❌ Error starting microphone</strong><br><br>Make sure you\'re using Chrome, Edge, or Safari.';
+                resultDiv.style.background = '#f8d7da';
+            }
+        }
+    </script>
+</body>
+</html>
