@@ -19,6 +19,7 @@
             background: #f2f2f7;
             color: #000;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Header */
@@ -48,7 +49,7 @@
             gap: 12px;
         }
 
-        .back-btn, .settings-btn {
+        .back-btn {
             background: rgba(255,255,255,0.2);
             border: 1px solid rgba(255,255,255,0.3);
             color: white;
@@ -56,24 +57,16 @@
             border-radius: 8px;
             font-size: 0.9rem;
             cursor: pointer;
-            display: flex;
+            display: none;
             align-items: center;
             gap: 6px;
-            border: none;
-        }
-
-        .settings-btn {
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            justify-content: center;
-            font-size: 1.2rem;
         }
 
         .breadcrumb {
             margin-top: 8px;
             font-size: 0.85rem;
             opacity: 0.9;
+            display: none;
         }
 
         /* Screens */
@@ -148,6 +141,18 @@
             color: #155724;
         }
 
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e93;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
         /* Add Button */
         .add-btn {
             position: fixed;
@@ -166,6 +171,414 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .add-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Tabs for Elements */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 77px;
+            z-index: 90;
+        }
+
+        .tab-btn {
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #f2f2f7;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+
+        .tab-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Element Sections */
+        .element-section {
+            display: none;
+        }
+
+        .element-section.active {
+            display: block;
+        }
+
+        /* General Section (at top of each element) */
+        .general-section {
+            background: white;
+            border-radius: 12px;
+            margin: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #2a5298;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Asset Cards (for wells, tanks, pumps, etc.) */
+        .asset-card {
+            background: white;
+            border-radius: 12px;
+            margin: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .asset-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .asset-header.storage {
+            background: linear-gradient(135deg, #6f42c1 0%, #4a2b85 100%);
+        }
+
+        .asset-header.pump {
+            background: linear-gradient(135deg, #fd7e14 0%, #d35400 100%);
+        }
+
+        .asset-header.treatment {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+
+        .asset-header.distribution {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+
+        .asset-header.operator {
+            background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+        }
+
+        .asset-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .asset-body {
+            padding: 16px;
+        }
+
+        /* Condition Rating */
+        .condition-section {
+            margin-bottom: 20px;
+        }
+
+        .condition-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .condition-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .condition-btn {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .condition-btn.selected {
+            border-width: 3px;
+        }
+
+        .condition-btn.good.selected {
+            border-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .condition-btn.fair.selected {
+            border-color: #ffc107;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .condition-btn.poor.selected {
+            border-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .condition-btn.issue.selected {
+            border-color: #8b0000;
+            background: #ffe0e0;
+            color: #8b0000;
+        }
+
+        /* Checklist */
+        .checklist-section {
+            margin-bottom: 20px;
+        }
+
+        .checklist-group-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 16px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            margin-top: 20px;
+        }
+
+        .notes-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .notes-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .voice-btn {
+            margin-top: 10px;
+            padding: 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .voice-btn.recording {
+            background: #dc3545;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Photos Section */
+        .photos-section {
+            margin-top: 20px;
+        }
+
+        .photos-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .photo-input {
+            display: none;
+        }
+
+        .photo-btn {
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Delete Asset Button */
+        .delete-asset-btn {
+            margin-top: 16px;
+            padding: 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            margin: 16px;
+            padding: 14px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: calc(100% - 32px);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
         }
 
         /* Modal */
@@ -206,6 +619,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9ecef;
         }
 
         .modal-title {
@@ -213,351 +628,34 @@
             font-weight: 600;
         }
 
-        .close-btn {
-            background: #f2f2f7;
+        .modal-close {
+            background: none;
             border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             cursor: pointer;
-            color: #8e8e93;
-        }
-
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #e5e5ea;
-            border-radius: 12px;
-            font-size: 1rem;
-            background: #f2f2f7;
-            font-family: inherit;
-        }
-
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none;
-            border-color: #2a5298;
-            background: white;
+            color: #6c757d;
         }
 
         .save-btn {
+            width: 100%;
+            padding: 14px;
             background: #2a5298;
             color: white;
             border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .voice-btn {
-            background: #34c759;
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
-            width: 100%;
-            margin-bottom: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .voice-btn.recording {
-            background: #ff3b30;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Checklist */
-        .checklist-section {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .checklist-section-title {
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #2c3e50;
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        .checklist-item input[type="checkbox"] {
-            width: 24px;
-            height: 24px;
             cursor: pointer;
         }
 
-        .checklist-item label {
-            flex: 1;
-            cursor: pointer;
-            font-size: 0.95rem;
+        .save-btn:active {
+            transform: scale(0.98);
         }
 
-        /* Condition Rating */
-        .condition-rating {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .condition-btn {
-            padding: 12px 8px;
-            border: 2px solid #e5e5ea;
-            border-radius: 12px;
-            background: white;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .condition-btn.selected {
-            border-color: currentColor;
-        }
-
-        .condition-btn.good.selected {
-            background: #d4edda;
-            color: #155724;
-            border-color: #155724;
-        }
-
-        .condition-btn.fair.selected {
-            background: #fff3cd;
-            color: #856404;
-            border-color: #856404;
-        }
-
-        .condition-btn.poor.selected {
-            background: #f8d7da;
-            color: #721c24;
-            border-color: #721c24;
-        }
-
-        .condition-btn.issue.selected {
-            background: #f8d7da;
-            color: #721c24;
-            border-color: #721c24;
-            font-weight: 700;
-        }
-
-        /* Photo Upload */
-        .photo-upload-area {
-            border: 2px dashed #e5e5ea;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            background: #f2f2f7;
-        }
-
-        .photo-upload-area:active {
-            background: #e5e5ea;
-        }
-
-        .photo-preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .photo-preview {
-            position: relative;
-            aspect-ratio: 1;
-        }
-
-        .photo-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .photo-remove {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #8e8e93;
-        }
-
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-        }
-
-        /* Element Tabs */
-        .element-tabs {
-            display: flex;
-            overflow-x: auto;
-            background: white;
-            padding: 8px 8px 0 8px;
-            gap: 6px;
-            -webkit-overflow-scrolling: touch;
-            border-bottom: 1px solid #e5e5ea;
-        }
-
-        .element-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab-btn {
-            flex-shrink: 0;
-            background: #f2f2f7;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px 12px 0 0;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #8e8e93;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .tab-btn.active {
-            background: #2a5298;
-            color: white;
-        }
-
-        .tab-badge {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: #ff3b30;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        /* Asset Card */
-        .asset-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-
-        .asset-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .asset-card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2a5298;
-        }
-
-        .asset-card-status {
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .asset-card-info {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-bottom: 8px;
-        }
-
-        .element-section {
-            display: none;
-        }
-
-        .element-section.active {
-            display: block;
-        }
-
-        .section-header {
-            background: #f8f9fa;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .quick-add-btn {
-            background: white;
-            color: #2a5298;
-            border: 2px dashed #2a5298;
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 1rem;
-            font-weight: 600;
-            width: 100%;
-            margin-bottom: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .quick-add-btn:active {
-            background: #f8f9fa;
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -567,263 +665,603 @@
         <div class="header-content">
             <h1 id="headerTitle">🚰 Systems</h1>
             <div class="header-actions">
-                <button class="back-btn" id="backBtn" style="display: none;" onclick="goBack()">← Back</button>
-                <button class="settings-btn" onclick="showSettings()">⚙</button>
+                <button class="back-btn" id="backBtn" onclick="goBack()">← Back</button>
             </div>
         </div>
-        <div class="breadcrumb" id="breadcrumb" style="display: none;"></div>
+        <div class="breadcrumb" id="breadcrumb"></div>
     </div>
 
     <!-- Systems Screen -->
     <div class="screen active" id="systemsScreen">
-        <div class="content" id="systemsList"></div>
+        <div class="content">
+            <div id="systemsList"></div>
+        </div>
         <button class="add-btn" onclick="showAddSystemModal()">+</button>
     </div>
 
     <!-- Inspections Screen -->
     <div class="screen" id="inspectionsScreen">
-        <div class="content" id="inspectionsList"></div>
+        <div class="content">
+            <div id="inspectionsList"></div>
+        </div>
         <button class="add-btn" onclick="showAddInspectionModal()">+</button>
     </div>
 
     <!-- Field Inspector Screen -->
     <div class="screen" id="fieldInspectorScreen">
-        <div class="element-tabs">
-            <button class="tab-btn active" data-element="sources" onclick="switchElement('sources')">Sources</button>
-            <button class="tab-btn" data-element="treatment" onclick="switchElement('treatment')">Treatment</button>
-            <button class="tab-btn" data-element="storage" onclick="switchElement('storage')">Storage</button>
-            <button class="tab-btn" data-element="pumps" onclick="switchElement('pumps')">Pumps</button>
-            <button class="tab-btn" data-element="distribution" onclick="switchElement('distribution')">Distribution</button>
-            <button class="tab-btn" data-element="management" onclick="switchElement('management')">Management</button>
-            <button class="tab-btn" data-element="operators" onclick="switchElement('operators')">Operators</button>
+        <!-- Element Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-element="overview" onclick="switchElement('overview')">📋 Overview</button>
+            <button class="tab-btn" data-element="sources" onclick="switchElement('sources')">1️⃣ Sources</button>
+            <button class="tab-btn" data-element="treatment" onclick="switchElement('treatment')">2️⃣ Treatment</button>
+            <button class="tab-btn" data-element="distribution" onclick="switchElement('distribution')">3️⃣ Distribution</button>
+            <button class="tab-btn" data-element="storage" onclick="switchElement('storage')">4️⃣ Storage</button>
+            <button class="tab-btn" data-element="pumps" onclick="switchElement('pumps')">5️⃣ Pumps</button>
+            <button class="tab-btn" data-element="monitoring" onclick="switchElement('monitoring')">6️⃣ Monitoring</button>
+            <button class="tab-btn" data-element="management" onclick="switchElement('management')">7️⃣ Management</button>
+            <button class="tab-btn" data-element="operators" onclick="switchElement('operators')">8️⃣ Operators</button>
         </div>
-        <div class="content">
-            <!-- Sources -->
-            <div class="element-section active" id="sources-section">
-                <div class="section-header">🕳️ Wells & Groundwater Sources</div>
-                <button class="quick-add-btn" onclick="addAsset('well')">➕ Add Well</button>
-                <div id="wells-list"></div>
-                
-                <div class="section-header" style="margin-top: 24px;">🌊 Surface Water Sources</div>
-                <button class="quick-add-btn" onclick="addAsset('surface_water')">➕ Add Surface Water Intake</button>
-                <div id="surface_water-list"></div>
+
+        <!-- Overview Section -->
+        <div class="element-section active" id="overview-section">
+            <div class="general-section">
+                <div class="section-title">System Information</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">PWS Number</label>
+                        <input type="text" class="form-input" id="overview-pws" placeholder="CA0000000">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">System Name</label>
+                        <input type="text" class="form-input" id="overview-system-name" placeholder="Enter system name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">System Type</label>
+                        <select class="form-select" id="overview-system-type">
+                            <option value="">Select Type</option>
+                            <option value="community">Community</option>
+                            <option value="ntnc">NTNC</option>
+                            <option value="transient">Transient</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Population Served</label>
+                        <input type="number" class="form-input" id="overview-population" placeholder="0">
+                    </div>
+                </div>
             </div>
 
-            <!-- Treatment -->
-            <div class="element-section" id="treatment-section">
-                <div class="section-header">🏭 Treatment Plants</div>
-                <button class="quick-add-btn" onclick="addAsset('treatment_plant')">➕ Add Treatment Plant</button>
-                <div id="treatment_plant-list"></div>
+            <div class="general-section">
+                <div class="section-title">Inspection Information</div>
+                <div class="form-group">
+                    <label class="form-label">Inspector Name</label>
+                    <input type="text" class="form-input" id="overview-inspector" placeholder="Enter inspector name">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Inspection Date</label>
+                        <input type="date" class="form-input" id="overview-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weather Conditions</label>
+                        <input type="text" class="form-input" id="overview-weather" placeholder="e.g., Clear, 75°F">
+                    </div>
+                </div>
             </div>
 
-            <!-- Storage -->
-            <div class="element-section" id="storage-section">
-                <div class="section-header">💧 Storage Tanks</div>
-                <button class="quick-add-btn" onclick="addAsset('storage_tank')">➕ Add Storage Tank</button>
-                <div id="storage_tank-list"></div>
+            <div class="general-section">
+                <div class="section-title">Previous Deficiencies</div>
+                <div class="form-group">
+                    <label class="form-label">Status of Previous Findings</label>
+                    <textarea class="form-textarea" id="overview-prev-deficiencies" placeholder="Describe resolution status of deficiencies from previous survey..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('overview-prev-deficiencies')">🎤 Use Voice</button>
+                </div>
             </div>
+        </div>
 
-            <!-- Pumps -->
-            <div class="element-section" id="pumps-section">
-                <div class="section-header">🚿 Pump Stations</div>
-                <button class="quick-add-btn" onclick="addAsset('pump_station')">➕ Add Pump Station</button>
-                <div id="pump_station-list"></div>
+        <!-- Sources Section (Element 1) -->
+        <div class="element-section" id="sources-section">
+            <div class="general-section">
+                <div class="section-title">Sources Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Source Type Mix</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sources-groundwater">
+                            <label>Groundwater (Wells)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sources-surface">
+                            <label>Surface Water</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sources-purchased">
+                            <label>Purchased Water</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Changes Since Last Inspection</label>
+                    <textarea class="form-textarea" id="sources-changes" placeholder="New sources added, sources abandoned, capacity changes, etc."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('sources-changes')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Sources Notes</label>
+                    <textarea class="form-textarea" id="sources-general-notes" placeholder="Overall observations about water sources, capacity, protection..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('sources-general-notes')">🎤 Use Voice</button>
+                </div>
             </div>
+            <div id="sources-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('source')">+ Add Well/Source</button>
+        </div>
 
-            <!-- Distribution -->
-            <div class="element-section" id="distribution-section">
-                <div class="section-header">🔧 Distribution System</div>
-                <button class="quick-add-btn" onclick="addAsset('distribution_general')">➕ Add Observation</button>
-                <div id="distribution_general-list"></div>
+        <!-- Treatment Section (Element 2) -->
+        <div class="element-section" id="treatment-section">
+            <div class="general-section">
+                <div class="section-title">Treatment Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Treatment Type</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-chlorination">
+                            <label>Chlorination/Disinfection</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-filtration">
+                            <label>Filtration</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-other">
+                            <label>Other Treatment</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-none">
+                            <label>No Treatment (Groundwater)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Treatment Notes</label>
+                    <textarea class="form-textarea" id="treatment-general-notes" placeholder="Overall treatment system observations, process effectiveness, records reviewed..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('treatment-general-notes')">🎤 Use Voice</button>
+                </div>
             </div>
+            <div id="treatment-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('treatment')">+ Add Treatment Facility</button>
+        </div>
 
-            <!-- Management -->
-            <div class="element-section" id="management-section">
-                <div class="section-header">📋 Management & Operations</div>
-                <button class="quick-add-btn" onclick="addAsset('management_general')">➕ Add Observation</button>
-                <div id="management_general-list"></div>
+        <!-- Distribution Section (Element 3) -->
+        <div class="element-section" id="distribution-section">
+            <div class="general-section">
+                <div class="section-title">Distribution Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Primary Pipe Materials</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-pvc">
+                            <label>PVC</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-di">
+                            <label>Ductile Iron</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-ac">
+                            <label>Asbestos Cement</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-ci">
+                            <label>Cast Iron</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Water Quality Spot Check (Chlorine Residual)</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.85rem;">Entry Point (mg/L)</label>
+                            <input type="number" step="0.01" class="form-input" id="dist-resid-entry" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.85rem;">Farthest Point (mg/L)</label>
+                            <input type="number" step="0.01" class="form-input" id="dist-resid-far" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Distribution Notes</label>
+                    <textarea class="form-textarea" id="distribution-general-notes" placeholder="System condition, maintenance programs, water age management, backflow prevention..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('distribution-general-notes')">🎤 Use Voice</button>
+                </div>
             </div>
+            <div id="distribution-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('distribution')">+ Add Distribution Point (Hydrant/PRV/Valve)</button>
+        </div>
 
-            <!-- Operators -->
-            <div class="element-section" id="operators-section">
-                <div class="section-header">👷 Operators</div>
-                <button class="quick-add-btn" onclick="addAsset('operator')">➕ Add Operator</button>
-                <div id="operator-list"></div>
+        <!-- Storage Section (Element 4) -->
+        <div class="element-section" id="storage-section">
+            <div class="general-section">
+                <div class="section-title">Storage Overview</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Total Storage Capacity (gal)</label>
+                        <input type="number" class="form-input" id="storage-total-capacity" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number of Tanks</label>
+                        <input type="number" class="form-input" id="storage-tank-count" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Storage Notes</label>
+                    <textarea class="form-textarea" id="storage-general-notes" placeholder="Overall storage system condition, water quality, turnover, AWWA inspection status..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('storage-general-notes')">🎤 Use Voice</button>
+                </div>
             </div>
+            <div id="storage-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('storage')">+ Add Storage Tank</button>
+        </div>
+
+        <!-- Pumps Section (Element 5) -->
+        <div class="element-section" id="pumps-section">
+            <div class="general-section">
+                <div class="section-title">Pumps Overview</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Number of Pump Stations</label>
+                        <input type="number" class="form-input" id="pumps-station-count" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Backup Power Available?</label>
+                        <select class="form-select" id="pumps-backup-power">
+                            <option value="">Select</option>
+                            <option value="all">All stations</option>
+                            <option value="some">Some stations</option>
+                            <option value="none">No backup power</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Pumps Notes</label>
+                    <textarea class="form-textarea" id="pumps-general-notes" placeholder="Overall pumping system condition, capacity, reliability, maintenance..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('pumps-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="pumps-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('pump')">+ Add Pump Station</button>
+        </div>
+
+        <!-- Monitoring Section (Element 6) -->
+        <div class="element-section" id="monitoring-section">
+            <div class="general-section">
+                <div class="section-title">Monitoring & Reporting Overview</div>
+                <div class="alert" style="background: #d1ecf1; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem;">
+                    ℹ️ <strong>Note:</strong> Monitoring compliance is primarily records-based. Document what you observe in the field regarding sampling equipment, monitoring locations, and record-keeping practices.
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CCR & EAR Status</label>
+                    <textarea class="form-textarea" id="monitoring-ccr-ear" placeholder="CCR delivery status, EAR submission status (ask operator)..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-ccr-ear')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">RTCR Compliance Observations</label>
+                    <textarea class="form-textarea" id="monitoring-rtcr" placeholder="Sample siting plan current? Sampling locations verified? Any recent positive results?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-rtcr')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Record-Keeping Observations</label>
+                    <textarea class="form-textarea" id="monitoring-records" placeholder="Are records organized and accessible? Data logs maintained? Sampling schedules posted?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-records')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Monitoring Notes</label>
+                    <textarea class="form-textarea" id="monitoring-general-notes" placeholder="Overall monitoring program observations, compliance status, data quality..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Section (Element 7) -->
+        <div class="element-section" id="management-section">
+            <div class="general-section">
+                <div class="section-title">Management & Operations Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Organization Type</label>
+                    <select class="form-select" id="mgmt-org-type">
+                        <option value="">Select</option>
+                        <option value="city">City/Municipal</option>
+                        <option value="district">Water District</option>
+                        <option value="mutual">Mutual Water Company</option>
+                        <option value="private">Private Utility</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Financial Capacity Assessment</label>
+                    <textarea class="form-textarea" id="mgmt-financial" placeholder="Budget adequate? CIP funded? Rate structure supports operations? (Based on conversation with management)"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('mgmt-financial')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reliability & Redundancy Observations</label>
+                    <textarea class="form-textarea" id="mgmt-reliability" placeholder="Backup systems in place? Emergency response plan? Alarm systems functional?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('mgmt-reliability')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Security Observations</label>
+                    <textarea class="form-textarea" id="mgmt-security" placeholder="Physical security adequate (fencing, locks)? Cybersecurity measures? Access control?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('mgmt-security')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Management Notes</label>
+                    <textarea class="form-textarea" id="management-general-notes" placeholder="Overall TMF capacity, organizational structure, planning, communication..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('management-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operators Section (Element 8) -->
+        <div class="element-section" id="operators-section">
+            <div class="general-section">
+                <div class="section-title">Operator Compliance Overview</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Required Treatment Grade</label>
+                        <select class="form-select" id="op-req-treatment">
+                            <option value="">Select</option>
+                            <option value="na">N/A (No Treatment)</option>
+                            <option value="t1">T1</option>
+                            <option value="t2">T2</option>
+                            <option value="t3">T3</option>
+                            <option value="t4">T4</option>
+                            <option value="t5">T5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Required Distribution Grade</label>
+                        <select class="form-select" id="op-req-distribution">
+                            <option value="">Select</option>
+                            <option value="d1">D1</option>
+                            <option value="d2">D2</option>
+                            <option value="d3">D3</option>
+                            <option value="d4">D4</option>
+                            <option value="d5">D5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Compliance Status</label>
+                    <textarea class="form-textarea" id="op-compliance" placeholder="Do chief operators meet requirements? Adequate staffing? Certifications current?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('op-compliance')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Operators Notes</label>
+                    <textarea class="form-textarea" id="operators-general-notes" placeholder="Overall operator capability, training, succession planning..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('operators-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="operators-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('operator')">+ Add Operator</button>
         </div>
     </div>
 
-    <!-- Modals will be added dynamically -->
-    <div id="modalContainer"></div>
+    <!-- Modal Container -->
+    <div class="modal" id="modal" onclick="closeModalOnBackdrop(event)">
+        <div class="modal-content" id="modalContent" onclick="event.stopPropagation()">
+            <!-- Modal content will be dynamically inserted -->
+        </div>
+    </div>
 
     <script>
-        // Global state
+        // App State
+        let appData = {
+            systems: [],
+            version: '3.0'
+        };
+
         let currentScreen = 'systems';
         let currentSystemId = null;
         let currentInspectionId = null;
-        let currentElement = 'sources';
-        let currentAssetType = null;
-        let currentAssetId = null;
-        let currentPhotos = [];
+        let currentElement = 'overview';
         let recognition = null;
+        let currentVoiceTarget = null;
 
-        // Data structure
-        let appData = {
-            systems: []
-        };
-
-        // Asset type definitions with inspection checklists
+        // Asset Type Definitions with checklists
         const assetTypes = {
-            well: {
-                name: 'Well',
-                icon: '🕳️',
-                fields: [
-                    { id: 'name', label: 'Well Name/Number', type: 'text', required: true },
-                    { id: 'location', label: 'Location', type: 'text' }
-                ],
-                checklist: [
-                    { id: 'wellhead_sealed', label: 'Wellhead properly sealed', section: 'Physical Condition' },
-                    { id: 'sanitary_seal', label: 'Sanitary seal intact', section: 'Physical Condition' },
-                    { id: 'vent_screened', label: 'Vent present and screened', section: 'Physical Condition' },
-                    { id: 'fenced', label: 'Fenced and secured', section: 'Security' },
-                    { id: 'fence_condition', label: 'Fence in good condition', section: 'Security' },
-                    { id: 'vegetation', label: 'Vegetation clearance adequate', section: 'Sanitary Protection' },
-                    { id: 'drainage', label: 'Proper drainage away from wellhead', section: 'Sanitary Protection' },
-                    { id: 'no_cross_connections', label: 'No visible cross-connections', section: 'Sanitary Protection' },
-                    { id: 'signage', label: 'Proper signage present', section: 'Security' }
-                ]
-            },
-            surface_water: {
-                name: 'Surface Water Intake',
-                icon: '🌊',
-                fields: [
-                    { id: 'name', label: 'Intake Name', type: 'text', required: true },
-                    { id: 'location', label: 'Location', type: 'text' }
-                ],
-                checklist: [
-                    { id: 'screened', label: 'Intake properly screened', section: 'Physical Condition' },
-                    { id: 'screens_clean', label: 'Screens clean and intact', section: 'Physical Condition' },
-                    { id: 'structure_sound', label: 'Structure in good condition', section: 'Physical Condition' },
-                    { id: 'fenced', label: 'Fenced and secured', section: 'Security' },
-                    { id: 'signage', label: 'Proper signage present', section: 'Security' },
-                    { id: 'monitoring', label: 'Source water monitoring equipment functional', section: 'Operations' }
-                ]
-            },
-            treatment_plant: {
-                name: 'Treatment Plant',
-                icon: '🏭',
-                fields: [
-                    { id: 'name', label: 'Plant Name', type: 'text', required: true },
-                    { id: 'treatment_type', label: 'Treatment Type', type: 'text' }
-                ],
-                checklist: [
-                    { id: 'filters_operational', label: 'Filters operational', section: 'Process Equipment' },
-                    { id: 'chemical_feed', label: 'Chemical feed systems working', section: 'Process Equipment' },
-                    { id: 'monitoring_equipment', label: 'Monitoring equipment operational', section: 'Process Equipment' },
-                    { id: 'chemical_storage', label: 'Chemical storage properly secured', section: 'Safety' },
-                    { id: 'spill_containment', label: 'Spill containment in place', section: 'Safety' },
-                    { id: 'eyewash_shower', label: 'Eyewash/safety shower accessible', section: 'Safety' },
-                    { id: 'sds_available', label: 'SDS sheets available and accessible', section: 'Safety' },
-                    { id: 'ventilation', label: 'Adequate ventilation', section: 'Safety' },
-                    { id: 'building_condition', label: 'Building in good condition', section: 'Physical Condition' },
-                    { id: 'secured', label: 'Facility secured/locked', section: 'Security' }
-                ]
-            },
-            storage_tank: {
-                name: 'Storage Tank',
+            source: {
+                name: 'Well/Source',
                 icon: '💧',
-                fields: [
-                    { id: 'name', label: 'Tank Name', type: 'text', required: true },
-                    { id: 'capacity', label: 'Capacity (gallons)', type: 'text' }
-                ],
-                checklist: [
-                    { id: 'vent_present', label: 'Vent present', section: 'Sanitary Protection' },
-                    { id: 'vent_screened', label: 'Vent properly screened (24 mesh)', section: 'Sanitary Protection' },
-                    { id: 'overflow_screened', label: 'Overflow properly screened', section: 'Sanitary Protection' },
-                    { id: 'overflow_discharged', label: 'Overflow discharges to approved location', section: 'Sanitary Protection' },
-                    { id: 'hatch_secured', label: 'Hatch secured/locked', section: 'Security' },
-                    { id: 'hatch_gasket', label: 'Hatch gasket in good condition', section: 'Physical Condition' },
-                    { id: 'exterior_condition', label: 'Exterior coating/paint condition good', section: 'Physical Condition' },
-                    { id: 'no_rust', label: 'No significant rust/corrosion', section: 'Physical Condition' },
-                    { id: 'ladder_condition', label: 'Access ladder in good condition', section: 'Safety' },
-                    { id: 'fence_condition', label: 'Fence/security in good condition', section: 'Security' },
-                    { id: 'drainage', label: 'Proper drainage around tank', section: 'Sanitary Protection' },
-                    { id: 'level_indicator', label: 'Level indicator operational', section: 'Operations' }
-                ]
+                color: 'source',
+                checklists: {
+                    'Wellhead Seal': [
+                        'Properly sealed',
+                        'Sanitary seal intact',
+                        'No visible damage'
+                    ],
+                    'Fencing & Security': [
+                        'Fenced and secured',
+                        'Gate locked',
+                        'No unauthorized access'
+                    ],
+                    'Vegetation & Drainage': [
+                        'Vegetation clearance adequate (100ft)',
+                        'Proper drainage away from wellhead',
+                        'No ponding near wellhead'
+                    ],
+                    'Cross-Connection Hazards': [
+                        'No cross-connections visible',
+                        'No potential contamination sources',
+                        'Chemical storage separated'
+                    ]
+                }
             },
-            pump_station: {
+            storage: {
+                name: 'Storage Tank',
+                icon: '🏗️',
+                color: 'storage',
+                checklists: {
+                    'Vents': [
+                        'Vent present',
+                        'Vent screen present',
+                        'Screen in good condition',
+                        'Properly sized (24-mesh minimum)'
+                    ],
+                    'Hatch/Access': [
+                        'Hatch secured/locked',
+                        'Gasket in good condition',
+                        'No gaps or damage',
+                        'Overlapping rim (min 2")'
+                    ],
+                    'Overflow': [
+                        'Overflow pipe properly screened',
+                        'Air gap maintained',
+                        'Discharges to proper location'
+                    ],
+                    'Exterior Condition': [
+                        'No rust/corrosion',
+                        'Paint condition acceptable',
+                        'No visible leaks',
+                        'Structural integrity good'
+                    ],
+                    'Access & Safety': [
+                        'Ladder/access in good condition',
+                        'Safety equipment present',
+                        'Level gauges operational'
+                    ],
+                    'Fencing & Security': [
+                        'Fence adequate',
+                        'Gate locked',
+                        'No unauthorized access'
+                    ]
+                }
+            },
+            pump: {
                 name: 'Pump Station',
-                icon: '🚿',
-                fields: [
-                    { id: 'name', label: 'Station Name', type: 'text', required: true },
-                    { id: 'location', label: 'Location', type: 'text' }
-                ],
-                checklist: [
-                    { id: 'pumps_running', label: 'Pumps running without unusual noise/vibration', section: 'Equipment Operation' },
-                    { id: 'no_leaks', label: 'No visible leaks', section: 'Equipment Operation' },
-                    { id: 'check_valve', label: 'Check valve condition good', section: 'Equipment Operation' },
-                    { id: 'pressure_gauges', label: 'Pressure gauges functional', section: 'Equipment Operation' },
-                    { id: 'backup_power', label: 'Backup generator present', section: 'Reliability' },
-                    { id: 'generator_fuel', label: 'Generator fuel level adequate', section: 'Reliability' },
-                    { id: 'generator_tested', label: 'Evidence of generator testing', section: 'Reliability' },
-                    { id: 'ventilation', label: 'Adequate ventilation', section: 'Safety' },
-                    { id: 'secured', label: 'Facility secured/locked', section: 'Security' },
-                    { id: 'alarms', label: 'Alarm system functional', section: 'Operations' },
-                    { id: 'controls', label: 'Control panel operational', section: 'Operations' }
-                ]
+                icon: '⚙️',
+                color: 'pump',
+                checklists: {
+                    'Pump Condition': [
+                        'No visible leaks',
+                        'No unusual vibration/noise',
+                        'Pump housing condition good',
+                        'Motor condition good'
+                    ],
+                    'Valves & Piping': [
+                        'Check valve condition good',
+                        'No visible leaks',
+                        'Valves accessible',
+                        'Pressure gauges readable'
+                    ],
+                    'Backup Power': [
+                        'Generator present',
+                        'Generator condition good',
+                        'Fuel level adequate',
+                        'Auto-transfer switch present'
+                    ],
+                    'Electrical & Controls': [
+                        'Control panel condition good',
+                        'Wiring properly secured',
+                        'No exposed conductors',
+                        'Alarm system functional'
+                    ],
+                    'Building/Enclosure': [
+                        'Proper ventilation',
+                        'No water intrusion',
+                        'Building secure',
+                        'Lighting adequate'
+                    ],
+                    'Safety & Access': [
+                        'Emergency shutoff accessible',
+                        'Spill containment present',
+                        'Safety signage posted',
+                        'Fire extinguisher present'
+                    ]
+                }
             },
-            distribution_general: {
-                name: 'Distribution Observation',
-                icon: '🔧',
-                fields: [
-                    { id: 'location', label: 'Location', type: 'text', required: true },
-                    { id: 'observation_type', label: 'Type', type: 'select', options: [
-                        'Hydrant',
-                        'Valve',
-                        'Main Line',
-                        'Service Connection',
-                        'Cross-Connection',
-                        'General'
-                    ]}
-                ],
-                checklist: []
+            treatment: {
+                name: 'Treatment Facility',
+                icon: '🧪',
+                color: 'treatment',
+                checklists: {
+                    'Treatment Equipment': [
+                        'Equipment clean and maintained',
+                        'No visible wear/damage',
+                        'Process equipment operational'
+                    ],
+                    'Chemical Storage & Feed': [
+                        'Chemical storage secure',
+                        'Secondary containment present',
+                        'Proper ventilation',
+                        'Safety shower/eyewash present',
+                        'Feed equipment condition good'
+                    ],
+                    'Piping & Valves': [
+                        'No visible leaks',
+                        'Valves labeled and accessible',
+                        'Piping condition good',
+                        'No cross-connections'
+                    ],
+                    'Monitoring Equipment': [
+                        'Monitoring equipment present',
+                        'Equipment accessible',
+                        'Meters readable',
+                        'Gauges functional'
+                    ],
+                    'Building & Facility': [
+                        'Building condition good',
+                        'No water intrusion',
+                        'Proper ventilation',
+                        'Housekeeping adequate'
+                    ],
+                    'Safety & Security': [
+                        'Facility secured',
+                        'Safety equipment present',
+                        'Spill kits available',
+                        'Emergency procedures posted'
+                    ]
+                }
             },
-            management_general: {
-                name: 'Management Observation',
-                icon: '📋',
-                fields: [
-                    { id: 'topic', label: 'Topic', type: 'text', required: true },
-                    { id: 'category', label: 'Category', type: 'select', options: [
-                        'Organization',
-                        'Financial',
-                        'Planning',
-                        'Reliability',
-                        'Security',
-                        'General'
-                    ]}
-                ],
-                checklist: []
+            distribution: {
+                name: 'Distribution Point',
+                icon: '🚰',
+                color: 'distribution',
+                checklists: {
+                    'Hydrants (if applicable)': [
+                        'Hydrant condition good',
+                        'Accessible and unobstructed',
+                        'No visible leaks',
+                        'Painted and numbered'
+                    ],
+                    'Valves (if applicable)': [
+                        'Valve box accessible',
+                        'Valve operable',
+                        'No visible leaks'
+                    ],
+                    'PRV Stations (if applicable)': [
+                        'Station condition good',
+                        'Pressure gauges readable',
+                        'No visible leaks',
+                        'Access maintained'
+                    ]
+                }
             },
             operator: {
                 name: 'Operator',
                 icon: '👷',
-                fields: [
-                    { id: 'name', label: 'Operator Name', type: 'text', required: true },
-                    { id: 'role', label: 'Role', type: 'select', options: [
-                        'Chief Operator - Treatment',
-                        'Chief Operator - Distribution',
-                        'Shift Operator',
-                        'Other'
-                    ]},
-                    { id: 'certification', label: 'Certification Level', type: 'text' },
-                    { id: 'cert_number', label: 'Certificate Number', type: 'text' },
-                    { id: 'cert_expiry', label: 'Expiration Date', type: 'date' }
-                ],
-                checklist: [
-                    { id: 'cert_current', label: 'Certification current and valid', section: 'Compliance' },
-                    { id: 'grade_adequate', label: 'Grade meets system requirements', section: 'Compliance' },
-                    { id: 'onsite_available', label: 'Available for onsite duties', section: 'Staffing' }
-                ]
+                color: 'operator',
+                checklists: {
+                    'Certification': [
+                        'Certification current',
+                        'Grade meets requirements',
+                        'Certificate on file'
+                    ],
+                    'Availability': [
+                        'Available for onsite duties',
+                        'Adequate shift coverage',
+                        'Emergency contact established'
+                    ]
+                }
             }
         };
 
@@ -841,9 +1279,13 @@
                 
                 recognition.onresult = function(event) {
                     const transcript = event.results[0][0].transcript;
-                    const noteText = document.getElementById('observationsText');
-                    if (noteText) {
-                        noteText.value += (noteText.value ? ' ' : '') + transcript;
+                    if (currentVoiceTarget) {
+                        const target = document.getElementById(currentVoiceTarget);
+                        if (target) {
+                            target.value += (target.value ? ' ' : '') + transcript;
+                            // Trigger change event to save data
+                            target.dispatchEvent(new Event('change'));
+                        }
                     }
                 };
                 
@@ -854,11 +1296,11 @@
                 };
                 
                 recognition.onend = function() {
-                    const voiceBtn = document.getElementById('voiceBtn');
-                    if (voiceBtn) {
-                        voiceBtn.classList.remove('recording');
-                        voiceBtn.innerHTML = '<span>🎤</span><span>Tap to use voice</span>';
-                    }
+                    // Reset button state
+                    document.querySelectorAll('.voice-btn').forEach(btn => {
+                        btn.classList.remove('recording');
+                        btn.innerHTML = '🎤 Use Voice';
+                    });
                 };
             }
             
@@ -867,14 +1309,14 @@
 
         // Data persistence
         function loadData() {
-            const savedData = localStorage.getItem('ddwFieldInspector');
+            const savedData = localStorage.getItem('ddwFieldInspectorV3');
             if (savedData) {
                 appData = JSON.parse(savedData);
             }
         }
 
         function saveData() {
-            localStorage.setItem('ddwFieldInspector', JSON.stringify(appData));
+            localStorage.setItem('ddwFieldInspectorV3', JSON.stringify(appData));
         }
 
         // Navigation
@@ -918,6 +1360,8 @@
 
         function goBack() {
             if (currentScreen === 'fieldInspector') {
+                // Save any pending changes before leaving
+                saveGeneralFields();
                 currentInspectionId = null;
                 showInspections(currentSystemId);
             } else if (currentScreen === 'inspections') {
@@ -958,16 +1402,20 @@
         }
 
         function showAddSystemModal() {
-            const modal = createModal('Add System', `
+            const modalHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">Add System</div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
                 <form id="addSystemForm" onsubmit="saveSystem(event)">
                     <div class="form-group">
                         <label class="form-label">System Name</label>
-                        <input type="text" class="form-input" id="systemNameInput" placeholder="e.g., Pine Valley Water District" required>
+                        <input type="text" class="form-input" id="systemNameInput" placeholder="e.g., Pine Valley Water District" required autofocus>
                     </div>
                     <button type="submit" class="save-btn">Create System</button>
                 </form>
-            `);
-            showModal(modal);
+            `;
+            showModal(modalHTML);
         }
 
         function saveSystem(event) {
@@ -1031,16 +1479,20 @@
         }
 
         function showAddInspectionModal() {
-            const modal = createModal('New Inspection', `
+            const modalHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">New Inspection</div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
                 <form id="addInspectionForm" onsubmit="saveInspection(event)">
                     <div class="form-group">
                         <label class="form-label">Inspection Date</label>
-                        <input type="date" class="form-input" id="inspectionDateInput" value="${new Date().toISOString().split('T')[0]}" required>
+                        <input type="date" class="form-input" id="inspectionDateInput" value="${new Date().toISOString().split('T')[0]}" required autofocus>
                     </div>
                     <button type="submit" class="save-btn">Start Inspection</button>
                 </form>
-            `);
-            showModal(modal);
+            `;
+            showModal(modalHTML);
         }
 
         function saveInspection(event) {
@@ -1053,6 +1505,7 @@
                 id: Date.now().toString(),
                 date: document.getElementById('inspectionDateInput').value,
                 assets: [],
+                generalFields: {},
                 createdAt: new Date().toISOString()
             };
             
@@ -1068,10 +1521,14 @@
         function showFieldInspector(inspectionId) {
             currentInspectionId = inspectionId;
             showScreen('fieldInspector');
+            loadGeneralFields();
             renderAssets();
         }
 
         function switchElement(element) {
+            // Save current element's general fields before switching
+            saveGeneralFields();
+            
             currentElement = element;
             
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1083,7 +1540,71 @@
                 section.classList.remove('active');
             });
             document.getElementById(element + '-section').classList.add('active');
+            
+            // Load general fields for new element
+            loadGeneralFields();
         }
+
+        // General Fields Management
+        function saveGeneralFields() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            if (!inspection.generalFields) inspection.generalFields = {};
+            
+            // Save all form inputs in current section
+            const section = document.getElementById(currentElement + '-section');
+            if (!section) return;
+            
+            const inputs = section.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.id) {
+                    if (input.type === 'checkbox') {
+                        inspection.generalFields[input.id] = input.checked;
+                    } else {
+                        inspection.generalFields[input.id] = input.value;
+                    }
+                }
+            });
+            
+            saveData();
+        }
+
+        function loadGeneralFields() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection || !inspection.generalFields) return;
+            
+            // Load all form inputs in current section
+            const section = document.getElementById(currentElement + '-section');
+            if (!section) return;
+            
+            const inputs = section.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.id && inspection.generalFields[input.id] !== undefined) {
+                    if (input.type === 'checkbox') {
+                        input.checked = inspection.generalFields[input.id];
+                    } else {
+                        input.value = inspection.generalFields[input.id];
+                    }
+                }
+            });
+        }
+
+        // Auto-save general fields on change
+        document.addEventListener('change', function(e) {
+            if (currentScreen === 'fieldInspector' && (e.target.classList.contains('form-input') || 
+                e.target.classList.contains('form-select') || 
+                e.target.classList.contains('form-textarea') ||
+                e.target.type === 'checkbox')) {
+                saveGeneralFields();
+            }
+        });
 
         function renderAssets() {
             const system = appData.systems.find(s => s.id === currentSystemId);
@@ -1095,18 +1616,14 @@
             if (!inspection.assets) inspection.assets = [];
             
             // Render each asset type
-            Object.keys(assetTypes).forEach(assetType => {
-                const container = document.getElementById(assetType + '-list');
+            ['source', 'storage', 'pump', 'treatment', 'distribution', 'operator'].forEach(type => {
+                const assets = inspection.assets.filter(a => a.type === type);
+                const container = document.getElementById(type + 's-list') || document.getElementById(type + '-list');
+                
                 if (!container) return;
                 
-                const assets = inspection.assets.filter(a => a.type === assetType);
-                
                 if (assets.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 20px; color: #8e8e93; font-size: 0.9rem;">
-                            No ${assetTypes[assetType].name.toLowerCase()}s added yet
-                        </div>
-                    `;
+                    container.innerHTML = '';
                 } else {
                     container.innerHTML = assets.map(asset => renderAssetCard(asset)).join('');
                 }
@@ -1114,42 +1631,149 @@
         }
 
         function renderAssetCard(asset) {
-            const assetTypeDef = assetTypes[asset.type];
-            const statusClass = asset.condition === 'good' ? 'badge-good' : 
-                               asset.condition === 'fair' ? 'badge-warning' :
-                               asset.condition === 'poor' ? 'badge-issue' :
-                               asset.condition === 'issue' ? 'badge-issue' : 'card-badge';
-            
-            const statusLabel = asset.condition === 'good' ? '✓ Good' :
-                               asset.condition === 'fair' ? '⚠ Fair' :
-                               asset.condition === 'poor' ? '⚠️ Poor' :
-                               asset.condition === 'issue' ? '🚨 Major Issue' :
-                               'Not assessed';
-            
-            const checkedItems = Object.values(asset.checklist || {}).filter(v => v === true).length;
-            const totalItems = assetTypeDef.checklist.length;
-            
-            return `
-                <div class="asset-card" onclick="editAsset('${asset.id}')">
-                    <div class="asset-card-header">
-                        <div class="asset-card-title">${assetTypeDef.icon} ${asset.data.name || 'Unnamed'}</div>
-                        <div class="asset-card-status ${statusClass}">${statusLabel}</div>
+            const assetType = assetTypes[asset.type];
+            const conditionIcon = {
+                'good': '✅',
+                'fair': '⚠️',
+                'poor': '❌',
+                'issue': '🚨'
+            }[asset.condition] || '';
+
+            let checklistHTML = '';
+            for (const [groupName, items] of Object.entries(assetType.checklists)) {
+                checklistHTML += `<div class="checklist-group-title">${groupName}</div>`;
+                items.forEach((item, idx) => {
+                    const checklistId = `${asset.id}-checklist-${groupName}-${idx}`;
+                    const isChecked = asset.checklist?.[groupName]?.[idx] || false;
+                    checklistHTML += `
+                        <div class="checklist-item">
+                            <input type="checkbox" id="${checklistId}" ${isChecked ? 'checked' : ''} onchange="updateAssetChecklist('${asset.id}', '${groupName}', ${idx}, this.checked)">
+                            <label for="${checklistId}">${item}</label>
+                        </div>
+                    `;
+                });
+            }
+
+            let photosHTML = '';
+            if (asset.photos && asset.photos.length > 0) {
+                photosHTML = `
+                    <div class="photo-preview">
+                        ${asset.photos.map((photo, idx) => `
+                            <div class="photo-item">
+                                <img src="${photo}" alt="Photo ${idx + 1}">
+                                <button class="photo-remove" onclick="removeAssetPhoto('${asset.id}', ${idx})">×</button>
+                            </div>
+                        `).join('')}
                     </div>
-                    ${asset.data.location ? `<div class="asset-card-info">📍 ${asset.data.location}</div>` : ''}
-                    ${totalItems > 0 ? `<div class="asset-card-info">✓ ${checkedItems}/${totalItems} items checked</div>` : ''}
-                    ${asset.photos?.length > 0 ? `<div class="asset-card-info">📷 ${asset.photos.length} photo${asset.photos.length !== 1 ? 's' : ''}</div>` : ''}
+                `;
+            }
+
+            return `
+                <div class="asset-card">
+                    <div class="asset-header ${assetType.color}">
+                        <div class="asset-title">
+                            ${assetType.icon} ${asset.name}
+                        </div>
+                        <div>${conditionIcon}</div>
+                    </div>
+                    <div class="asset-body">
+                        <!-- Condition Rating -->
+                        <div class="condition-section">
+                            <div class="condition-title">Overall Condition</div>
+                            <div class="condition-buttons">
+                                <button class="condition-btn good ${asset.condition === 'good' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'good')">
+                                    ✅ Good
+                                </button>
+                                <button class="condition-btn fair ${asset.condition === 'fair' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'fair')">
+                                    ⚠️ Fair
+                                </button>
+                                <button class="condition-btn poor ${asset.condition === 'poor' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'poor')">
+                                    ❌ Poor
+                                </button>
+                                <button class="condition-btn issue ${asset.condition === 'issue' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'issue')">
+                                    🚨 Major Issue
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Checklist -->
+                        <div class="checklist-section">
+                            ${checklistHTML}
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="notes-section">
+                            <div class="notes-title">Observations & Notes</div>
+                            <textarea class="notes-input" id="notes-${asset.id}" onchange="updateAssetNotes('${asset.id}', this.value)">${asset.notes || ''}</textarea>
+                            <button class="voice-btn" onclick="startVoiceNote('notes-${asset.id}')">
+                                🎤 Use Voice
+                            </button>
+                        </div>
+
+                        <!-- Photos -->
+                        <div class="photos-section">
+                            <div class="photos-title">Photos</div>
+                            <input type="file" accept="image/*" capture="environment" class="photo-input" id="photo-${asset.id}" onchange="addAssetPhoto('${asset.id}', this)">
+                            <button class="photo-btn" onclick="document.getElementById('photo-${asset.id}').click()">
+                                📷 Add Photo
+                            </button>
+                            ${photosHTML}
+                        </div>
+
+                        <!-- Delete Asset -->
+                        <button class="delete-asset-btn" onclick="deleteAsset('${asset.id}')">
+                            🗑️ Delete ${assetType.name}
+                        </button>
+                    </div>
                 </div>
             `;
         }
 
-        function addAsset(assetType) {
-            currentAssetType = assetType;
-            currentAssetId = null;
-            currentPhotos = [];
-            showAssetModal(assetType);
+        function showAddAssetModal(type) {
+            const assetType = assetTypes[type];
+            const modalHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">Add ${assetType.name}</div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <form id="addAssetForm" onsubmit="saveAsset(event, '${type}')">
+                    <div class="form-group">
+                        <label class="form-label">${assetType.name} Name/ID</label>
+                        <input type="text" class="form-input" id="assetNameInput" placeholder="e.g., Well #3, Hillside Tank" required autofocus>
+                    </div>
+                    <button type="submit" class="save-btn">Add ${assetType.name}</button>
+                </form>
+            `;
+            showModal(modalHTML);
         }
 
-        function editAsset(assetId) {
+        function saveAsset(event, type) {
+            event.preventDefault();
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = {
+                id: Date.now().toString(),
+                type: type,
+                name: document.getElementById('assetNameInput').value,
+                condition: '',
+                checklist: {},
+                notes: '',
+                photos: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            inspection.assets.push(asset);
+            saveData();
+            closeModal();
+            renderAssets();
+        }
+
+        function updateAssetCondition(assetId, condition) {
             const system = appData.systems.find(s => s.id === currentSystemId);
             if (!system) return;
             
@@ -1159,171 +1783,81 @@
             const asset = inspection.assets.find(a => a.id === assetId);
             if (!asset) return;
             
-            currentAssetType = asset.type;
-            currentAssetId = assetId;
-            currentPhotos = asset.photos || [];
-            showAssetModal(asset.type, asset);
+            asset.condition = condition;
+            saveData();
+            renderAssets();
         }
 
-        function showAssetModal(assetType, existingAsset = null) {
-            const assetTypeDef = assetTypes[assetType];
-            const isEdit = existingAsset !== null;
+        function updateAssetChecklist(assetId, groupName, idx, checked) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
             
-            // Build form fields
-            let fieldsHTML = assetTypeDef.fields.map(field => {
-                const value = existingAsset?.data[field.id] || '';
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            if (!asset.checklist) asset.checklist = {};
+            if (!asset.checklist[groupName]) asset.checklist[groupName] = {};
+            
+            asset.checklist[groupName][idx] = checked;
+            saveData();
+        }
+
+        function updateAssetNotes(assetId, notes) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            asset.notes = notes;
+            saveData();
+        }
+
+        function addAssetPhoto(assetId, input) {
+            if (!input.files || !input.files[0]) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const system = appData.systems.find(s => s.id === currentSystemId);
+                if (!system) return;
                 
-                if (field.type === 'select') {
-                    return `
-                        <div class="form-group">
-                            <label class="form-label">${field.label}${field.required ? ' *' : ''}</label>
-                            <select class="form-select" id="field_${field.id}" ${field.required ? 'required' : ''}>
-                                <option value="">Select...</option>
-                                ${field.options.map(opt => `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                            </select>
-                        </div>
-                    `;
-                } else {
-                    return `
-                        <div class="form-group">
-                            <label class="form-label">${field.label}${field.required ? ' *' : ''}</label>
-                            <input type="${field.type}" class="form-input" id="field_${field.id}" value="${value}" ${field.required ? 'required' : ''}>
-                        </div>
-                    `;
-                }
-            }).join('');
-            
-            // Build checklist
-            let checklistHTML = '';
-            if (assetTypeDef.checklist.length > 0) {
-                const sections = [...new Set(assetTypeDef.checklist.map(item => item.section))];
+                const inspection = system.inspections.find(i => i.id === currentInspectionId);
+                if (!inspection) return;
                 
-                checklistHTML = sections.map(section => {
-                    const items = assetTypeDef.checklist.filter(item => item.section === section);
-                    return `
-                        <div class="checklist-section">
-                            <div class="checklist-section-title">${section}</div>
-                            ${items.map(item => {
-                                const checked = existingAsset?.checklist?.[item.id] || false;
-                                return `
-                                    <div class="checklist-item">
-                                        <input type="checkbox" id="check_${item.id}" ${checked ? 'checked' : ''}>
-                                        <label for="check_${item.id}">${item.label}</label>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
-                }).join('');
-            }
-            
-            // Condition rating
-            const currentCondition = existingAsset?.condition || '';
-            const conditionHTML = `
-                <div class="form-group">
-                    <label class="form-label">Overall Condition</label>
-                    <div class="condition-rating">
-                        <button type="button" class="condition-btn good ${currentCondition === 'good' ? 'selected' : ''}" onclick="selectCondition('good')">✓ Good</button>
-                        <button type="button" class="condition-btn fair ${currentCondition === 'fair' ? 'selected' : ''}" onclick="selectCondition('fair')">⚠ Fair</button>
-                        <button type="button" class="condition-btn poor ${currentCondition === 'poor' ? 'selected' : ''}" onclick="selectCondition('poor')">⚠️ Poor</button>
-                        <button type="button" class="condition-btn issue ${currentCondition === 'issue' ? 'selected' : ''}" onclick="selectCondition('issue')">🚨 Major Issue</button>
-                    </div>
-                </div>
-            `;
-            
-            // Voice and observations
-            const observations = existingAsset?.observations || '';
-            const observationsHTML = `
-                <div class="form-group">
-                    <label class="form-label">Observations & Notes</label>
-                    <button type="button" class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()">
-                        <span>🎤</span><span>Tap to use voice</span>
-                    </button>
-                    <textarea class="form-textarea" id="observationsText" placeholder="Add any additional observations, deficiencies, or notes...">${observations}</textarea>
-                </div>
-            `;
-            
-            // Photos
-            const photoHTML = `
-                <div class="form-group">
-                    <label class="form-label">Photos</label>
-                    <input type="file" id="photoInput" accept="image/*" multiple capture="environment" style="display: none;" onchange="handlePhotoUpload(event)">
-                    <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
-                        <div>📷 Tap to add photos</div>
-                    </div>
-                    <div class="photo-preview-grid" id="photoPreviewGrid">${renderPhotoGrid()}</div>
-                </div>
-            `;
-            
-            const modalContent = `
-                <form id="assetForm" onsubmit="saveAsset(event)">
-                    ${fieldsHTML}
-                    ${checklistHTML}
-                    ${conditionHTML}
-                    ${observationsHTML}
-                    ${photoHTML}
-                    <button type="submit" class="save-btn">${isEdit ? 'Update' : 'Save'} ${assetTypeDef.name}</button>
-                    ${isEdit ? `<button type="button" onclick="deleteAsset('${existingAsset.id}')" style="margin-top: 12px; background: #ff3b30;" class="save-btn">Delete ${assetTypeDef.name}</button>` : ''}
-                </form>
-            `;
-            
-            const modal = createModal(`${isEdit ? 'Edit' : 'Add'} ${assetTypeDef.name}`, modalContent);
-            showModal(modal);
+                const asset = inspection.assets.find(a => a.id === assetId);
+                if (!asset) return;
+                
+                if (!asset.photos) asset.photos = [];
+                asset.photos.push(e.target.result);
+                saveData();
+                renderAssets();
+            };
+            reader.readAsDataURL(input.files[0]);
         }
 
-        let selectedCondition = '';
-        function selectCondition(condition) {
-            selectedCondition = condition;
-            document.querySelectorAll('.condition-btn').forEach(btn => btn.classList.remove('selected'));
-            event.target.classList.add('selected');
-        }
-
-        function toggleVoiceInput() {
-            if (!recognition) {
-                alert('Voice input not supported on this browser.');
-                return;
-            }
+        function removeAssetPhoto(assetId, photoIdx) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
             
-            const voiceBtn = document.getElementById('voiceBtn');
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
             
-            if (voiceBtn.classList.contains('recording')) {
-                recognition.stop();
-            } else {
-                voiceBtn.classList.add('recording');
-                voiceBtn.innerHTML = '<span>🔴</span><span>Listening... (tap to stop)</span>';
-                recognition.start();
-            }
-        }
-
-        function handlePhotoUpload(event) {
-            const files = Array.from(event.target.files);
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
             
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentPhotos.push(e.target.result);
-                    document.getElementById('photoPreviewGrid').innerHTML = renderPhotoGrid();
-                };
-                reader.readAsDataURL(file);
-            });
+            asset.photos.splice(photoIdx, 1);
+            saveData();
+            renderAssets();
         }
 
-        function renderPhotoGrid() {
-            return currentPhotos.map((photo, index) => `
-                <div class="photo-preview">
-                    <img src="${photo}" alt="Photo ${index + 1}">
-                    <button class="photo-remove" onclick="removePhoto(${index})">×</button>
-                </div>
-            `).join('');
-        }
-
-        function removePhoto(index) {
-            currentPhotos.splice(index, 1);
-            document.getElementById('photoPreviewGrid').innerHTML = renderPhotoGrid();
-        }
-
-        function saveAsset(event) {
-            event.preventDefault();
+        function deleteAsset(assetId) {
+            if (!confirm('Delete this asset? This cannot be undone.')) return;
             
             const system = appData.systems.find(s => s.id === currentSystemId);
             if (!system) return;
@@ -1331,146 +1865,45 @@
             const inspection = system.inspections.find(i => i.id === currentInspectionId);
             if (!inspection) return;
             
-            const assetTypeDef = assetTypes[currentAssetType];
-            
-            // Collect field data
-            const data = {};
-            assetTypeDef.fields.forEach(field => {
-                data[field.id] = document.getElementById('field_' + field.id).value;
-            });
-            
-            // Collect checklist data
-            const checklist = {};
-            assetTypeDef.checklist.forEach(item => {
-                checklist[item.id] = document.getElementById('check_' + item.id)?.checked || false;
-            });
-            
-            const asset = {
-                id: currentAssetId || Date.now().toString(),
-                type: currentAssetType,
-                data: data,
-                checklist: checklist,
-                condition: selectedCondition,
-                observations: document.getElementById('observationsText').value,
-                photos: [...currentPhotos],
-                timestamp: new Date().toISOString()
-            };
-            
-            if (currentAssetId) {
-                // Update existing
-                const index = inspection.assets.findIndex(a => a.id === currentAssetId);
-                if (index !== -1) {
-                    inspection.assets[index] = asset;
-                }
-            } else {
-                // Add new
-                inspection.assets.push(asset);
-            }
-            
+            inspection.assets = inspection.assets.filter(a => a.id !== assetId);
             saveData();
-            closeModal();
             renderAssets();
-            
-            // Reset
-            currentAssetId = null;
-            currentPhotos = [];
-            selectedCondition = '';
         }
 
-        function deleteAsset(assetId) {
-            if (confirm('Delete this asset inspection?')) {
-                const system = appData.systems.find(s => s.id === currentSystemId);
-                if (!system) return;
-                
-                const inspection = system.inspections.find(i => i.id === currentInspectionId);
-                if (!inspection) return;
-                
-                inspection.assets = inspection.assets.filter(a => a.id !== assetId);
-                saveData();
-                closeModal();
-                renderAssets();
+        // Voice Notes
+        function startVoiceNote(targetId) {
+            if (!recognition) {
+                alert('Voice recognition not supported on this device.');
+                return;
+            }
+
+            currentVoiceTarget = targetId;
+            const btn = event.target;
+            
+            if (btn.classList.contains('recording')) {
+                recognition.stop();
+                btn.classList.remove('recording');
+                btn.innerHTML = '🎤 Use Voice';
+            } else {
+                btn.classList.add('recording');
+                btn.innerHTML = '⏺️ Recording... (tap to stop)';
+                recognition.start();
             }
         }
 
-        // Modal helpers
-        function createModal(title, content) {
-            return `
-                <div class="modal active">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2 class="modal-title">${title}</h2>
-                            <button class="close-btn" onclick="closeModal()">×</button>
-                        </div>
-                        ${content}
-                    </div>
-                </div>
-            `;
-        }
-
-        function showModal(modalHTML) {
-            document.getElementById('modalContainer').innerHTML = modalHTML;
+        // Modal
+        function showModal(html) {
+            document.getElementById('modalContent').innerHTML = html;
+            document.getElementById('modal').classList.add('active');
         }
 
         function closeModal() {
-            document.getElementById('modalContainer').innerHTML = '';
-            currentPhotos = [];
-            selectedCondition = '';
+            document.getElementById('modal').classList.remove('active');
         }
 
-        // Settings
-        function showSettings() {
-            const modal = createModal('⚙ Settings', `
-                <div style="padding: 20px 0;">
-                    <div class="form-group">
-                        <label class="form-label">Export Data</label>
-                        <button class="form-input" onclick="exportAllData()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea;">
-                            📤 Export All Data
-                        </button>
-                        <small style="color: #8e8e93; display: block; margin-top: 8px;">Download all systems, inspections, and assets as JSON</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Data Management</label>
-                        <button class="form-input" onclick="clearAllData()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea; color: #ff3b30;">
-                            🗑 Clear All Data
-                        </button>
-                        <small style="color: #8e8e93; display: block; margin-top: 8px;">Permanently delete all data (use Export first!)</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">About</label>
-                        <div style="background: #f2f2f7; padding: 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;">
-                            <p><strong>DDW Field Inspector v3.0</strong></p>
-                            <p style="margin-top: 8px;">Comprehensive asset-based inspection tool for California DDW water system sanitary surveys.</p>
-                            <p style="margin-top: 8px; color: #8e8e93;">All data stored locally on your device.</p>
-                        </div>
-                    </div>
-                </div>
-            `);
-            showModal(modal);
-        }
-
-        function exportAllData() {
-            const filename = `DDW_FieldInspector_${new Date().toISOString().split('T')[0]}.json`;
-            const dataStr = JSON.stringify(appData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportLink = document.createElement('a');
-            exportLink.setAttribute('href', dataUri);
-            exportLink.setAttribute('download', filename);
-            exportLink.click();
-        }
-
-        function clearAllData() {
-            if (confirm('Are you sure you want to delete ALL data?\n\nThis cannot be undone!\n\nConsider using Export first.')) {
-                if (confirm('Really delete everything? This is your last chance!')) {
-                    appData = { systems: [] };
-                    saveData();
-                    closeModal();
-                    currentSystemId = null;
-                    currentInspectionId = null;
-                    showScreen('systems');
-                    renderSystems();
-                    alert('All data deleted.');
-                }
+        function closeModalOnBackdrop(event) {
+            if (event.target.id === 'modal') {
+                closeModal();
             }
         }
     </script>
