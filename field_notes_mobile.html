@@ -503,6 +503,90 @@
             display: block;
         }
 
+        /* Subsections */
+        .subsection {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .subsection-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .subsection-header:active {
+            background: #e9ecef;
+        }
+
+        .subsection-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .subsection-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subsection-count {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .subsection-indicator {
+            font-size: 1.2rem;
+            color: #8e8e93;
+            transition: transform 0.2s;
+        }
+
+        .subsection.expanded .subsection-indicator {
+            transform: rotate(180deg);
+        }
+
+        .subsection-content {
+            display: none;
+            padding: 16px;
+        }
+
+        .subsection.expanded .subsection-content {
+            display: block;
+        }
+
+        .subsection-add-btn {
+            background: #f2f2f7;
+            color: #2a5298;
+            border: 1px solid #e5e5ea;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .subsection-add-btn:active {
+            background: #e5e5ea;
+        }
+
         .note-count-badge {
             background: #ff3b30;
             color: white;
@@ -551,37 +635,44 @@
             <button class="tab-btn" data-element="operators" onclick="switchElement('operators')">Operators</button>
         </div>
         <div class="content">
+            <!-- Overview Element -->
             <div class="element-section active" id="overview-section">
-                <button class="quick-add-btn" onclick="openNoteModal('overview')">➕ Add Note</button>
-                <div id="overview-notes"></div>
+                <div id="overview-subsections"></div>
             </div>
+            
+            <!-- Sources Element -->
             <div class="element-section" id="sources-section">
-                <button class="quick-add-btn" onclick="openNoteModal('sources')">➕ Add Note</button>
-                <div id="sources-notes"></div>
+                <div id="sources-subsections"></div>
             </div>
+            
+            <!-- Treatment Element -->
             <div class="element-section" id="treatment-section">
-                <button class="quick-add-btn" onclick="openNoteModal('treatment')">➕ Add Note</button>
-                <div id="treatment-notes"></div>
+                <div id="treatment-subsections"></div>
             </div>
+            
+            <!-- Distribution Element -->
             <div class="element-section" id="distribution-section">
-                <button class="quick-add-btn" onclick="openNoteModal('distribution')">➕ Add Note</button>
-                <div id="distribution-notes"></div>
+                <div id="distribution-subsections"></div>
             </div>
+            
+            <!-- Storage Element -->
             <div class="element-section" id="storage-section">
-                <button class="quick-add-btn" onclick="openNoteModal('storage')">➕ Add Note</button>
-                <div id="storage-notes"></div>
+                <div id="storage-subsections"></div>
             </div>
+            
+            <!-- Pumps Element -->
             <div class="element-section" id="pumps-section">
-                <button class="quick-add-btn" onclick="openNoteModal('pumps')">➕ Add Note</button>
-                <div id="pumps-notes"></div>
+                <div id="pumps-subsections"></div>
             </div>
+            
+            <!-- Management Element -->
             <div class="element-section" id="management-section">
-                <button class="quick-add-btn" onclick="openNoteModal('management')">➕ Add Note</button>
-                <div id="management-notes"></div>
+                <div id="management-subsections"></div>
             </div>
+            
+            <!-- Operators Element -->
             <div class="element-section" id="operators-section">
-                <button class="quick-add-btn" onclick="openNoteModal('operators')">➕ Add Note</button>
-                <div id="operators-notes"></div>
+                <div id="operators-subsections"></div>
             </div>
         </div>
     </div>
@@ -628,6 +719,12 @@
                 <button class="close-btn" onclick="closeNoteModal()">×</button>
             </div>
             <form id="noteForm" onsubmit="saveNote(event)">
+                <div class="form-group" id="subsectionSelectorGroup">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="subsectionSelector" required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
                 <div class="form-group">
                     <label class="form-label">Location/Asset</label>
                     <input type="text" class="form-input" id="noteLocation" placeholder="e.g., Well #3, Zone 2 Booster, Main St Tank">
@@ -686,8 +783,8 @@
                 <div class="form-group">
                     <label class="form-label">About</label>
                     <div style="background: #f2f2f7; padding: 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;">
-                        <p><strong>DDW Field Notes v2.0</strong></p>
-                        <p style="margin-top: 8px;">Hierarchical note taking for California DDW water system inspections.</p>
+                        <p><strong>DDW Field Notes v2.1</strong></p>
+                        <p style="margin-top: 8px;">Hierarchical note taking with organized subsections for California DDW water system inspections.</p>
                         <p style="margin-top: 8px; color: #8e8e93;">All data stored locally on your device.</p>
                     </div>
                 </div>
@@ -701,9 +798,64 @@
         let currentSystemId = null;
         let currentInspectionId = null;
         let currentElement = 'overview';
+        let currentSubsection = 'general';
         let currentPriority = 'medium';
         let currentPhotos = [];
         let recognition = null;
+
+        // Subsection definitions for each element
+        const elementSubsections = {
+            overview: [
+                { id: 'general', name: 'General Overview Notes' }
+            ],
+            sources: [
+                { id: 'wells', name: 'Wells & Groundwater' },
+                { id: 'surface', name: 'Surface Water Sources' },
+                { id: 'cross_connection', name: 'Cross-Connection Control Program' },
+                { id: 'monitoring', name: 'Source Water Monitoring' },
+                { id: 'general', name: 'General Sources Notes' }
+            ],
+            treatment: [
+                { id: 'facilities', name: 'Treatment Facilities' },
+                { id: 'processes', name: 'Treatment Processes' },
+                { id: 'chemicals', name: 'Chemical Handling & Safety' },
+                { id: 'records', name: 'Data & Records Review' },
+                { id: 'general', name: 'General Treatment Notes' }
+            ],
+            distribution: [
+                { id: 'system_overview', name: 'System Overview & Changes' },
+                { id: 'water_quality', name: 'Water Quality Management' },
+                { id: 'operations', name: 'Operations & Maintenance' },
+                { id: 'cross_connection', name: 'Cross-Connection Control' },
+                { id: 'general', name: 'General Distribution Notes' }
+            ],
+            storage: [
+                { id: 'condition', name: 'Tank Condition & Integrity' },
+                { id: 'sanitary', name: 'Sanitary Protection' },
+                { id: 'operations', name: 'Operations & Turnover' },
+                { id: 'records', name: 'Data & Records Review' },
+                { id: 'general', name: 'General Storage Notes' }
+            ],
+            pumps: [
+                { id: 'stations', name: 'Pump Stations & Equipment' },
+                { id: 'backup_power', name: 'Backup Power & Redundancy' },
+                { id: 'maintenance', name: 'Maintenance & Records' },
+                { id: 'general', name: 'General Pumps Notes' }
+            ],
+            management: [
+                { id: 'organization', name: 'Organization & Management' },
+                { id: 'financial', name: 'Revenue, Funding & Planning' },
+                { id: 'reliability', name: 'Reliability & Security' },
+                { id: 'resilience', name: 'Climate Change & Resilience' },
+                { id: 'general', name: 'General Management Notes' }
+            ],
+            operators: [
+                { id: 'certification', name: 'Certification Requirements' },
+                { id: 'staffing', name: 'Staffing & Coverage' },
+                { id: 'compliance', name: 'Compliance Assessment' },
+                { id: 'general', name: 'General Operators Notes' }
+            ]
+        };
 
         // Data structure
         let appData = {
@@ -976,8 +1128,26 @@
             document.getElementById(element + '-section').classList.add('active');
         }
 
-        function openNoteModal(element) {
+        function openNoteModal(element, subsection = 'general') {
             currentElement = element;
+            currentSubsection = subsection;
+            
+            // Populate subsection selector
+            const selector = document.getElementById('subsectionSelector');
+            const subsections = elementSubsections[element] || [];
+            
+            selector.innerHTML = subsections.map(sub => 
+                `<option value="${sub.id}" ${sub.id === subsection ? 'selected' : ''}>${sub.name}</option>`
+            ).join('');
+            
+            // Hide selector if only one option (general)
+            const selectorGroup = document.getElementById('subsectionSelectorGroup');
+            if (subsections.length <= 1) {
+                selectorGroup.style.display = 'none';
+            } else {
+                selectorGroup.style.display = 'block';
+            }
+            
             document.getElementById('noteModal').classList.add('active');
             document.getElementById('noteLocation').focus();
         }
@@ -988,6 +1158,7 @@
             currentPhotos = [];
             document.getElementById('photoPreviewGrid').innerHTML = '';
             currentPriority = 'medium';
+            currentSubsection = 'general';
             document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
             document.querySelector('.priority-btn.medium').classList.add('selected');
         }
@@ -1055,9 +1226,14 @@
             const inspection = system.inspections.find(i => i.id === currentInspectionId);
             if (!inspection) return;
             
+            // Get subsection from selector
+            const subsectionSelector = document.getElementById('subsectionSelector');
+            const subsection = subsectionSelector.value || 'general';
+            
             const note = {
                 id: Date.now(),
                 element: currentElement,
+                subsection: subsection,
                 location: document.getElementById('noteLocation').value,
                 text: document.getElementById('noteText').value,
                 priority: currentPriority,
@@ -1083,21 +1259,59 @@
             const elements = ['overview', 'sources', 'treatment', 'distribution', 'storage', 'pumps', 'management', 'operators'];
             
             elements.forEach(element => {
-                const container = document.getElementById(element + '-notes');
-                const notes = inspection.notes.filter(note => note.element === element);
+                const container = document.getElementById(element + '-subsections');
+                const subsections = elementSubsections[element] || [];
+                const elementNotes = inspection.notes.filter(note => note.element === element);
                 
-                if (notes.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📝</div>
-                            <div>No notes yet</div>
-                            <div style="font-size: 0.85rem; margin-top: 8px;">Tap "Add Note" to get started</div>
-                        </div>
-                    `;
+                if (subsections.length === 0) {
+                    // No subsections, just render notes directly (shouldn't happen with current config)
+                    container.innerHTML = renderNotesForSubsection(elementNotes);
                 } else {
-                    container.innerHTML = notes.map(note => renderNoteCard(note)).join('');
+                    // Render subsections
+                    container.innerHTML = subsections.map(subsection => {
+                        // Filter notes for this subsection, with backward compatibility
+                        const subsectionNotes = elementNotes.filter(note => {
+                            // If note doesn't have subsection field, put it in 'general'
+                            const noteSubsection = note.subsection || 'general';
+                            return noteSubsection === subsection.id;
+                        });
+                        const noteCount = subsectionNotes.length;
+                        
+                        return `
+                            <div class="subsection ${noteCount > 0 ? 'expanded' : ''}" id="subsection-${element}-${subsection.id}">
+                                <div class="subsection-header" onclick="toggleSubsection('${element}', '${subsection.id}')">
+                                    <div class="subsection-title">${subsection.name}</div>
+                                    <div class="subsection-meta">
+                                        ${noteCount > 0 ? `<span class="subsection-count">${noteCount}</span>` : ''}
+                                        <span class="subsection-indicator">▼</span>
+                                    </div>
+                                </div>
+                                <div class="subsection-content">
+                                    <button class="subsection-add-btn" onclick="openNoteModal('${element}', '${subsection.id}')">
+                                        ➕ Add Note
+                                    </button>
+                                    ${noteCount === 0 ? `
+                                        <div style="text-align: center; padding: 20px; color: #8e8e93; font-size: 0.9rem;">
+                                            No notes yet
+                                        </div>
+                                    ` : renderNotesForSubsection(subsectionNotes)}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
                 }
             });
+        }
+
+        function renderNotesForSubsection(notes) {
+            return notes.map(note => renderNoteCard(note)).join('');
+        }
+
+        function toggleSubsection(element, subsectionId) {
+            const subsection = document.getElementById(`subsection-${element}-${subsectionId}`);
+            if (subsection) {
+                subsection.classList.toggle('expanded');
+            }
         }
 
         function renderNoteCard(note) {
@@ -1113,7 +1327,7 @@
                     </div>
                     ${note.location ? `<div style="font-weight: 600; margin-bottom: 8px; color: #2a5298;">📍 ${note.location}</div>` : ''}
                     <div class="note-text">${note.text}</div>
-                    ${note.photos.length > 0 ? `
+                    ${note.photos && note.photos.length > 0 ? `
                         <div class="note-photos">
                             ${note.photos.map(photo => `<img src="${photo}" class="note-photo" onclick="viewPhoto('${photo}')">`).join('')}
                         </div>
