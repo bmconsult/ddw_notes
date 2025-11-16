@@ -505,34 +505,6 @@
             border-radius: 10px;
             margin-left: 6px;
         }
-
-        /* Info banner */
-        .info-banner {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 12px 16px;
-            font-size: 0.85rem;
-            border-bottom: 1px solid #90caf9;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .info-banner.hidden {
-            display: none;
-        }
-
-        .close-banner {
-            margin-left: auto;
-            background: none;
-            border: none;
-            color: #1976d2;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-        }
     </style>
 </head>
 <body>
@@ -546,13 +518,6 @@
                 <button onclick="showSettings()" class="settings-btn">⚙</button>
             </div>
         </div>
-    </div>
-
-    <!-- Info Banner -->
-    <div class="info-banner" id="infoBanner">
-        <span>💡</span>
-        <span>Need voice notes? Tap ⚙️ Settings for setup guide</span>
-        <button class="close-banner" onclick="closeBanner()">×</button>
     </div>
 
     <!-- Element Tabs -->
@@ -634,83 +599,6 @@
         </div>
     </div>
 
-    <!-- Permission Fix Modal -->
-    <div class="modal" id="permissionFixModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">🔧 Fix Microphone Access</h2>
-                <button class="close-btn" onclick="closePermissionFixModal()">✕</button>
-            </div>
-            
-            <div style="padding: 20px 0;">
-                <div style="background: #fff3cd; padding: 16px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">⚠️</div>
-                    <p style="font-weight: 600; margin-bottom: 8px;">Microphone is blocked</p>
-                    <p style="font-size: 0.9rem;">Follow the steps below to enable it</p>
-                </div>
-                
-                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                    <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 16px;">📱 Chrome on Android:</p>
-                    
-                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
-                        <p style="font-weight: 600; margin-bottom: 8px;">Step 1: Find the lock icon</p>
-                        <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; margin-bottom: 8px; text-align: center;">
-                            🔒 <span style="color: #666;">yoursite.com</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: #666;">Look at the top of your screen in the address bar</p>
-                    </div>
-                    
-                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
-                        <p style="font-weight: 600; margin-bottom: 8px;">Step 2: Tap the lock icon 🔒</p>
-                        <p style="font-size: 0.85rem; color: #666;">A menu will appear</p>
-                    </div>
-                    
-                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
-                        <p style="font-weight: 600; margin-bottom: 8px;">Step 3: Tap "Permissions" or "Site settings"</p>
-                        <p style="font-size: 0.85rem; color: #666;">You'll see a list of permissions</p>
-                    </div>
-                    
-                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
-                        <p style="font-weight: 600; margin-bottom: 8px;">Step 4: Find "Microphone"</p>
-                        <p style="font-size: 0.85rem; color: #666;">It might say "Blocked" or "Denied"</p>
-                    </div>
-                    
-                    <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
-                        <p style="font-weight: 600; margin-bottom: 8px;">Step 5: Change to "Allow"</p>
-                        <p style="font-size: 0.85rem; color: #666;">Tap on it and select "Allow" or "Ask"</p>
-                    </div>
-                    
-                    <div style="background: white; padding: 16px; border-radius: 8px;">
-                        <p style="font-weight: 600; margin-bottom: 8px;">Step 6: Refresh this page</p>
-                        <p style="font-size: 0.85rem; color: #666;">Pull down on the page or tap the refresh button</p>
-                    </div>
-                </div>
-                
-                <div style="background: #f2f2f7; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
-                    <p style="font-weight: 600; margin-bottom: 12px;">🍎 iPhone/Safari:</p>
-                    <ol style="margin-left: 20px; line-height: 2; font-size: 0.9rem;">
-                        <li>Close this app</li>
-                        <li>Open Settings app on your iPhone</li>
-                        <li>Scroll down to "Safari"</li>
-                        <li>Tap "Camera & Microphone"</li>
-                        <li>Set to "Allow" or "Ask"</li>
-                        <li>Come back here and refresh</li>
-                    </ol>
-                </div>
-                
-                <button class="save-btn" onclick="refreshPage()">
-                    🔄 I've Changed It - Refresh Now
-                </button>
-                
-                <div style="text-align: center; margin-top: 16px;">
-                    <button style="background: none; border: none; color: #2a5298; font-size: 0.9rem; cursor: pointer; text-decoration: underline;" onclick="closePermissionFixModal()">
-                        I'll do this later
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
@@ -720,73 +608,6 @@
             </div>
             
             <div style="padding: 20px 0;">
-                <div class="form-group">
-                    <label class="form-label">🎤 Voice Notes Help</label>
-                    
-                    <!-- Browser Check -->
-                    <div id="browserCheckDiv" style="background: #f2f2f7; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem;">
-                        <strong>Browser Status:</strong> <span id="browserStatus">Checking...</span>
-                    </div>
-                    
-                    <!-- Android Quick Start -->
-                    <div style="background: #e3f2fd; padding: 16px; border-radius: 12px; margin-bottom: 16px;">
-                        <p style="font-weight: 600; margin-bottom: 12px;">📱 Android Quick Start:</p>
-                        <ol style="margin-left: 20px; line-height: 2;">
-                            <li>Tap "Test Microphone" below</li>
-                            <li>When browser asks, tap <strong>"Allow"</strong></li>
-                            <li>Speak a few words to test</li>
-                            <li>If it works, you're all set!</li>
-                        </ol>
-                        
-                        <div style="background: white; padding: 12px; border-radius: 8px; margin-top: 12px;">
-                            <p style="font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Where to find the permission:</p>
-                            <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; margin-bottom: 8px;">
-                                [🔒 example.com] 🎤 ⓘ
-                                <div style="margin-top: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;">↑ Look here in your address bar ↑</div>
-                            </div>
-                            <p style="font-size: 0.8rem; color: #666;">The 🎤 icon appears when permission is needed. Tap it and choose "Allow"</p>
-                        </div>
-                    </div>
-                    
-                    <button class="voice-btn" id="testMicBtn" onclick="testMicrophone()" style="margin-bottom: 16px;">
-                        <span>🎤</span>
-                        <span>Test Microphone Now</span>
-                    </button>
-                    
-                    <details style="margin-bottom: 16px; background: #fff3cd; padding: 12px; border-radius: 8px;">
-                        <summary style="font-weight: 600; cursor: pointer;">🔧 Troubleshooting (tap to expand)</summary>
-                        <div style="margin-top: 12px; line-height: 1.8;">
-                            <p style="margin-bottom: 8px;"><strong>If "Allow" doesn't appear:</strong></p>
-                            <ol style="margin-left: 20px; margin-bottom: 12px;">
-                                <li>Look for a <strong>microphone icon</strong> in your address bar (top of browser)</li>
-                                <li>Tap it and select "Allow"</li>
-                                <li>Refresh this page</li>
-                            </ol>
-                            
-                            <p style="margin-bottom: 8px;"><strong>If you accidentally blocked:</strong></p>
-                            <ol style="margin-left: 20px; margin-bottom: 12px;">
-                                <li>Tap the <strong>lock icon</strong> (or "i" icon) in address bar</li>
-                                <li>Find "Microphone" or "Permissions"</li>
-                                <li>Change to "Allow"</li>
-                                <li>Refresh this page</li>
-                            </ol>
-                            
-                            <p style="margin-bottom: 8px;"><strong>Still not working?</strong></p>
-                            <p style="margin-left: 20px;">Try Chrome browser - it has the best voice support on Android</p>
-                        </div>
-                    </details>
-                    
-                    <button class="form-input" onclick="resetVoicePermission()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea;">
-                        🔄 Reset Voice Tutorial
-                    </button>
-                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Shows the welcome guide again</small>
-                    
-                    <button class="form-input" onclick="showPermissionFixModal(); closeSettingsModal();" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea; margin-top: 12px;">
-                        🔧 How to Enable Microphone
-                    </button>
-                    <small style="color: #8e8e93; display: block; margin-top: 8px;">Step-by-step guide to fix blocked microphone</small>
-                </div>
-                
                 <div class="form-group">
                     <label class="form-label">Data Management</label>
                     <button class="form-input" onclick="clearAllData()" style="text-align: left; cursor: pointer; background: white; border: 1px solid #e5e5ea; color: #ff3b30;">
@@ -802,65 +623,6 @@
                         <p style="margin-top: 8px;">Mobile-first note taking for California DDW water system inspections.</p>
                         <p style="margin-top: 8px; color: #8e8e93;">All data stored locally on your device.</p>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Microphone Permission Modal -->
-    <div class="modal" id="micPermissionModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">🎤 Enable Voice Notes</h2>
-                <button class="close-btn" onclick="closeMicModal()">✕</button>
-            </div>
-            
-            <div style="padding: 20px 0;">
-                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 12px;">🎤</div>
-                    <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 12px;">Quick Setup</p>
-                    <ol style="text-align: left; margin-left: 40px; line-height: 2; font-size: 1rem;">
-                        <li>Tap "Enable" below</li>
-                        <li>Browser will ask for permission</li>
-                        <li><strong>Tap "Allow"</strong> ✅</li>
-                        <li>Start speaking!</li>
-                    </ol>
-                </div>
-                
-                <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
-                    <strong>💡 Tip:</strong> Look for a microphone icon 🎤 in your browser's address bar if you don't see a popup
-                </div>
-                
-                <button class="save-btn" onclick="requestMicrophonePermission()">
-                    🎤 Enable Voice Notes
-                </button>
-                
-                <details style="margin-top: 20px; padding: 12px; background: #f2f2f7; border-radius: 8px;">
-                    <summary style="font-weight: 600; cursor: pointer; font-size: 0.9rem;">Having trouble? (tap for help)</summary>
-                    <div style="margin-top: 12px; font-size: 0.85rem; line-height: 1.6;">
-                        <p style="margin-bottom: 8px;"><strong>Android:</strong></p>
-                        <ol style="margin-left: 20px; margin-bottom: 12px;">
-                            <li>Check your address bar for a 🎤 icon</li>
-                            <li>Tap it and select "Allow"</li>
-                            <li>Or tap the lock icon 🔒 > Permissions > Microphone > Allow</li>
-                        </ol>
-                        <p style="margin-bottom: 8px;"><strong>iPhone/Safari:</strong></p>
-                        <ol style="margin-left: 20px;">
-                            <li>Go to Settings app</li>
-                            <li>Scroll to Safari</li>
-                            <li>Tap "Camera & Microphone"</li>
-                            <li>Set to "Allow"</li>
-                        </ol>
-                        <p style="margin-top: 12px; padding: 8px; background: #e3f2fd; border-radius: 6px;">
-                            Still stuck? Tap ⚙️ Settings > Test Microphone for more help
-                        </p>
-                    </div>
-                </details>
-                
-                <div style="text-align: center; margin-top: 16px;">
-                    <button style="background: none; border: none; color: #8e8e93; text-decoration: underline; font-size: 0.9rem; cursor: pointer;" onclick="skipMicPermission()">
-                        Skip for now
-                    </button>
                 </div>
             </div>
         </div>
@@ -935,11 +697,6 @@
             // Set current date
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
             
-            // Check if banner was dismissed
-            if (localStorage.getItem('bannerDismissed') === 'true') {
-                document.getElementById('infoBanner').classList.add('hidden');
-            }
-            
             // Load system name
             const savedSystemName = localStorage.getItem('systemName');
             if (savedSystemName) {
@@ -991,15 +748,15 @@
                     document.getElementById('voiceIcon').textContent = '🎤';
                     
                     if (event.error === 'no-speech') {
-                        alert('No speech detected. Please try again.');
+                        // Don't alert for no speech - just stop quietly
+                        console.log('No speech detected');
                     } else if (event.error === 'not-allowed') {
-                        // Show detailed fix instructions
-                        showPermissionFixModal();
+                        alert('Microphone access denied. Please allow microphone access when your browser asks.');
                     } else if (event.error === 'aborted') {
-                        // User stopped it, no need for alert
+                        // User stopped it, no alert needed
                         console.log('Voice recording aborted by user');
                     } else {
-                        alert('Voice recognition error: ' + event.error);
+                        console.log('Voice recognition error: ' + event.error);
                     }
                 };
                 
@@ -1016,11 +773,6 @@
             renderAllNotes();
             updateNoteCounts();
         });
-
-        function closeBanner() {
-            document.getElementById('infoBanner').classList.add('hidden');
-            localStorage.setItem('bannerDismissed', 'true');
-        }
 
         function switchElement(element) {
             currentElement = element;
@@ -1063,7 +815,7 @@
 
         function toggleVoiceInput() {
             if (!recognition) {
-                alert('Voice input not supported on this device. Speech recognition requires Chrome, Edge, or Safari on iOS 14.5+');
+                alert('Voice input not supported on this browser.');
                 return;
             }
             
@@ -1076,15 +828,8 @@
                 document.getElementById('voiceText').textContent = 'Tap to use voice';
                 document.getElementById('voiceIcon').textContent = '🎤';
             } else {
-                // Check if this is first time using voice
-                const hasUsedVoice = localStorage.getItem('hasUsedVoice');
-                if (!hasUsedVoice) {
-                    // Show permission modal first
-                    document.getElementById('micPermissionModal').classList.add('active');
-                } else {
-                    // Start recording directly
-                    startVoiceRecording();
-                }
+                // Start recording directly
+                startVoiceRecording();
             }
         }
 
@@ -1114,26 +859,6 @@
                 }
                 alert(errorMessage);
             }
-        }
-
-        function requestMicrophonePermission() {
-            // Close the modal
-            document.getElementById('micPermissionModal').classList.remove('active');
-            
-            // Mark that user has seen the permission flow
-            localStorage.setItem('hasUsedVoice', 'true');
-            
-            // Start voice recording (this will trigger browser's permission prompt)
-            startVoiceRecording();
-        }
-
-        function skipMicPermission() {
-            document.getElementById('micPermissionModal').classList.remove('active');
-            localStorage.setItem('hasUsedVoice', 'true');
-        }
-
-        function closeMicModal() {
-            document.getElementById('micPermissionModal').classList.remove('active');
         }
 
         function handlePhotoUpload(event) {
@@ -1315,38 +1040,6 @@
 
         function showSettings() {
             document.getElementById('settingsModal').classList.add('active');
-            updateBrowserStatus();
-        }
-
-        function updateBrowserStatus() {
-            const statusSpan = document.getElementById('browserStatus');
-            const checkDiv = document.getElementById('browserCheckDiv');
-            
-            if (!statusSpan) return;
-            
-            if (recognition) {
-                statusSpan.innerHTML = '✅ Voice notes supported';
-                checkDiv.style.background = '#d4edda';
-                checkDiv.style.color = '#155724';
-            } else {
-                const userAgent = navigator.userAgent.toLowerCase();
-                let browserName = 'Unknown browser';
-                
-                if (userAgent.includes('chrome')) browserName = 'Chrome';
-                else if (userAgent.includes('firefox')) browserName = 'Firefox';
-                else if (userAgent.includes('safari')) browserName = 'Safari';
-                else if (userAgent.includes('edge')) browserName = 'Edge';
-                
-                statusSpan.innerHTML = `❌ Not supported in ${browserName}`;
-                checkDiv.style.background = '#f8d7da';
-                checkDiv.style.color = '#721c24';
-                
-                // Add helpful message
-                const helpMsg = document.createElement('div');
-                helpMsg.style.cssText = 'margin-top: 8px; font-size: 0.85rem;';
-                helpMsg.innerHTML = 'Voice notes require Chrome, Edge, or Safari (iOS 14.5+)';
-                checkDiv.appendChild(helpMsg);
-            }
         }
 
         function closeSettingsModal() {
