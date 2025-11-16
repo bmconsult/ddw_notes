@@ -377,6 +377,78 @@
             overflow-y: auto;
         }
 
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .note-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 4px solid #2a5298;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .note-item:hover {
+            background: #e9ecef;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .note-timestamp {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .note-delete {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        .note-text {
+            color: #2c3e50;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .add-note-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .add-note-btn:active {
+            background: #1e3a6b;
+        }
+
+        .empty-notes {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+        }
+
         .notes-modal-textarea {
             width: 100%;
             min-height: 300px;
@@ -1225,8 +1297,7 @@
                 <button class="notes-modal-close" onclick="closeNotesModal()">×</button>
             </div>
             <div class="notes-modal-body">
-                <textarea class="notes-modal-textarea" id="notesModalTextarea" placeholder="Enter your notes here..."></textarea>
-                <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('notesModalTextarea')">🎤 Use Voice</button>
+                <!-- Content dynamically inserted here -->
             </div>
         </div>
     </div>
@@ -1446,14 +1517,12 @@
             } else {
                 container.innerHTML = appData.systems.map(system => {
                     const inspectionCount = system.inspections.length;
-                    const totalAssets = system.inspections.reduce((sum, insp) => sum + (insp.assets?.length || 0), 0);
                     
                     return `
                         <div class="card" onclick="showInspections('${system.id}')">
                             <div class="card-title">${system.name}</div>
                             <div class="card-meta">
                                 <span>${inspectionCount} inspection${inspectionCount !== 1 ? 's' : ''}</span>
-                                <span class="card-badge">${totalAssets} assets inspected</span>
                             </div>
                         </div>
                     `;
@@ -1592,7 +1661,7 @@
                 date: document.getElementById('inspectionDateInput').value,
                 assets: [],
                 generalFields: {},
-                generalNotes: '',
+                generalNotes: [],  // Array of {id, text, timestamp} objects
                 createdAt: new Date().toISOString()
             };
             
@@ -2146,6 +2215,8 @@
         }
 
         // General Notes
+        let currentEditingNoteId = null;
+
         function openGeneralNotes() {
             const system = appData.systems.find(s => s.id === currentSystemId);
             if (!system) return;
@@ -2153,31 +2224,174 @@
             const inspection = system.inspections.find(i => i.id === currentInspectionId);
             if (!inspection) return;
             
-            if (!inspection.generalNotes) inspection.generalNotes = '';
+            // Migrate old single note to array format
+            if (typeof inspection.generalNotes === 'string' && inspection.generalNotes) {
+                inspection.generalNotes = [{
+                    id: Date.now().toString(),
+                    text: inspection.generalNotes,
+                    timestamp: inspection.createdAt
+                }];
+                saveData();
+            }
+            
+            if (!Array.isArray(inspection.generalNotes)) {
+                inspection.generalNotes = [];
+            }
             
             const notesModal = document.getElementById('notesModal');
             const notesModalTitle = document.getElementById('notesModalTitle');
-            const notesModalTextarea = document.getElementById('notesModalTextarea');
+            const notesModalBody = document.querySelector('.notes-modal-body');
             
             notesModalTitle.textContent = 'General Inspection Notes';
-            notesModalTextarea.value = inspection.generalNotes;
+            
+            renderGeneralNotesList();
+            
             notesModal.classList.add('active');
+        }
+
+        function renderGeneralNotesList() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
             
-            // Auto-save on change
-            notesModalTextarea.onchange = () => {
-                inspection.generalNotes = notesModalTextarea.value;
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const notesModalBody = document.querySelector('.notes-modal-body');
+            
+            if (currentEditingNoteId) {
+                // Show edit view
+                const note = inspection.generalNotes.find(n => n.id === currentEditingNoteId);
+                if (note) {
+                    notesModalBody.innerHTML = `
+                        <textarea class="notes-modal-textarea" id="editNoteTextarea" autofocus>${note.text}</textarea>
+                        <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('editNoteTextarea')">🎤 Use Voice</button>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="add-note-btn" style="background: #28a745;" onclick="saveEditedNote()">💾 Save Changes</button>
+                            <button class="add-note-btn" style="background: #6c757d;" onclick="cancelEditNote()">Cancel</button>
+                        </div>
+                    `;
+                }
+            } else {
+                // Show list view
+                const notesList = inspection.generalNotes
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .map(note => {
+                        const date = new Date(note.timestamp);
+                        const timeStr = date.toLocaleString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            hour: 'numeric', 
+                            minute: '2-digit',
+                            hour12: true 
+                        });
+                        
+                        return `
+                            <div class="note-item" onclick="editGeneralNote('${note.id}')">
+                                <div class="note-header">
+                                    <div class="note-timestamp">${timeStr}</div>
+                                    <button class="note-delete" onclick="event.stopPropagation(); deleteGeneralNote('${note.id}')">🗑️</button>
+                                </div>
+                                <div class="note-text">${note.text}</div>
+                            </div>
+                        `;
+                    }).join('');
+                
+                notesModalBody.innerHTML = `
+                    <button class="add-note-btn" onclick="addGeneralNote()">+ Add Note</button>
+                    ${inspection.generalNotes.length === 0 ? 
+                        '<div class="empty-notes">No notes yet. Tap "+ Add Note" to start.</div>' : 
+                        `<div class="notes-list">${notesList}</div>`
+                    }
+                `;
+            }
+        }
+
+        function addGeneralNote() {
+            currentEditingNoteId = 'new';
+            const notesModalBody = document.querySelector('.notes-modal-body');
+            
+            notesModalBody.innerHTML = `
+                <textarea class="notes-modal-textarea" id="newNoteTextarea" placeholder="Enter your observation..." autofocus></textarea>
+                <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('newNoteTextarea')">🎤 Use Voice</button>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="add-note-btn" style="background: #28a745;" onclick="saveNewNote()">💾 Save Note</button>
+                    <button class="add-note-btn" style="background: #6c757d;" onclick="cancelEditNote()">Cancel</button>
+                </div>
+            `;
+            
+            document.getElementById('newNoteTextarea').focus();
+        }
+
+        function saveNewNote() {
+            const textarea = document.getElementById('newNoteTextarea');
+            if (!textarea || !textarea.value.trim()) {
+                alert('Please enter some text for the note.');
+                return;
+            }
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const newNote = {
+                id: Date.now().toString(),
+                text: textarea.value.trim(),
+                timestamp: new Date().toISOString()
+            };
+            
+            inspection.generalNotes.push(newNote);
+            saveData();
+            currentEditingNoteId = null;
+            renderGeneralNotesList();
+        }
+
+        function editGeneralNote(noteId) {
+            currentEditingNoteId = noteId;
+            renderGeneralNotesList();
+        }
+
+        function saveEditedNote() {
+            const textarea = document.getElementById('editNoteTextarea');
+            if (!textarea || !textarea.value.trim()) {
+                alert('Note cannot be empty.');
+                return;
+            }
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const note = inspection.generalNotes.find(n => n.id === currentEditingNoteId);
+            if (note) {
+                note.text = textarea.value.trim();
                 saveData();
-            };
+            }
             
-            // Auto-save on input with debounce
-            let saveTimeout;
-            notesModalTextarea.oninput = () => {
-                clearTimeout(saveTimeout);
-                saveTimeout = setTimeout(() => {
-                    inspection.generalNotes = notesModalTextarea.value;
-                    saveData();
-                }, 1000);
-            };
+            currentEditingNoteId = null;
+            renderGeneralNotesList();
+        }
+
+        function cancelEditNote() {
+            currentEditingNoteId = null;
+            renderGeneralNotesList();
+        }
+
+        function deleteGeneralNote(noteId) {
+            if (!confirm('Delete this note?')) return;
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            inspection.generalNotes = inspection.generalNotes.filter(n => n.id !== noteId);
+            saveData();
+            renderGeneralNotesList();
         }
 
         // Notes Expansion Modal
@@ -2193,10 +2407,16 @@
             
             const notesModal = document.getElementById('notesModal');
             const notesModalTitle = document.getElementById('notesModalTitle');
-            const notesModalTextarea = document.getElementById('notesModalTextarea');
+            const notesModalBody = document.querySelector('.notes-modal-body');
             
             notesModalTitle.textContent = title;
-            notesModalTextarea.value = textarea.value;
+            
+            notesModalBody.innerHTML = `
+                <textarea class="notes-modal-textarea" id="notesModalTextarea" placeholder="Enter your notes here...">${textarea.value}</textarea>
+                <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('notesModalTextarea')">🎤 Use Voice</button>
+            `;
+            
+            const notesModalTextarea = document.getElementById('notesModalTextarea');
             notesModal.classList.add('active');
             
             // Auto-save on change
@@ -2226,8 +2446,8 @@
             const notesModal = document.getElementById('notesModal');
             const notesModalTextarea = document.getElementById('notesModalTextarea');
             
-            // Final save before closing
-            if (currentNotesTarget) {
+            // Final save before closing (for expandable textarea notes)
+            if (currentNotesTarget && notesModalTextarea) {
                 const textarea = document.getElementById(currentNotesTarget);
                 if (textarea) {
                     textarea.value = notesModalTextarea.value;
@@ -2240,6 +2460,7 @@
             notesModal.classList.remove('active');
             currentNotesTarget = null;
             currentNotesUpdateFn = null;
+            currentEditingNoteId = null;
         }
     </script>
 </body>
