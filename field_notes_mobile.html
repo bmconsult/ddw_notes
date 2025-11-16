@@ -1361,10 +1361,7 @@
                         return `
                             <div class="card" onclick="showFieldInspector('${inspection.id}')">
                                 <div class="card-title">${localDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                                <div class="card-meta">
-                                    <span>${assets.length} assets</span>
-                                    ${issueCount > 0 ? `<span class="card-badge badge-issue">⚠️ ${issueCount} issues</span>` : ''}
-                                </div>
+                                ${issueCount > 0 ? `<div class="card-meta"><span class="card-badge badge-issue">⚠️ ${issueCount} issues</span></div>` : ''}
                             </div>
                         `;
                     }).join('');
