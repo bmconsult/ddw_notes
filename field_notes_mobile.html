@@ -793,7 +793,14 @@
                 backBtn.style.display = 'flex';
                 const system = appData.systems.find(s => s.id === currentSystemId);
                 const inspection = system?.inspections.find(i => i.id === currentInspectionId);
-                headerTitle.textContent = inspection ? new Date(inspection.date).toLocaleDateString() : 'Field Notes';
+                if (inspection) {
+                    // Parse date correctly to avoid timezone issues
+                    const dateParts = inspection.date.split('-');
+                    const localDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                    headerTitle.textContent = localDate.toLocaleDateString();
+                } else {
+                    headerTitle.textContent = 'Field Notes';
+                }
                 breadcrumb.style.display = 'block';
                 breadcrumb.textContent = system ? system.name : '';
             }
@@ -898,9 +905,13 @@
                         const noteCount = inspection.notes.length;
                         const issueCount = inspection.notes.filter(n => n.priority === 'high').length;
                         
+                        // Parse date correctly to avoid timezone issues
+                        const dateParts = inspection.date.split('-');
+                        const localDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                        
                         return `
                             <div class="card" onclick="showFieldNotes('${inspection.id}')">
-                                <div class="card-title">${new Date(inspection.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                <div class="card-title">${localDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
                                 <div class="card-meta">
                                     <span>${noteCount} notes</span>
                                     ${issueCount > 0 ? `<span class="card-badge" style="background: #f8d7da; color: #721c24;">⚠️ ${issueCount} issues</span>` : ''}
