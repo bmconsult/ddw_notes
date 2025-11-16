@@ -88,12 +88,47 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+            position: relative;
         }
 
         .card:active {
             transform: scale(0.98);
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .card.delete-mode {
+            background-color: #fee;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .card-delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+            z-index: 10;
+        }
+
+        .card.delete-mode .card-delete-btn {
+            display: flex;
         }
 
         .card-title {
@@ -156,6 +191,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        /* General Notes Button */
+        .general-notes-btn {
+            position: fixed;
+            bottom: max(env(safe-area-inset-bottom), 90px);
+            right: 20px;
+            background: #28a745;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .general-notes-btn.active {
+            display: flex;
         }
 
         /* Tabs */
@@ -245,6 +304,93 @@
         .form-textarea {
             min-height: 80px;
             resize: vertical;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:hover {
+            border-color: #2a5298;
+        }
+
+        /* Expanded Notes Modal */
+        .notes-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .notes-modal.active {
+            display: flex;
+        }
+
+        .notes-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .notes-modal-header {
+            padding: 20px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notes-modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2a5298;
+        }
+
+        .notes-modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notes-modal-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .notes-modal-textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .notes-modal-textarea:focus {
+            outline: none;
+            border-color: #2a5298;
         }
 
         .form-row {
@@ -765,7 +911,7 @@
                 <div class="section-title">General Inspection Observations</div>
                 <div class="form-group">
                     <label class="form-label">Overall Site Observations & Notes</label>
-                    <textarea class="form-textarea" id="overview-general-notes" placeholder="Overall site impressions, access conditions, general security, site-wide observations not specific to individual elements..."></textarea>
+                    <textarea class="form-textarea" id="overview-general-notes" placeholder="Overall site impressions, access conditions, general security, site-wide observations not specific to individual elements..." onclick="openNotesExpansion('overview-general-notes', 'Overview Notes', null)"></textarea>
                     <button class="voice-btn" onclick="startVoiceNote('overview-general-notes')">🎤 Use Voice</button>
                 </div>
             </div>
@@ -1068,6 +1214,23 @@
         </div>
     </div>
 
+    <!-- General Notes Button (shows during inspection) -->
+    <button class="general-notes-btn" id="generalNotesBtn" onclick="openGeneralNotes()">💬</button>
+
+    <!-- Notes Expansion Modal -->
+    <div class="notes-modal" id="notesModal" onclick="closeNotesModal(event)">
+        <div class="notes-modal-content" onclick="event.stopPropagation()">
+            <div class="notes-modal-header">
+                <div class="notes-modal-title" id="notesModalTitle">Notes</div>
+                <button class="notes-modal-close" onclick="closeNotesModal()">×</button>
+            </div>
+            <div class="notes-modal-body">
+                <textarea class="notes-modal-textarea" id="notesModalTextarea" placeholder="Enter your notes here..."></textarea>
+                <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('notesModalTextarea')">🎤 Use Voice</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // App State
         let appData = {
@@ -1225,17 +1388,20 @@
             const backBtn = document.getElementById('backBtn');
             const headerTitle = document.getElementById('headerTitle');
             const breadcrumb = document.getElementById('breadcrumb');
+            const generalNotesBtn = document.getElementById('generalNotesBtn');
             
             if (currentScreen === 'systems') {
                 backBtn.style.display = 'none';
                 headerTitle.textContent = '🚰 Systems';
                 breadcrumb.style.display = 'none';
+                generalNotesBtn.classList.remove('active');
             } else if (currentScreen === 'inspections') {
                 backBtn.style.display = 'flex';
                 const system = appData.systems.find(s => s.id === currentSystemId);
                 headerTitle.textContent = system ? system.name : 'Inspections';
                 breadcrumb.style.display = 'block';
                 breadcrumb.textContent = 'Select an inspection';
+                generalNotesBtn.classList.remove('active');
             } else if (currentScreen === 'fieldInspector') {
                 backBtn.style.display = 'flex';
                 const system = appData.systems.find(s => s.id === currentSystemId);
@@ -1249,6 +1415,7 @@
                 }
                 breadcrumb.style.display = 'block';
                 breadcrumb.textContent = system ? system.name : '';
+                generalNotesBtn.classList.add('active');
             }
         }
 
@@ -1359,12 +1526,41 @@
                         const localDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
                         
                         return `
-                            <div class="card" onclick="showFieldInspector('${inspection.id}')">
+                            <div class="card" data-inspection-id="${inspection.id}">
+                                <button class="card-delete-btn" onclick="event.stopPropagation(); deleteInspection('${inspection.id}')">🗑️</button>
                                 <div class="card-title">${localDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
                                 ${issueCount > 0 ? `<div class="card-meta"><span class="card-badge badge-issue">⚠️ ${issueCount} issues</span></div>` : ''}
                             </div>
                         `;
                     }).join('');
+                
+                // Add long-press handlers to each card
+                document.querySelectorAll('.card[data-inspection-id]').forEach(card => {
+                    let pressTimer;
+                    const inspectionId = card.dataset.inspectionId;
+                    
+                    card.addEventListener('touchstart', (e) => {
+                        pressTimer = setTimeout(() => {
+                            card.classList.add('delete-mode');
+                        }, 500); // 500ms long press
+                    });
+                    
+                    card.addEventListener('touchend', () => {
+                        clearTimeout(pressTimer);
+                    });
+                    
+                    card.addEventListener('touchmove', () => {
+                        clearTimeout(pressTimer);
+                    });
+                    
+                    card.addEventListener('click', (e) => {
+                        if (card.classList.contains('delete-mode')) {
+                            card.classList.remove('delete-mode');
+                        } else {
+                            showFieldInspector(inspectionId);
+                        }
+                    });
+                });
             }
         }
 
@@ -1396,6 +1592,7 @@
                 date: document.getElementById('inspectionDateInput').value,
                 assets: [],
                 generalFields: {},
+                generalNotes: '',
                 createdAt: new Date().toISOString()
             };
             
@@ -1404,6 +1601,17 @@
             closeModal();
             
             showFieldInspector(inspection.id);
+        }
+
+        function deleteInspection(inspectionId) {
+            if (!confirm('Delete this entire inspection? This cannot be undone.')) return;
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            system.inspections = system.inspections.filter(i => i.id !== inspectionId);
+            saveData();
+            renderInspections();
         }
 
         // Field Inspector
@@ -1620,7 +1828,7 @@
                                 </div>
                                 <div class="notes-section">
                                     <div class="notes-title">Notes</div>
-                                    <textarea class="notes-input" onchange="updateNestedItem('${asset.id}', ${idx}, 'notes', this.value)">${item.notes || ''}</textarea>
+                                    <textarea class="notes-input" id="nested-notes-${asset.id}-${idx}" onchange="updateNestedItem('${asset.id}', ${idx}, 'notes', this.value)" onclick="openNotesExpansion('nested-notes-${asset.id}-${idx}', '${item.name || assetType.nestedName} Notes', (val) => updateNestedItem('${asset.id}', ${idx}, 'notes', val))">${item.notes || ''}</textarea>
                                 </div>
                             </div>
                         `).join('')}
@@ -1661,7 +1869,7 @@
 
                         <div class="notes-section">
                             <div class="notes-title">${assetType.hasNested ? 'Station/Facility' : ''} Observations & Notes</div>
-                            <textarea class="notes-input" id="notes-${asset.id}" onchange="updateAssetNotes('${asset.id}', this.value)">${asset.notes || ''}</textarea>
+                            <textarea class="notes-input" id="notes-${asset.id}" onchange="updateAssetNotes('${asset.id}', this.value)" onclick="openNotesExpansion('notes-${asset.id}', '${asset.name} Notes', (val) => updateAssetNotes('${asset.id}', val))">${asset.notes || ''}</textarea>
                             <button class="voice-btn" onclick="startVoiceNote('notes-${asset.id}')">🎤 Use Voice</button>
                         </div>
 
@@ -1935,6 +2143,103 @@
             if (event.target.id === 'modal') {
                 closeModal();
             }
+        }
+
+        // General Notes
+        function openGeneralNotes() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            if (!inspection.generalNotes) inspection.generalNotes = '';
+            
+            const notesModal = document.getElementById('notesModal');
+            const notesModalTitle = document.getElementById('notesModalTitle');
+            const notesModalTextarea = document.getElementById('notesModalTextarea');
+            
+            notesModalTitle.textContent = 'General Inspection Notes';
+            notesModalTextarea.value = inspection.generalNotes;
+            notesModal.classList.add('active');
+            
+            // Auto-save on change
+            notesModalTextarea.onchange = () => {
+                inspection.generalNotes = notesModalTextarea.value;
+                saveData();
+            };
+            
+            // Auto-save on input with debounce
+            let saveTimeout;
+            notesModalTextarea.oninput = () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    inspection.generalNotes = notesModalTextarea.value;
+                    saveData();
+                }, 1000);
+            };
+        }
+
+        // Notes Expansion Modal
+        let currentNotesTarget = null;
+        let currentNotesUpdateFn = null;
+
+        function openNotesExpansion(textareaId, title, updateFn) {
+            const textarea = document.getElementById(textareaId);
+            if (!textarea) return;
+            
+            currentNotesTarget = textareaId;
+            currentNotesUpdateFn = updateFn;
+            
+            const notesModal = document.getElementById('notesModal');
+            const notesModalTitle = document.getElementById('notesModalTitle');
+            const notesModalTextarea = document.getElementById('notesModalTextarea');
+            
+            notesModalTitle.textContent = title;
+            notesModalTextarea.value = textarea.value;
+            notesModal.classList.add('active');
+            
+            // Auto-save on change
+            notesModalTextarea.onchange = () => {
+                textarea.value = notesModalTextarea.value;
+                if (currentNotesUpdateFn) {
+                    currentNotesUpdateFn(notesModalTextarea.value);
+                }
+            };
+            
+            // Auto-save on input with debounce
+            let saveTimeout;
+            notesModalTextarea.oninput = () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    textarea.value = notesModalTextarea.value;
+                    if (currentNotesUpdateFn) {
+                        currentNotesUpdateFn(notesModalTextarea.value);
+                    }
+                }, 1000);
+            };
+        }
+
+        function closeNotesModal(event) {
+            if (event && event.target.id !== 'notesModal') return;
+            
+            const notesModal = document.getElementById('notesModal');
+            const notesModalTextarea = document.getElementById('notesModalTextarea');
+            
+            // Final save before closing
+            if (currentNotesTarget) {
+                const textarea = document.getElementById(currentNotesTarget);
+                if (textarea) {
+                    textarea.value = notesModalTextarea.value;
+                    if (currentNotesUpdateFn) {
+                        currentNotesUpdateFn(notesModalTextarea.value);
+                    }
+                }
+            }
+            
+            notesModal.classList.remove('active');
+            currentNotesTarget = null;
+            currentNotesUpdateFn = null;
         }
     </script>
 </body>
