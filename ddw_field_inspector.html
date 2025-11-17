@@ -1,1 +1,2471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>DDW Field Inspector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f2f2f7;
+            color: #000;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3a6b 100%);
+            color: white;
+            padding: max(env(safe-area-inset-top), 20px) 20px 20px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .breadcrumb {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            opacity: 0.9;
+            display: none;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            min-height: calc(100vh - 100px);
+            padding-bottom: 80px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Content */
+        .content {
+            padding: 16px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+            position: relative;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .card.delete-mode {
+            background-color: #fee;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .card-delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+            z-index: 10;
+        }
+
+        .card.delete-mode .card-delete-btn {
+            display: flex;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2a5298;
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: #8e8e93;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .card-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-issue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e93;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        /* Add Button */
+        .add-btn {
+            position: fixed;
+            bottom: max(env(safe-area-inset-bottom), 20px);
+            right: 20px;
+            background: #2a5298;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* General Notes Button */
+        .general-notes-btn {
+            position: fixed;
+            bottom: max(env(safe-area-inset-bottom), 90px);
+            right: 20px;
+            background: #28a745;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .general-notes-btn.active {
+            display: flex;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 77px;
+            z-index: 90;
+        }
+
+        .tab-btn {
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #f2f2f7;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+
+        /* Element Sections */
+        .element-section {
+            display: none;
+        }
+
+        .element-section.active {
+            display: block;
+        }
+
+        /* General Section */
+        .general-section {
+            background: white;
+            border-radius: 12px;
+            margin: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #2a5298;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:hover {
+            border-color: #2a5298;
+        }
+
+        /* Expanded Notes Modal */
+        .notes-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .notes-modal.active {
+            display: flex;
+        }
+
+        .notes-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .notes-modal-header {
+            padding: 20px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notes-modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2a5298;
+        }
+
+        .notes-modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notes-modal-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .note-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 4px solid #2a5298;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .note-item:hover {
+            background: #e9ecef;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .note-timestamp {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .note-delete {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        .note-text {
+            color: #2c3e50;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .add-note-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .add-note-btn:active {
+            background: #1e3a6b;
+        }
+
+        .empty-notes {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+        }
+
+        .notes-modal-textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .notes-modal-textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Asset Cards */
+        .asset-card {
+            background: white;
+            border-radius: 12px;
+            margin: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .asset-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .asset-header.storage {
+            background: linear-gradient(135deg, #6f42c1 0%, #4a2b85 100%);
+        }
+
+        .asset-header.pump {
+            background: linear-gradient(135deg, #fd7e14 0%, #d35400 100%);
+        }
+
+        .asset-header.treatment {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+
+        .asset-header.distribution {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+
+        .asset-header.operator {
+            background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+        }
+
+        .asset-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .asset-body {
+            padding: 16px;
+        }
+
+        /* Nested Items (Pumps within Station, Processes within Facility) */
+        .nested-items {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .nested-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .nested-item {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .nested-item-header {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #495057;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-nested-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .add-nested-btn {
+            margin-top: 12px;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        /* Condition Rating */
+        .condition-section {
+            margin-bottom: 20px;
+        }
+
+        .condition-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .condition-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .condition-btn {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .condition-btn.selected {
+            border-width: 3px;
+        }
+
+        .condition-btn.good.selected {
+            border-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .condition-btn.fair.selected {
+            border-color: #ffc107;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .condition-btn.poor.selected {
+            border-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .condition-btn.issue.selected {
+            border-color: #8b0000;
+            background: #ffe0e0;
+            color: #8b0000;
+        }
+
+        /* Checklist */
+        .checklist-section {
+            margin-bottom: 20px;
+        }
+
+        .checklist-group-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 16px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            margin-top: 20px;
+        }
+
+        .notes-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .notes-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .voice-btn {
+            margin-top: 10px;
+            padding: 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .voice-btn.recording {
+            background: #dc3545;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Photos */
+        .photos-section {
+            margin-top: 20px;
+        }
+
+        .photos-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .photo-input {
+            display: none;
+        }
+
+        .photo-btn {
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Delete Asset Button */
+        .delete-asset-btn {
+            margin-top: 16px;
+            padding: 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            margin: 16px;
+            padding: 14px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: calc(100% - 32px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: flex-end;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: max(env(safe-area-inset-bottom), 20px);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1 id="headerTitle">🚰 Systems</h1>
+            <div class="header-actions">
+                <button class="back-btn" id="backBtn" onclick="goBack()">← Back</button>
+            </div>
+        </div>
+        <div class="breadcrumb" id="breadcrumb"></div>
+    </div>
+
+    <!-- Systems Screen -->
+    <div class="screen active" id="systemsScreen">
+        <div class="content">
+            <div id="systemsList"></div>
+        </div>
+        <button class="add-btn" onclick="showAddSystemModal()">+</button>
+    </div>
+
+    <!-- Inspections Screen -->
+    <div class="screen" id="inspectionsScreen">
+        <div class="content">
+            <div id="inspectionsList"></div>
+        </div>
+        <button class="add-btn" onclick="showAddInspectionModal()">+</button>
+    </div>
+
+    <!-- Field Inspector Screen -->
+    <div class="screen" id="fieldInspectorScreen">
+        <!-- Element Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-element="overview" onclick="switchElement('overview')">📋 Overview</button>
+            <button class="tab-btn" data-element="sources" onclick="switchElement('sources')">1️⃣ Sources</button>
+            <button class="tab-btn" data-element="treatment" onclick="switchElement('treatment')">2️⃣ Treatment</button>
+            <button class="tab-btn" data-element="distribution" onclick="switchElement('distribution')">3️⃣ Distribution</button>
+            <button class="tab-btn" data-element="storage" onclick="switchElement('storage')">4️⃣ Storage</button>
+            <button class="tab-btn" data-element="pumps" onclick="switchElement('pumps')">5️⃣ Pumps</button>
+            <button class="tab-btn" data-element="monitoring" onclick="switchElement('monitoring')">6️⃣ Monitoring</button>
+            <button class="tab-btn" data-element="management" onclick="switchElement('management')">7️⃣ Management</button>
+            <button class="tab-btn" data-element="operators" onclick="switchElement('operators')">8️⃣ Operators</button>
+        </div>
+
+        <!-- Overview Section -->
+        <div class="element-section active" id="overview-section">
+            <div class="general-section">
+                <div class="section-title">System Information</div>
+                <div class="form-group">
+                    <label class="form-label">System Name</label>
+                    <input type="text" class="form-input" id="overview-system-name" readonly style="background: #f8f9fa;">
+                </div>
+            </div>
+
+            <div class="general-section">
+                <div class="section-title">Inspection Information</div>
+                <div class="form-group">
+                    <label class="form-label">Inspector Name</label>
+                    <input type="text" class="form-input" id="overview-inspector" placeholder="Enter inspector name">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Inspection Date</label>
+                        <input type="date" class="form-input" id="overview-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weather Conditions</label>
+                        <input type="text" class="form-input" id="overview-weather" placeholder="e.g., Clear, 75°F">
+                    </div>
+                </div>
+            </div>
+
+            <div class="general-section">
+                <div class="section-title">Previous Deficiencies</div>
+                <div class="form-group">
+                    <label class="form-label">Status of Previous Findings</label>
+                    <textarea class="form-textarea" id="overview-prev-deficiencies" placeholder="Describe resolution status of deficiencies from previous survey..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('overview-prev-deficiencies')">🎤 Use Voice</button>
+                </div>
+            </div>
+
+            <div class="general-section">
+                <div class="section-title">General Inspection Observations</div>
+                <div class="form-group">
+                    <label class="form-label">Overall Site Observations & Notes</label>
+                    <textarea class="form-textarea" id="overview-general-notes" placeholder="Overall site impressions, access conditions, general security, site-wide observations not specific to individual elements..." onclick="openNotesExpansion('overview-general-notes', 'Overview Notes', null)"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('overview-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sources Section (Element 1) -->
+        <div class="element-section" id="sources-section">
+            <div class="general-section">
+                <div class="section-title">Sources Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Source Type Mix</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sources-groundwater">
+                            <label>Groundwater (Wells)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sources-surface">
+                            <label>Surface Water</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sources-purchased">
+                            <label>Purchased Water</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cross-Connection Control Field Observations</label>
+                    <textarea class="form-textarea" id="sources-ccc-observations" placeholder="Spot-checked backflow devices at high-hazard facilities. Test tags current? Devices in place and properly installed? Any visible issues?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('sources-ccc-observations')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Changes Since Last Inspection</label>
+                    <textarea class="form-textarea" id="sources-changes" placeholder="New sources added, sources abandoned, capacity changes, etc."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('sources-changes')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Sources Notes</label>
+                    <textarea class="form-textarea" id="sources-general-notes" placeholder="Overall observations about water sources, capacity, protection..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('sources-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="sources-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('source')">+ Add Well/Source</button>
+        </div>
+
+        <!-- Treatment Section (Element 2) -->
+        <div class="element-section" id="treatment-section">
+            <div class="general-section">
+                <div class="section-title">Treatment Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Treatment Type</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-chlorination">
+                            <label>Chlorination/Disinfection</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-filtration">
+                            <label>Filtration</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-other">
+                            <label>Other Treatment</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treatment-none">
+                            <label>No Treatment (Groundwater)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Treatment Notes</label>
+                    <textarea class="form-textarea" id="treatment-general-notes" placeholder="Overall treatment system observations, process effectiveness..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('treatment-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="treatment-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('treatment')">+ Add Treatment Facility</button>
+        </div>
+
+        <!-- Distribution Section (Element 3) -->
+        <div class="element-section" id="distribution-section">
+            <div class="general-section">
+                <div class="section-title">Distribution Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Primary Pipe Materials</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-pvc">
+                            <label>PVC</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-di">
+                            <label>Ductile Iron</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-ac">
+                            <label>Asbestos Cement</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dist-ci">
+                            <label>Cast Iron</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Water Quality Spot Check (Chlorine Residual)</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.85rem;">Entry Point (mg/L)</label>
+                            <input type="number" step="0.01" class="form-input" id="dist-resid-entry" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.85rem;">Farthest Point (mg/L)</label>
+                            <input type="number" step="0.01" class="form-input" id="dist-resid-far" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Distribution Notes</label>
+                    <textarea class="form-textarea" id="distribution-general-notes" placeholder="System condition, maintenance programs, water age management, backflow prevention..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('distribution-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="distribution-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('distribution')">+ Add Distribution Point</button>
+        </div>
+
+        <!-- Storage Section (Element 4) -->
+        <div class="element-section" id="storage-section">
+            <div class="general-section">
+                <div class="section-title">Storage Overview</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Total Storage Capacity (gal)</label>
+                        <input type="number" class="form-input" id="storage-total-capacity" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number of Tanks</label>
+                        <input type="number" class="form-input" id="storage-tank-count" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Storage Notes</label>
+                    <textarea class="form-textarea" id="storage-general-notes" placeholder="Overall storage system condition, water quality, turnover..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('storage-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="storage-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('storage')">+ Add Storage Tank</button>
+        </div>
+
+        <!-- Pumps Section (Element 5) -->
+        <div class="element-section" id="pumps-section">
+            <div class="general-section">
+                <div class="section-title">Pumps Overview</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Number of Pump Stations</label>
+                        <input type="number" class="form-input" id="pumps-station-count" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Backup Power Available?</label>
+                        <select class="form-select" id="pumps-backup-power">
+                            <option value="">Select</option>
+                            <option value="all">All stations</option>
+                            <option value="some">Some stations</option>
+                            <option value="none">No backup power</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Pumps Notes</label>
+                    <textarea class="form-textarea" id="pumps-general-notes" placeholder="Overall pumping system condition, capacity, reliability, maintenance..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('pumps-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="pumps-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('pump')">+ Add Pump Station</button>
+        </div>
+
+        <!-- Monitoring Section (Element 6) -->
+        <div class="element-section" id="monitoring-section">
+            <div class="general-section">
+                <div class="section-title">Monitoring & Reporting Overview</div>
+                <div style="background: #d1ecf1; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem;">
+                    ℹ️ <strong>Note:</strong> Monitoring compliance is primarily records-based. Document what you observe in the field regarding sampling equipment, monitoring locations, and record-keeping practices.
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CCR & EAR Status</label>
+                    <textarea class="form-textarea" id="monitoring-ccr-ear" placeholder="CCR delivery status, EAR submission status (ask operator)..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-ccr-ear')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">RTCR Compliance Observations</label>
+                    <textarea class="form-textarea" id="monitoring-rtcr" placeholder="Sample siting plan current? Sampling locations verified? Any recent positive results?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-rtcr')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Record-Keeping Observations</label>
+                    <textarea class="form-textarea" id="monitoring-records" placeholder="Are records organized and accessible? Data logs maintained? Sampling schedules posted?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-records')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Monitoring Notes</label>
+                    <textarea class="form-textarea" id="monitoring-general-notes" placeholder="Overall monitoring program observations, compliance status, data quality..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('monitoring-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Section (Element 7) -->
+        <div class="element-section" id="management-section">
+            <div class="general-section">
+                <div class="section-title">Management & Operations Overview</div>
+                <div class="form-group">
+                    <label class="form-label">Organization Type</label>
+                    <select class="form-select" id="mgmt-org-type">
+                        <option value="">Select</option>
+                        <option value="city">City/Municipal</option>
+                        <option value="district">Water District</option>
+                        <option value="mutual">Mutual Water Company</option>
+                        <option value="private">Private Utility</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Financial Capacity Assessment</label>
+                    <textarea class="form-textarea" id="mgmt-financial" placeholder="Budget adequate? CIP funded? Rate structure supports operations? (Based on conversation with management)"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('mgmt-financial')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reliability & Redundancy Observations</label>
+                    <textarea class="form-textarea" id="mgmt-reliability" placeholder="Backup systems in place? Emergency response plan? Alarm systems functional?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('mgmt-reliability')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Security Observations</label>
+                    <textarea class="form-textarea" id="mgmt-security" placeholder="Physical security adequate (fencing, locks)? Cybersecurity measures? Access control?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('mgmt-security')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Management Notes</label>
+                    <textarea class="form-textarea" id="management-general-notes" placeholder="Overall TMF capacity, organizational structure, planning, communication..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('management-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operators Section (Element 8) -->
+        <div class="element-section" id="operators-section">
+            <div class="general-section">
+                <div class="section-title">Operator Compliance Overview</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Required Treatment Grade</label>
+                        <select class="form-select" id="op-req-treatment">
+                            <option value="">Select</option>
+                            <option value="na">N/A (No Treatment)</option>
+                            <option value="t1">T1</option>
+                            <option value="t2">T2</option>
+                            <option value="t3">T3</option>
+                            <option value="t4">T4</option>
+                            <option value="t5">T5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Required Distribution Grade</label>
+                        <select class="form-select" id="op-req-distribution">
+                            <option value="">Select</option>
+                            <option value="d1">D1</option>
+                            <option value="d2">D2</option>
+                            <option value="d3">D3</option>
+                            <option value="d4">D4</option>
+                            <option value="d5">D5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Compliance Status</label>
+                    <textarea class="form-textarea" id="op-compliance" placeholder="Do chief operators meet requirements? Adequate staffing? Certifications current?"></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('op-compliance')">🎤 Use Voice</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">General Operators Notes</label>
+                    <textarea class="form-textarea" id="operators-general-notes" placeholder="Overall operator capability, training, succession planning..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceNote('operators-general-notes')">🎤 Use Voice</button>
+                </div>
+            </div>
+            <div id="operators-list"></div>
+            <button class="action-btn" onclick="showAddAssetModal('operator')">+ Add Operator</button>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div class="modal" id="modal" onclick="closeModalOnBackdrop(event)">
+        <div class="modal-content" id="modalContent" onclick="event.stopPropagation()">
+            <!-- Modal content dynamically inserted -->
+        </div>
+    </div>
+
+    <!-- General Notes Button (shows during inspection) -->
+    <button class="general-notes-btn" id="generalNotesBtn" onclick="openGeneralNotes()">💬</button>
+
+    <!-- Notes Expansion Modal -->
+    <div class="notes-modal" id="notesModal" onclick="closeNotesModal(event)">
+        <div class="notes-modal-content" onclick="event.stopPropagation()">
+            <div class="notes-modal-header">
+                <div class="notes-modal-title" id="notesModalTitle">Notes</div>
+                <button class="notes-modal-close" onclick="closeNotesModal()">×</button>
+            </div>
+            <div class="notes-modal-body">
+                <!-- Content dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let appData = {
+            systems: [],
+            version: '4.0'
+        };
+
+        let currentScreen = 'systems';
+        let currentSystemId = null;
+        let currentInspectionId = null;
+        let currentElement = 'overview';
+        let recognition = null;
+        let currentVoiceTarget = null;
+
+        // Asset Type Definitions
+        const assetTypes = {
+            source: {
+                name: 'Well/Source',
+                icon: '💧',
+                color: 'source',
+                hasNested: false,
+                checklists: {
+                    'Wellhead Seal': ['Properly sealed', 'Sanitary seal intact', 'No visible damage'],
+                    'Fencing & Security': ['Fenced and secured', 'Gate locked', 'No unauthorized access'],
+                    'Vegetation & Drainage': ['Vegetation clearance adequate (100ft)', 'Proper drainage away from wellhead', 'No ponding near wellhead'],
+                    'Cross-Connection Hazards': ['No cross-connections visible', 'No potential contamination sources', 'Chemical storage separated']
+                }
+            },
+            storage: {
+                name: 'Storage Tank',
+                icon: '🏗️',
+                color: 'storage',
+                hasNested: false,
+                checklists: {
+                    'Vents': ['Vent present', 'Vent screen present', 'Screen in good condition', 'Properly sized (24-mesh minimum)'],
+                    'Hatch/Access': ['Hatch secured/locked', 'Gasket in good condition', 'No gaps or damage', 'Overlapping rim (min 2")'],
+                    'Overflow': ['Overflow pipe properly screened', 'Air gap maintained', 'Discharges to proper location'],
+                    'Exterior Condition': ['No rust/corrosion', 'Paint condition acceptable', 'No visible leaks', 'Structural integrity good'],
+                    'Access & Safety': ['Ladder/access in good condition', 'Safety equipment present', 'Level gauges operational'],
+                    'Fencing & Security': ['Fence adequate', 'Gate locked', 'No unauthorized access']
+                }
+            },
+            pump: {
+                name: 'Pump Station',
+                icon: '⚙️',
+                color: 'pump',
+                hasNested: true,
+                nestedType: 'pump',
+                nestedName: 'Pump',
+                checklists: {
+                    'Station Building/Enclosure': ['Proper ventilation', 'No water intrusion', 'Building secure', 'Lighting adequate'],
+                    'Backup Power': ['Generator present', 'Generator condition good', 'Fuel level adequate', 'Auto-transfer switch present'],
+                    'Electrical & Controls': ['Control panel condition good', 'Wiring properly secured', 'No exposed conductors', 'Alarm system functional'],
+                    'Safety & Access': ['Emergency shutoff accessible', 'Spill containment present', 'Safety signage posted', 'Fire extinguisher present']
+                }
+            },
+            treatment: {
+                name: 'Treatment Facility',
+                icon: '🧪',
+                color: 'treatment',
+                hasNested: true,
+                nestedType: 'process',
+                nestedName: 'Process/Filter',
+                checklists: {
+                    'Chemical Storage & Feed': ['Chemical storage secure', 'Secondary containment present', 'Proper ventilation', 'Safety shower/eyewash present', 'Feed equipment condition good'],
+                    'Building & Facility': ['Building condition good', 'No water intrusion', 'Proper ventilation', 'Housekeeping adequate'],
+                    'Piping & Valves': ['No visible leaks', 'Valves labeled and accessible', 'Piping condition good', 'No cross-connections'],
+                    'Safety & Security': ['Facility secured', 'Safety equipment present', 'Spill kits available', 'Emergency procedures posted']
+                }
+            },
+            distribution: {
+                name: 'Distribution Point',
+                icon: '🚰',
+                color: 'distribution',
+                hasNested: false,
+                checklists: {
+                    'Hydrants (if applicable)': ['Hydrant condition good', 'Accessible and unobstructed', 'No visible leaks', 'Painted and numbered'],
+                    'Valves (if applicable)': ['Valve box accessible', 'Valve operable', 'No visible leaks'],
+                    'PRV Stations (if applicable)': ['Station condition good', 'Pressure gauges readable', 'No visible leaks', 'Access maintained']
+                }
+            },
+            operator: {
+                name: 'Operator',
+                icon: '👷',
+                color: 'operator',
+                hasNested: false,
+                checklists: {
+                    'Certification': ['Certification current', 'Grade meets requirements', 'Certificate on file'],
+                    'Availability': ['Available for onsite duties', 'Adequate shift coverage', 'Emergency contact established']
+                }
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            
+            // Initialize speech recognition
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    if (currentVoiceTarget) {
+                        const target = document.getElementById(currentVoiceTarget);
+                        if (target) {
+                            target.value += (target.value ? ' ' : '') + transcript;
+                            target.dispatchEvent(new Event('change'));
+                        }
+                    }
+                };
+                
+                recognition.onerror = function(event) {
+                    if (event.error === 'not-allowed') {
+                        alert('Microphone access denied. Please allow microphone access.');
+                    }
+                };
+                
+                recognition.onend = function() {
+                    document.querySelectorAll('.voice-btn').forEach(btn => {
+                        btn.classList.remove('recording');
+                        btn.innerHTML = '🎤 Use Voice';
+                    });
+                };
+            }
+            
+            renderSystems();
+        });
+
+        // Data persistence
+        function loadData() {
+            const savedData = localStorage.getItem('ddwFieldInspectorV4');
+            if (savedData) {
+                appData = JSON.parse(savedData);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('ddwFieldInspectorV4', JSON.stringify(appData));
+        }
+
+        // Navigation
+        function showScreen(screen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screen + 'Screen').classList.add('active');
+            currentScreen = screen;
+            updateHeader();
+        }
+
+        function updateHeader() {
+            const backBtn = document.getElementById('backBtn');
+            const headerTitle = document.getElementById('headerTitle');
+            const breadcrumb = document.getElementById('breadcrumb');
+            const generalNotesBtn = document.getElementById('generalNotesBtn');
+            
+            if (currentScreen === 'systems') {
+                backBtn.style.display = 'none';
+                headerTitle.textContent = '🚰 Systems';
+                breadcrumb.style.display = 'none';
+                generalNotesBtn.classList.remove('active');
+            } else if (currentScreen === 'inspections') {
+                backBtn.style.display = 'flex';
+                const system = appData.systems.find(s => s.id === currentSystemId);
+                headerTitle.textContent = system ? system.name : 'Inspections';
+                breadcrumb.style.display = 'block';
+                breadcrumb.textContent = 'Select an inspection';
+                generalNotesBtn.classList.remove('active');
+            } else if (currentScreen === 'fieldInspector') {
+                backBtn.style.display = 'flex';
+                const system = appData.systems.find(s => s.id === currentSystemId);
+                const inspection = system?.inspections.find(i => i.id === currentInspectionId);
+                if (inspection) {
+                    const dateParts = inspection.date.split('-');
+                    const localDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                    headerTitle.textContent = localDate.toLocaleDateString();
+                } else {
+                    headerTitle.textContent = 'Field Inspector';
+                }
+                breadcrumb.style.display = 'block';
+                breadcrumb.textContent = system ? system.name : '';
+                generalNotesBtn.classList.add('active');
+            }
+        }
+
+        function goBack() {
+            if (currentScreen === 'fieldInspector') {
+                saveGeneralFields();
+                currentInspectionId = null;
+                showInspections(currentSystemId);
+            } else if (currentScreen === 'inspections') {
+                currentSystemId = null;
+                showScreen('systems');
+                renderSystems();
+            }
+        }
+
+        // Systems
+        function renderSystems() {
+            const container = document.getElementById('systemsList');
+            
+            if (appData.systems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🚰</div>
+                        <div>No systems yet</div>
+                        <div style="font-size: 0.85rem; margin-top: 8px;">Tap + to add your first water system</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = appData.systems.map(system => {
+                    const inspectionCount = system.inspections.length;
+                    
+                    return `
+                        <div class="card">
+                            <div class="card-title">${system.name}</div>
+                            <div class="card-meta">
+                                <span>${inspectionCount} inspection${inspectionCount !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <button style="flex: 1; padding: 10px; background: #2a5298; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;" onclick="event.stopPropagation(); window.location.href='ddw_system_data.html?systemId=${system.id}'">📊 View Data</button>
+                                <button style="flex: 1; padding: 10px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;" onclick="event.stopPropagation(); showInspections('${system.id}')">📋 Inspections</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function showAddSystemModal() {
+            const modalHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">Add System</div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <form id="addSystemForm" onsubmit="saveSystem(event)">
+                    <div class="form-group">
+                        <label class="form-label">System Name</label>
+                        <input type="text" class="form-input" id="systemNameInput" placeholder="e.g., Pine Valley Water District" required autofocus>
+                    </div>
+                    <button type="submit" class="save-btn">Create System</button>
+                </form>
+            `;
+            showModal(modalHTML);
+        }
+
+        function saveSystem(event) {
+            event.preventDefault();
+            
+            const system = {
+                id: Date.now().toString(),
+                name: document.getElementById('systemNameInput').value,
+                inspections: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            appData.systems.push(system);
+            saveData();
+            closeModal();
+            renderSystems();
+        }
+
+        // Inspections
+        function showInspections(systemId) {
+            currentSystemId = systemId;
+            showScreen('inspections');
+            renderInspections();
+        }
+
+        function renderInspections() {
+            const container = document.getElementById('inspectionsList');
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            
+            if (!system) return;
+            
+            if (system.inspections.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div>No inspections yet</div>
+                        <div style="font-size: 0.85rem; margin-top: 8px;">Tap + to start a new inspection</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = system.inspections
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .map(inspection => {
+                        const assets = inspection.assets || [];
+                        const issueCount = assets.filter(a => a.condition === 'poor' || a.condition === 'issue').length;
+                        
+                        const dateParts = inspection.date.split('-');
+                        const localDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                        
+                        return `
+                            <div class="card" data-inspection-id="${inspection.id}">
+                                <button class="card-delete-btn" onclick="event.stopPropagation(); deleteInspection('${inspection.id}')">🗑️</button>
+                                <div class="card-title">${localDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                ${issueCount > 0 ? `<div class="card-meta"><span class="card-badge badge-issue">⚠️ ${issueCount} issues</span></div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                
+                // Add long-press handlers to each card
+                document.querySelectorAll('.card[data-inspection-id]').forEach(card => {
+                    let pressTimer;
+                    const inspectionId = card.dataset.inspectionId;
+                    
+                    card.addEventListener('touchstart', (e) => {
+                        pressTimer = setTimeout(() => {
+                            card.classList.add('delete-mode');
+                        }, 500); // 500ms long press
+                    });
+                    
+                    card.addEventListener('touchend', () => {
+                        clearTimeout(pressTimer);
+                    });
+                    
+                    card.addEventListener('touchmove', () => {
+                        clearTimeout(pressTimer);
+                    });
+                    
+                    card.addEventListener('click', (e) => {
+                        if (card.classList.contains('delete-mode')) {
+                            card.classList.remove('delete-mode');
+                        } else {
+                            showFieldInspector(inspectionId);
+                        }
+                    });
+                });
+            }
+        }
+
+        function showAddInspectionModal() {
+            const modalHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">New Inspection</div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <form id="addInspectionForm" onsubmit="saveInspection(event)">
+                    <div class="form-group">
+                        <label class="form-label">Inspection Date</label>
+                        <input type="date" class="form-input" id="inspectionDateInput" value="${new Date().toISOString().split('T')[0]}" required autofocus>
+                    </div>
+                    <button type="submit" class="save-btn">Start Inspection</button>
+                </form>
+            `;
+            showModal(modalHTML);
+        }
+
+        function saveInspection(event) {
+            event.preventDefault();
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = {
+                id: Date.now().toString(),
+                date: document.getElementById('inspectionDateInput').value,
+                assets: [],
+                generalFields: {},
+                generalNotes: [],  // Array of {id, text, timestamp} objects
+                createdAt: new Date().toISOString()
+            };
+            
+            system.inspections.push(inspection);
+            saveData();
+            closeModal();
+            
+            showFieldInspector(inspection.id);
+        }
+
+        function deleteInspection(inspectionId) {
+            if (!confirm('Delete this entire inspection? This cannot be undone.')) return;
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            system.inspections = system.inspections.filter(i => i.id !== inspectionId);
+            saveData();
+            renderInspections();
+        }
+
+        // Field Inspector
+        function showFieldInspector(inspectionId) {
+            currentInspectionId = inspectionId;
+            showScreen('fieldInspector');
+            loadGeneralFields();
+            renderAssets();
+        }
+
+        function switchElement(element) {
+            saveGeneralFields();
+            
+            currentElement = element;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-element="${element}"]`).classList.add('active');
+            
+            document.querySelectorAll('.element-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(element + '-section').classList.add('active');
+            
+            loadGeneralFields();
+        }
+
+        // General Fields Management
+        function saveGeneralFields() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            if (!inspection.generalFields) inspection.generalFields = {};
+            
+            const section = document.getElementById(currentElement + '-section');
+            if (!section) return;
+            
+            const inputs = section.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.id) {
+                    if (input.type === 'checkbox') {
+                        inspection.generalFields[input.id] = input.checked;
+                    } else {
+                        inspection.generalFields[input.id] = input.value;
+                    }
+                }
+            });
+            
+            saveData();
+        }
+
+        function loadGeneralFields() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection || !inspection.generalFields) {
+                // Pre-fill system name in overview
+                if (currentElement === 'overview') {
+                    const nameInput = document.getElementById('overview-system-name');
+                    if (nameInput) nameInput.value = system.name;
+                }
+                return;
+            }
+            
+            const section = document.getElementById(currentElement + '-section');
+            if (!section) return;
+            
+            const inputs = section.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.id && inspection.generalFields[input.id] !== undefined) {
+                    if (input.type === 'checkbox') {
+                        input.checked = inspection.generalFields[input.id];
+                    } else {
+                        input.value = inspection.generalFields[input.id];
+                    }
+                }
+            });
+            
+            // Always pre-fill system name
+            if (currentElement === 'overview') {
+                const nameInput = document.getElementById('overview-system-name');
+                if (nameInput) nameInput.value = system.name;
+            }
+        }
+
+        // Auto-save on change
+        document.addEventListener('change', function(e) {
+            if (currentScreen === 'fieldInspector' && (e.target.classList.contains('form-input') || 
+                e.target.classList.contains('form-select') || 
+                e.target.classList.contains('form-textarea') ||
+                e.target.type === 'checkbox')) {
+                saveGeneralFields();
+            }
+        });
+
+        function renderAssets() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            if (!inspection.assets) inspection.assets = [];
+            
+            ['source', 'storage', 'pump', 'treatment', 'distribution', 'operator'].forEach(type => {
+                const assets = inspection.assets.filter(a => a.type === type);
+                const container = document.getElementById(type + 's-list') || document.getElementById(type + '-list');
+                
+                if (!container) return;
+                
+                if (assets.length === 0) {
+                    container.innerHTML = '';
+                } else {
+                    container.innerHTML = assets.map(asset => renderAssetCard(asset)).join('');
+                }
+            });
+        }
+
+        function renderAssetCard(asset) {
+            const assetType = assetTypes[asset.type];
+            const conditionIcon = {
+                'good': '✅',
+                'fair': '⚠️',
+                'poor': '❌',
+                'issue': '🚨'
+            }[asset.condition] || '';
+
+            let checklistHTML = '';
+            for (const [groupName, items] of Object.entries(assetType.checklists)) {
+                checklistHTML += `<div class="checklist-group-title">${groupName}</div>`;
+                items.forEach((item, idx) => {
+                    const checklistId = `${asset.id}-checklist-${groupName}-${idx}`;
+                    const isChecked = asset.checklist?.[groupName]?.[idx] || false;
+                    checklistHTML += `
+                        <div class="checklist-item">
+                            <input type="checkbox" id="${checklistId}" ${isChecked ? 'checked' : ''} onchange="updateAssetChecklist('${asset.id}', '${groupName}', ${idx}, this.checked)">
+                            <label for="${checklistId}">${item}</label>
+                        </div>
+                    `;
+                });
+            }
+
+            let photosHTML = '';
+            if (asset.photos && asset.photos.length > 0) {
+                photosHTML = `
+                    <div class="photo-preview">
+                        ${asset.photos.map((photo, idx) => `
+                            <div class="photo-item">
+                                <img src="${photo}" alt="Photo ${idx + 1}">
+                                <button class="photo-remove" onclick="removeAssetPhoto('${asset.id}', ${idx})">×</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Nested items (pumps or processes)
+            let nestedHTML = '';
+            if (assetType.hasNested && asset.nested && asset.nested.length > 0) {
+                nestedHTML = `
+                    <div class="nested-items">
+                        <div class="nested-title">Individual ${assetType.nestedName}s</div>
+                        ${asset.nested.map((item, idx) => `
+                            <div class="nested-item">
+                                <div class="nested-item-header">
+                                    <span>${item.name || `${assetType.nestedName} ${idx + 1}`}</span>
+                                    <button class="delete-nested-btn" onclick="deleteNestedItem('${asset.id}', ${idx})">Delete</button>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Name/ID</label>
+                                    <input type="text" class="form-input" value="${item.name || ''}" onchange="updateNestedItem('${asset.id}', ${idx}, 'name', this.value)">
+                                </div>
+                                ${asset.type === 'pump' ? `
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">HP</label>
+                                            <input type="number" class="form-input" value="${item.hp || ''}" onchange="updateNestedItem('${asset.id}', ${idx}, 'hp', this.value)">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">GPM</label>
+                                            <input type="number" class="form-input" value="${item.gpm || ''}" onchange="updateNestedItem('${asset.id}', ${idx}, 'gpm', this.value)">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Manufacturer</label>
+                                        <input type="text" class="form-input" value="${item.manufacturer || ''}" onchange="updateNestedItem('${asset.id}', ${idx}, 'manufacturer', this.value)">
+                                    </div>
+                                ` : ''}
+                                ${asset.type === 'treatment' ? `
+                                    <div class="form-group">
+                                        <label class="form-label">Process Type</label>
+                                        <select class="form-select" onchange="updateNestedItem('${asset.id}', ${idx}, 'processType', this.value)">
+                                            <option value="">Select Type</option>
+                                            <option value="filter" ${item.processType === 'filter' ? 'selected' : ''}>Filter</option>
+                                            <option value="chlorinator" ${item.processType === 'chlorinator' ? 'selected' : ''}>Chlorinator</option>
+                                            <option value="clarifier" ${item.processType === 'clarifier' ? 'selected' : ''}>Clarifier</option>
+                                            <option value="other" ${item.processType === 'other' ? 'selected' : ''}>Other</option>
+                                        </select>
+                                    </div>
+                                ` : ''}
+                                <div class="condition-section">
+                                    <div class="condition-title">Condition</div>
+                                    <div class="condition-buttons">
+                                        <button class="condition-btn good ${item.condition === 'good' ? 'selected' : ''}" onclick="updateNestedCondition('${asset.id}', ${idx}, 'good')">✅ Good</button>
+                                        <button class="condition-btn fair ${item.condition === 'fair' ? 'selected' : ''}" onclick="updateNestedCondition('${asset.id}', ${idx}, 'fair')">⚠️ Fair</button>
+                                        <button class="condition-btn poor ${item.condition === 'poor' ? 'selected' : ''}" onclick="updateNestedCondition('${asset.id}', ${idx}, 'poor')">❌ Poor</button>
+                                        <button class="condition-btn issue ${item.condition === 'issue' ? 'selected' : ''}" onclick="updateNestedCondition('${asset.id}', ${idx}, 'issue')">🚨 Issue</button>
+                                    </div>
+                                </div>
+                                <div class="notes-section">
+                                    <div class="notes-title">Notes</div>
+                                    <textarea class="notes-input" id="nested-notes-${asset.id}-${idx}" onchange="updateNestedItem('${asset.id}', ${idx}, 'notes', this.value)" onclick="openNotesExpansion('nested-notes-${asset.id}-${idx}', '${item.name || assetType.nestedName} Notes', (val) => updateNestedItem('${asset.id}', ${idx}, 'notes', val))">${item.notes || ''}</textarea>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <button class="add-nested-btn" onclick="addNestedItem('${asset.id}')">+ Add ${assetType.nestedName}</button>
+                    </div>
+                `;
+            } else if (assetType.hasNested) {
+                nestedHTML = `
+                    <div class="nested-items">
+                        <div class="nested-title">Individual ${assetType.nestedName}s</div>
+                        <button class="add-nested-btn" onclick="addNestedItem('${asset.id}')">+ Add ${assetType.nestedName}</button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="asset-card">
+                    <div class="asset-header ${assetType.color}">
+                        <div class="asset-title">
+                            ${assetType.icon} ${asset.name}
+                        </div>
+                        <div>${conditionIcon}</div>
+                    </div>
+                    <div class="asset-body">
+                        <div class="condition-section">
+                            <div class="condition-title">${assetType.hasNested ? 'Station/Facility' : ''} Overall Condition</div>
+                            <div class="condition-buttons">
+                                <button class="condition-btn good ${asset.condition === 'good' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'good')">✅ Good</button>
+                                <button class="condition-btn fair ${asset.condition === 'fair' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'fair')">⚠️ Fair</button>
+                                <button class="condition-btn poor ${asset.condition === 'poor' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'poor')">❌ Poor</button>
+                                <button class="condition-btn issue ${asset.condition === 'issue' ? 'selected' : ''}" onclick="updateAssetCondition('${asset.id}', 'issue')">🚨 Major Issue</button>
+                            </div>
+                        </div>
+
+                        <div class="checklist-section">
+                            ${checklistHTML}
+                        </div>
+
+                        <div class="notes-section">
+                            <div class="notes-title">${assetType.hasNested ? 'Station/Facility' : ''} Observations & Notes</div>
+                            <textarea class="notes-input" id="notes-${asset.id}" onchange="updateAssetNotes('${asset.id}', this.value)" onclick="openNotesExpansion('notes-${asset.id}', '${asset.name} Notes', (val) => updateAssetNotes('${asset.id}', val))">${asset.notes || ''}</textarea>
+                            <button class="voice-btn" onclick="startVoiceNote('notes-${asset.id}')">🎤 Use Voice</button>
+                        </div>
+
+                        <div class="photos-section">
+                            <div class="photos-title">${assetType.hasNested ? 'Station/Facility' : ''} Photos</div>
+                            <input type="file" accept="image/*" capture="environment" class="photo-input" id="photo-${asset.id}" onchange="addAssetPhoto('${asset.id}', this)">
+                            <button class="photo-btn" onclick="document.getElementById('photo-${asset.id}').click()">📷 Add Photo</button>
+                            ${photosHTML}
+                        </div>
+
+                        ${nestedHTML}
+
+                        <button class="delete-asset-btn" onclick="deleteAsset('${asset.id}')">🗑️ Delete ${assetType.name}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showAddAssetModal(type) {
+            const assetType = assetTypes[type];
+            const modalHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">Add ${assetType.name}</div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <form id="addAssetForm" onsubmit="saveAsset(event, '${type}')">
+                    <div class="form-group">
+                        <label class="form-label">${assetType.name} Name/ID</label>
+                        <input type="text" class="form-input" id="assetNameInput" placeholder="e.g., Well #3, Hillside Tank" required autofocus>
+                    </div>
+                    <button type="submit" class="save-btn">Add ${assetType.name}</button>
+                </form>
+            `;
+            showModal(modalHTML);
+        }
+
+        function saveAsset(event, type) {
+            event.preventDefault();
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = {
+                id: Date.now().toString(),
+                type: type,
+                name: document.getElementById('assetNameInput').value,
+                condition: '',
+                checklist: {},
+                notes: '',
+                photos: [],
+                nested: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            inspection.assets.push(asset);
+            saveData();
+            closeModal();
+            renderAssets();
+        }
+
+        function updateAssetCondition(assetId, condition) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            asset.condition = condition;
+            saveData();
+            renderAssets();
+        }
+
+        function updateAssetChecklist(assetId, groupName, idx, checked) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            if (!asset.checklist) asset.checklist = {};
+            if (!asset.checklist[groupName]) asset.checklist[groupName] = {};
+            
+            asset.checklist[groupName][idx] = checked;
+            saveData();
+        }
+
+        function updateAssetNotes(assetId, notes) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            asset.notes = notes;
+            saveData();
+        }
+
+        function addAssetPhoto(assetId, input) {
+            if (!input.files || !input.files[0]) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const system = appData.systems.find(s => s.id === currentSystemId);
+                if (!system) return;
+                
+                const inspection = system.inspections.find(i => i.id === currentInspectionId);
+                if (!inspection) return;
+                
+                const asset = inspection.assets.find(a => a.id === assetId);
+                if (!asset) return;
+                
+                if (!asset.photos) asset.photos = [];
+                asset.photos.push(e.target.result);
+                saveData();
+                renderAssets();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function removeAssetPhoto(assetId, photoIdx) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            asset.photos.splice(photoIdx, 1);
+            saveData();
+            renderAssets();
+        }
+
+        function deleteAsset(assetId) {
+            if (!confirm('Delete this asset? This cannot be undone.')) return;
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            inspection.assets = inspection.assets.filter(a => a.id !== assetId);
+            saveData();
+            renderAssets();
+        }
+
+        // Nested Items (Pumps within Station, Processes within Facility)
+        function addNestedItem(assetId) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            if (!asset.nested) asset.nested = [];
+            
+            const newItem = {
+                name: '',
+                condition: '',
+                notes: ''
+            };
+            
+            if (asset.type === 'pump') {
+                newItem.hp = '';
+                newItem.gpm = '';
+                newItem.manufacturer = '';
+            } else if (asset.type === 'treatment') {
+                newItem.processType = '';
+            }
+            
+            asset.nested.push(newItem);
+            saveData();
+            renderAssets();
+        }
+
+        function updateNestedItem(assetId, itemIdx, field, value) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset || !asset.nested || !asset.nested[itemIdx]) return;
+            
+            asset.nested[itemIdx][field] = value;
+            saveData();
+        }
+
+        function updateNestedCondition(assetId, itemIdx, condition) {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset || !asset.nested || !asset.nested[itemIdx]) return;
+            
+            asset.nested[itemIdx].condition = condition;
+            saveData();
+            renderAssets();
+        }
+
+        function deleteNestedItem(assetId, itemIdx) {
+            if (!confirm('Delete this item?')) return;
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const asset = inspection.assets.find(a => a.id === assetId);
+            if (!asset || !asset.nested) return;
+            
+            asset.nested.splice(itemIdx, 1);
+            saveData();
+            renderAssets();
+        }
+
+        // Voice Notes
+        function startVoiceNote(targetId) {
+            if (!recognition) {
+                alert('Voice recognition not supported on this device.');
+                return;
+            }
+
+            currentVoiceTarget = targetId;
+            const btn = event.target;
+            
+            if (btn.classList.contains('recording')) {
+                recognition.stop();
+                btn.classList.remove('recording');
+                btn.innerHTML = '🎤 Use Voice';
+            } else {
+                btn.classList.add('recording');
+                btn.innerHTML = '⏺️ Recording... (tap to stop)';
+                recognition.start();
+            }
+        }
+
+        // Modal
+        function showModal(html) {
+            document.getElementById('modalContent').innerHTML = html;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function closeModalOnBackdrop(event) {
+            if (event.target.id === 'modal') {
+                closeModal();
+            }
+        }
+
+        // General Notes
+        let currentEditingNoteId = null;
+
+        function openGeneralNotes() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            // Migrate old single note to array format
+            if (typeof inspection.generalNotes === 'string' && inspection.generalNotes) {
+                inspection.generalNotes = [{
+                    id: Date.now().toString(),
+                    text: inspection.generalNotes,
+                    timestamp: inspection.createdAt
+                }];
+                saveData();
+            }
+            
+            if (!Array.isArray(inspection.generalNotes)) {
+                inspection.generalNotes = [];
+            }
+            
+            const notesModal = document.getElementById('notesModal');
+            const notesModalTitle = document.getElementById('notesModalTitle');
+            const notesModalBody = document.querySelector('.notes-modal-body');
+            
+            notesModalTitle.textContent = 'General Inspection Notes';
+            
+            renderGeneralNotesList();
+            
+            notesModal.classList.add('active');
+        }
+
+        function renderGeneralNotesList() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const notesModalBody = document.querySelector('.notes-modal-body');
+            
+            if (currentEditingNoteId) {
+                // Show edit view
+                const note = inspection.generalNotes.find(n => n.id === currentEditingNoteId);
+                if (note) {
+                    notesModalBody.innerHTML = `
+                        <textarea class="notes-modal-textarea" id="editNoteTextarea" autofocus>${note.text}</textarea>
+                        <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('editNoteTextarea')">🎤 Use Voice</button>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="add-note-btn" style="background: #28a745;" onclick="saveEditedNote()">💾 Save Changes</button>
+                            <button class="add-note-btn" style="background: #6c757d;" onclick="cancelEditNote()">Cancel</button>
+                        </div>
+                    `;
+                }
+            } else {
+                // Show list view
+                const notesList = inspection.generalNotes
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .map(note => {
+                        const date = new Date(note.timestamp);
+                        const timeStr = date.toLocaleString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            hour: 'numeric', 
+                            minute: '2-digit',
+                            hour12: true 
+                        });
+                        
+                        return `
+                            <div class="note-item" onclick="editGeneralNote('${note.id}')">
+                                <div class="note-header">
+                                    <div class="note-timestamp">${timeStr}</div>
+                                    <button class="note-delete" onclick="event.stopPropagation(); deleteGeneralNote('${note.id}')">🗑️</button>
+                                </div>
+                                <div class="note-text">${note.text}</div>
+                            </div>
+                        `;
+                    }).join('');
+                
+                notesModalBody.innerHTML = `
+                    <button class="add-note-btn" onclick="addGeneralNote()">+ Add Note</button>
+                    ${inspection.generalNotes.length === 0 ? 
+                        '<div class="empty-notes">No notes yet. Tap "+ Add Note" to start.</div>' : 
+                        `<div class="notes-list">${notesList}</div>`
+                    }
+                `;
+            }
+        }
+
+        function addGeneralNote() {
+            currentEditingNoteId = 'new';
+            const notesModalBody = document.querySelector('.notes-modal-body');
+            
+            notesModalBody.innerHTML = `
+                <textarea class="notes-modal-textarea" id="newNoteTextarea" placeholder="Enter your observation..." autofocus></textarea>
+                <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('newNoteTextarea')">🎤 Use Voice</button>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="add-note-btn" style="background: #28a745;" onclick="saveNewNote()">💾 Save Note</button>
+                    <button class="add-note-btn" style="background: #6c757d;" onclick="cancelEditNote()">Cancel</button>
+                </div>
+            `;
+            
+            document.getElementById('newNoteTextarea').focus();
+        }
+
+        function saveNewNote() {
+            const textarea = document.getElementById('newNoteTextarea');
+            if (!textarea || !textarea.value.trim()) {
+                alert('Please enter some text for the note.');
+                return;
+            }
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const newNote = {
+                id: Date.now().toString(),
+                text: textarea.value.trim(),
+                timestamp: new Date().toISOString()
+            };
+            
+            inspection.generalNotes.push(newNote);
+            saveData();
+            currentEditingNoteId = null;
+            renderGeneralNotesList();
+        }
+
+        function editGeneralNote(noteId) {
+            currentEditingNoteId = noteId;
+            renderGeneralNotesList();
+        }
+
+        function saveEditedNote() {
+            const textarea = document.getElementById('editNoteTextarea');
+            if (!textarea || !textarea.value.trim()) {
+                alert('Note cannot be empty.');
+                return;
+            }
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            const note = inspection.generalNotes.find(n => n.id === currentEditingNoteId);
+            if (note) {
+                note.text = textarea.value.trim();
+                saveData();
+            }
+            
+            currentEditingNoteId = null;
+            renderGeneralNotesList();
+        }
+
+        function cancelEditNote() {
+            currentEditingNoteId = null;
+            renderGeneralNotesList();
+        }
+
+        function deleteGeneralNote(noteId) {
+            if (!confirm('Delete this note?')) return;
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            const inspection = system.inspections.find(i => i.id === currentInspectionId);
+            if (!inspection) return;
+            
+            inspection.generalNotes = inspection.generalNotes.filter(n => n.id !== noteId);
+            saveData();
+            renderGeneralNotesList();
+        }
+
+        // Notes Expansion Modal
+        let currentNotesTarget = null;
+        let currentNotesUpdateFn = null;
+
+        function openNotesExpansion(textareaId, title, updateFn) {
+            const textarea = document.getElementById(textareaId);
+            if (!textarea) return;
+            
+            currentNotesTarget = textareaId;
+            currentNotesUpdateFn = updateFn;
+            
+            const notesModal = document.getElementById('notesModal');
+            const notesModalTitle = document.getElementById('notesModalTitle');
+            const notesModalBody = document.querySelector('.notes-modal-body');
+            
+            notesModalTitle.textContent = title;
+            
+            notesModalBody.innerHTML = `
+                <textarea class="notes-modal-textarea" id="notesModalTextarea" placeholder="Enter your notes here...">${textarea.value}</textarea>
+                <button class="voice-btn" style="margin-top: 12px;" onclick="startVoiceNote('notesModalTextarea')">🎤 Use Voice</button>
+            `;
+            
+            const notesModalTextarea = document.getElementById('notesModalTextarea');
+            notesModal.classList.add('active');
+            
+            // Auto-save on change
+            notesModalTextarea.onchange = () => {
+                textarea.value = notesModalTextarea.value;
+                if (currentNotesUpdateFn) {
+                    currentNotesUpdateFn(notesModalTextarea.value);
+                }
+            };
+            
+            // Auto-save on input with debounce
+            let saveTimeout;
+            notesModalTextarea.oninput = () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    textarea.value = notesModalTextarea.value;
+                    if (currentNotesUpdateFn) {
+                        currentNotesUpdateFn(notesModalTextarea.value);
+                    }
+                }, 1000);
+            };
+        }
+
+        function closeNotesModal(event) {
+            if (event && event.target.id !== 'notesModal') return;
+            
+            const notesModal = document.getElementById('notesModal');
+            const notesModalTextarea = document.getElementById('notesModalTextarea');
+            
+            // Final save before closing (for expandable textarea notes)
+            if (currentNotesTarget && notesModalTextarea) {
+                const textarea = document.getElementById(currentNotesTarget);
+                if (textarea) {
+                    textarea.value = notesModalTextarea.value;
+                    if (currentNotesUpdateFn) {
+                        currentNotesUpdateFn(notesModalTextarea.value);
+                    }
+                }
+            }
+            
+            notesModal.classList.remove('active');
+            currentNotesTarget = null;
+            currentNotesUpdateFn = null;
+            currentEditingNoteId = null;
+        }
+    </script>
+</body>
+</html>
