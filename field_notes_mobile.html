@@ -1519,10 +1519,14 @@
                     const inspectionCount = system.inspections.length;
                     
                     return `
-                        <div class="card" onclick="showInspections('${system.id}')">
+                        <div class="card">
                             <div class="card-title">${system.name}</div>
                             <div class="card-meta">
                                 <span>${inspectionCount} inspection${inspectionCount !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <button style="flex: 1; padding: 10px; background: #2a5298; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;" onclick="event.stopPropagation(); window.location.href='ddw_system_data.html?systemId=${system.id}'">📊 View Data</button>
+                                <button style="flex: 1; padding: 10px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;" onclick="event.stopPropagation(); showInspections('${system.id}')">📋 Inspections</button>
                             </div>
                         </div>
                     `;
