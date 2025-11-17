@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>DDW System Data Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f2f2f7;
+            color: #000;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3a6b 100%);
+            color: white;
+            padding: max(env(safe-area-inset-top), 20px) 20px 20px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .breadcrumb {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 77px;
+            z-index: 90;
+        }
+
+        .tab-btn {
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #f2f2f7;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+
+        /* Content */
+        .content {
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .data-section {
+            display: none;
+        }
+
+        .data-section.active {
+            display: block;
+        }
+
+        /* Form Sections */
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #2a5298;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* Save Button */
+        .save-btn {
+            position: fixed;
+            bottom: max(env(safe-area-inset-bottom), 20px);
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 30px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .save-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* List Items */
+        .list-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            color: #2a5298;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .add-item-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .add-item-btn:active {
+            background: #1e3a6b;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e93;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        /* Deficiency Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-open {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-closed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .type-significant {
+            background: #dc3545;
+            color: white;
+        }
+
+        .type-minor {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .type-recommendation {
+            background: #17a2b8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1 id="headerTitle">📊 System Data</h1>
+            <button class="back-btn" onclick="goBack()">← Back</button>
+        </div>
+        <div class="breadcrumb" id="breadcrumb">Loading...</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" id="dataTabs">
+        <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+        <button class="tab-btn" onclick="switchTab('permits')">Permits</button>
+        <button class="tab-btn" onclick="switchTab('sources')">Sources</button>
+        <button class="tab-btn" onclick="switchTab('treatment')">Treatment</button>
+        <button class="tab-btn" onclick="switchTab('distribution')">Distribution</button>
+        <button class="tab-btn" onclick="switchTab('storage')">Storage</button>
+        <button class="tab-btn" onclick="switchTab('pumps')">Pumps</button>
+        <button class="tab-btn" onclick="switchTab('monitoring')">Monitoring</button>
+        <button class="tab-btn" onclick="switchTab('management')">Management</button>
+        <button class="tab-btn" onclick="switchTab('operators')">Operators</button>
+        <button class="tab-btn" onclick="switchTab('deficiencies')">Deficiencies</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Overview Section -->
+        <div class="data-section active" id="overview-section">
+            <div class="form-section">
+                <div class="section-title">System Overview</div>
+                <div class="form-group">
+                    <label class="form-label">PWS Number</label>
+                    <input type="text" class="form-input" id="pws-number" placeholder="CA0000000">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">System Classification</label>
+                        <select class="form-select" id="classification">
+                            <option value="">Select...</option>
+                            <option value="CWS">CWS - Community</option>
+                            <option value="NTNC">NTNC - Non-Transient Non-Community</option>
+                            <option value="TNC">TNC - Transient Non-Community</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Population Served</label>
+                        <input type="number" class="form-input" id="population" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Service Connections</label>
+                        <input type="number" class="form-input" id="connections" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ownership Type</label>
+                        <select class="form-select" id="ownership">
+                            <option value="">Select...</option>
+                            <option value="Public">Public</option>
+                            <option value="Private">Private</option>
+                            <option value="Mutual">Mutual</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Primary Contact Name</label>
+                    <input type="text" class="form-input" id="contact-name" placeholder="Full Name">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Contact Phone</label>
+                        <input type="tel" class="form-input" id="contact-phone" placeholder="(555) 555-5555">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact Email</label>
+                        <input type="email" class="form-input" id="contact-email" placeholder="email@example.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Area Description</label>
+                    <textarea class="form-textarea" id="service-area" placeholder="Describe the service area, location, topography, climate..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">System Address/Location</label>
+                    <textarea class="form-textarea" id="location" placeholder="Street address, city, county..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Last Sanitary Survey</label>
+                        <input type="date" class="form-input" id="last-survey">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Next Survey Due</label>
+                        <input type="date" class="form-input" id="next-survey">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permits Section -->
+        <div class="data-section" id="permits-section">
+            <div class="form-section">
+                <div class="section-title">Current Permit</div>
+                <div class="form-group">
+                    <label class="form-label">Permit Number</label>
+                    <input type="text" class="form-input" id="permit-number" placeholder="02-XX-XXXX">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Issue Date</label>
+                        <input type="date" class="form-input" id="permit-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Permit Status</label>
+                        <select class="form-select" id="permit-status">
+                            <option value="">Select...</option>
+                            <option value="Active">Active</option>
+                            <option value="Pending Amendment">Pending Amendment</option>
+                            <option value="Expired">Expired</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Outstanding Permit Conditions</label>
+                    <textarea class="form-textarea" id="permit-conditions" placeholder="List any outstanding conditions..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Amendments</div>
+                <div id="amendments-list"></div>
+                <button class="add-item-btn" onclick="addAmendment()">+ Add Amendment</button>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Compliance History (Past 3 Years)</div>
+                <div class="form-group">
+                    <label class="form-label">Violations</label>
+                    <textarea class="form-textarea" id="violations" placeholder="List violations, dates, status, resolution..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">MCL Exceedances</label>
+                    <textarea class="form-textarea" id="mcl-exceedances" placeholder="List MCL exceedances, contaminants, dates..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Compliance Notes</label>
+                    <textarea class="form-textarea" id="compliance-notes" placeholder="Additional compliance information..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sources Section -->
+        <div class="data-section" id="sources-section">
+            <div class="form-section">
+                <div class="section-title">Water Sources</div>
+                <div id="sources-list"></div>
+                <button class="add-item-btn" onclick="addSource()">+ Add Source</button>
+            </div>
+        </div>
+
+        <!-- Treatment Section -->
+        <div class="data-section" id="treatment-section">
+            <div class="form-section">
+                <div class="section-title">Treatment Information</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Treatment Classification</label>
+                        <select class="form-select" id="treatment-class">
+                            <option value="">Select...</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                            <option value="None">No Treatment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rated Capacity (MGD)</label>
+                        <input type="number" step="0.01" class="form-input" id="treatment-capacity" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Treatment Type</label>
+                    <input type="text" class="form-input" id="treatment-type" placeholder="e.g., Conventional, Membrane, Blending">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Treatment Processes</label>
+                    <textarea class="form-textarea" id="treatment-processes" placeholder="List all treatment processes (coagulation, sedimentation, filtration, disinfection, etc.)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Operations Plan Date</label>
+                    <input type="date" class="form-input" id="ops-plan-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Treatment Challenges/Notes</label>
+                    <textarea class="form-textarea" id="treatment-notes" placeholder="Water quality challenges, seasonal issues, performance notes..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Chemical Storage</div>
+                <div id="chemicals-list"></div>
+                <button class="add-item-btn" onclick="addChemical()">+ Add Chemical</button>
+            </div>
+        </div>
+
+        <!-- Distribution Section -->
+        <div class="data-section" id="distribution-section">
+            <div class="form-section">
+                <div class="section-title">Distribution System</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Distribution Classification</label>
+                        <select class="form-select" id="dist-class">
+                            <option value="">Select...</option>
+                            <option value="D1">D1</option>
+                            <option value="D2">D2</option>
+                            <option value="D3">D3</option>
+                            <option value="D4">D4</option>
+                            <option value="D5">D5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Pipe Miles</label>
+                        <input type="number" step="0.1" class="form-input" id="pipe-miles" placeholder="0.0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pressure Zones</label>
+                    <input type="text" class="form-input" id="pressure-zones" placeholder="e.g., Zone 1, Zone 2, High Zone">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pipe Materials & Ages</label>
+                    <textarea class="form-textarea" id="pipe-materials" placeholder="AC: 60% (avg 50 yrs), DI: 20% (avg 30 yrs), PVC: 15% (avg 20 yrs), etc."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Valve Count</label>
+                        <input type="number" class="form-input" id="valve-count" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hydrant Count</label>
+                        <input type="number" class="form-input" id="hydrant-count" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Valve Exercise Program</label>
+                    <textarea class="form-textarea" id="valve-program" placeholder="Frequency, % exercised annually, schedule..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Flushing Program</label>
+                    <textarea class="form-textarea" id="flushing-program" placeholder="Frequency, dead-end flushing schedule..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Main Break History</label>
+                    <input type="text" class="form-input" id="main-breaks" placeholder="Average breaks per year">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Cross-Connection Control</div>
+                <div class="form-group">
+                    <label class="form-label">Program Coordinator</label>
+                    <input type="text" class="form-input" id="ccc-coordinator" placeholder="Name & Certification">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Last Survey Date</label>
+                        <input type="date" class="form-input" id="ccc-survey-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Backflow Device Count</label>
+                        <input type="number" class="form-input" id="backflow-count" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Test Compliance Rate</label>
+                    <input type="text" class="form-input" id="test-compliance" placeholder="e.g., 98%">
+                </div>
+            </div>
+        </div>
+
+        <!-- Storage Section -->
+        <div class="data-section" id="storage-section">
+            <div class="form-section">
+                <div class="section-title">Finished Water Storage Tanks</div>
+                <div id="storage-list"></div>
+                <button class="add-item-btn" onclick="addStorage()">+ Add Storage Tank</button>
+            </div>
+        </div>
+
+        <!-- Pumps Section -->
+        <div class="data-section" id="pumps-section">
+            <div class="form-section">
+                <div class="section-title">Pump Stations</div>
+                <div id="pumps-list"></div>
+                <button class="add-item-btn" onclick="addPump()">+ Add Pump Station</button>
+            </div>
+        </div>
+
+        <!-- Monitoring Section -->
+        <div class="data-section" id="monitoring-section">
+            <div class="form-section">
+                <div class="section-title">Primary Standards Monitoring</div>
+                <div class="form-group">
+                    <label class="form-label">IOC Schedule & Last Sample</label>
+                    <input type="text" class="form-input" id="ioc-schedule" placeholder="Triennial - Last: MM/YYYY">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nitrate Schedule & Last Sample</label>
+                    <input type="text" class="form-input" id="nitrate-schedule" placeholder="Quarterly/Annual - Last: MM/YYYY">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">VOC Schedule & Last Sample</label>
+                    <input type="text" class="form-input" id="voc-schedule" placeholder="Triennial - Last: MM/YYYY">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">SOC Schedule & Last Sample</label>
+                    <input type="text" class="form-input" id="soc-schedule" placeholder="2Q/3yrs - Last: MM/YYYY">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Radionuclides Schedule & Last Sample</label>
+                    <input type="text" class="form-input" id="rad-schedule" placeholder="6-9 years - Last: MM/YYYY">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Active Waivers</label>
+                    <textarea class="form-textarea" id="waivers" placeholder="List waivers and expiration dates..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Bacteriological (TCR/rTCR)</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Required Samples/Month</label>
+                        <input type="number" class="form-input" id="tcr-samples" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">BSSP Approval Date</label>
+                        <input type="date" class="form-input" id="bssp-date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last TCR Detection</label>
+                    <input type="date" class="form-input" id="last-tcr">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Level 1/2 Assessments</label>
+                    <textarea class="form-textarea" id="assessments" placeholder="List any assessments and dates..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Disinfection Byproducts</div>
+                <div class="form-group">
+                    <label class="form-label">TTHM/HAA5 Monitoring Frequency</label>
+                    <select class="form-select" id="dbp-freq">
+                        <option value="">Select...</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Reduced">Reduced</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sample Locations</label>
+                    <input type="text" class="form-input" id="dbp-locations" placeholder="Number of locations">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Recent LRAA Values</label>
+                    <input type="text" class="form-input" id="lraa-values" placeholder="TTHM: XX µg/L, HAA5: XX µg/L">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Lead & Copper Rule</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">LCR Schedule</label>
+                        <select class="form-select" id="lcr-schedule">
+                            <option value="">Select...</option>
+                            <option value="Annual">Annual</option>
+                            <option value="Triennial">Triennial</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Sample Date</label>
+                        <input type="date" class="form-input" id="lcr-date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">90th Percentile Values</label>
+                    <input type="text" class="form-input" id="lcr-90th" placeholder="Lead: XX µg/L, Copper: XX µg/L">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Line Inventory Status</label>
+                    <textarea class="form-textarea" id="service-lines" placeholder="Completion status, lead lines identified, replacement plan..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">SWTR Compliance (if applicable)</div>
+                <div class="form-group">
+                    <label class="form-label">CT Compliance</label>
+                    <textarea class="form-textarea" id="ct-compliance" placeholder="Contact time requirements, baffling factors..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Turbidity Compliance</label>
+                    <input type="text" class="form-input" id="turbidity-compliance" placeholder="CFE turbidity range">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Monthly Reporting Status</label>
+                    <select class="form-select" id="swtr-reporting">
+                        <option value="">Select...</option>
+                        <option value="Current">Current</option>
+                        <option value="Overdue">Overdue</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Reporting Compliance</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">eAR Submission Status</label>
+                        <select class="form-select" id="ear-status">
+                            <option value="">Select...</option>
+                            <option value="Current">Current</option>
+                            <option value="Incomplete">Incomplete</option>
+                            <option value="Overdue">Overdue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CCR Distribution Date</label>
+                        <input type="date" class="form-input" id="ccr-date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Overdue Reports</label>
+                    <textarea class="form-textarea" id="overdue-reports" placeholder="List any overdue reports..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Section -->
+        <div class="data-section" id="management-section">
+            <div class="form-section">
+                <div class="section-title">Organization</div>
+                <div class="form-group">
+                    <label class="form-label">Ownership Structure</label>
+                    <textarea class="form-textarea" id="ownership-structure" placeholder="Describe ownership and management structure..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Staffing Levels</label>
+                    <textarea class="form-textarea" id="staffing" placeholder="Number of staff, roles, adequacy..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Emergency Contact Info</label>
+                    <textarea class="form-textarea" id="emergency-contact" placeholder="24/7 contact information..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Planning Documents</div>
+                <div class="form-group">
+                    <label class="form-label">Capital Improvement Plan Date</label>
+                    <input type="date" class="form-input" id="cip-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Urban Water Management Plan Date</label>
+                    <input type="date" class="form-input" id="uwmp-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Water Shortage Contingency Plan Date</label>
+                    <input type="date" class="form-input" id="wscp-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Emergency Response Plan Date</label>
+                    <input type="date" class="form-input" id="erp-date">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Reliability & Redundancy</div>
+                <div class="form-group">
+                    <label class="form-label">SCADA System</label>
+                    <textarea class="form-textarea" id="scada" placeholder="SCADA capabilities, monitoring, control..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Alarm Systems</label>
+                    <textarea class="form-textarea" id="alarms" placeholder="Types of alarms, monitoring, response..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Backup Power</label>
+                    <textarea class="form-textarea" id="backup-power" placeholder="Generator locations, capacity, fuel type..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Redundancy Notes</label>
+                    <textarea class="form-textarea" id="redundancy" placeholder="Redundant equipment, spare parts inventory..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Security</div>
+                <div class="form-group">
+                    <label class="form-label">Physical Security Measures</label>
+                    <textarea class="form-textarea" id="physical-security" placeholder="Fencing, locks, cameras, intrusion alarms..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">IT Security Program</label>
+                    <textarea class="form-textarea" id="it-security" placeholder="Cybersecurity measures, training, protocols..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Risk & Resilience Assessment Date</label>
+                    <input type="date" class="form-input" id="rra-date">
+                    <small style="color: #6c757d;">Required for systems >3,300 population</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">EPRP Update Date</label>
+                    <input type="date" class="form-input" id="eprp-date">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Climate Vulnerability</div>
+                <div class="form-group">
+                    <label class="form-label">eAR Climate Assessment Status</label>
+                    <select class="form-select" id="climate-status">
+                        <option value="">Select...</option>
+                        <option value="Complete">Complete</option>
+                        <option value="Incomplete">Incomplete</option>
+                        <option value="Not Started">Not Started</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Identified Vulnerabilities</label>
+                    <textarea class="form-textarea" id="vulnerabilities" placeholder="Drought, flooding, wildfire, landslide, extreme weather..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mitigation Actions</label>
+                    <textarea class="form-textarea" id="mitigation" placeholder="Actions taken or planned to address vulnerabilities..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operators Section -->
+        <div class="data-section" id="operators-section">
+            <div class="form-section">
+                <div class="section-title">Chief Treatment Operator</div>
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="chief-treatment-name" placeholder="Full Name">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Cert Level</label>
+                        <select class="form-select" id="chief-treatment-level">
+                            <option value="">Select...</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cert Number</label>
+                        <input type="text" class="form-input" id="chief-treatment-cert" placeholder="XXXXX">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cert Expiration</label>
+                    <input type="date" class="form-input" id="chief-treatment-exp">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Chief Distribution Operator</div>
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="chief-dist-name" placeholder="Full Name">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Cert Level</label>
+                        <select class="form-select" id="chief-dist-level">
+                            <option value="">Select...</option>
+                            <option value="D1">D1</option>
+                            <option value="D2">D2</option>
+                            <option value="D3">D3</option>
+                            <option value="D4">D4</option>
+                            <option value="D5">D5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cert Number</label>
+                        <input type="text" class="form-input" id="chief-dist-cert" placeholder="XXXXX">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cert Expiration</label>
+                    <input type="date" class="form-input" id="chief-dist-exp">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Shift Operators</div>
+                <div id="shift-operators-list"></div>
+                <button class="add-item-btn" onclick="addShiftOperator()">+ Add Shift Operator</button>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Staffing</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Required Treatment Cert</label>
+                        <input type="text" class="form-input" id="req-treatment-cert" placeholder="e.g., T3">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Required Distribution Cert</label>
+                        <input type="text" class="form-input" id="req-dist-cert" placeholder="e.g., D3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Staffing Adequacy Notes</label>
+                    <textarea class="form-textarea" id="staffing-notes" placeholder="Number of operators, 24/7 coverage, succession planning..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deficiencies Section -->
+        <div class="data-section" id="deficiencies-section">
+            <div class="form-section">
+                <div class="section-title">Previous Deficiencies</div>
+                <div id="deficiencies-list"></div>
+                <button class="add-item-btn" onclick="addDeficiency()">+ Add Deficiency</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Button -->
+    <button class="save-btn" onclick="saveAllData()">💾 Save All</button>
+
+    <script>
+        // App State
+        let appData = {
+            systems: [],
+            version: '4.0'
+        };
+
+        let currentSystemId = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            
+            // Get system ID from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            currentSystemId = urlParams.get('systemId');
+            
+            if (!currentSystemId) {
+                alert('No system selected');
+                window.location.href = 'ddw_field_inspector.html';
+                return;
+            }
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) {
+                alert('System not found');
+                window.location.href = 'ddw_field_inspector.html';
+                return;
+            }
+            
+            // Initialize system data structure if not exists
+            if (!system.systemData) {
+                system.systemData = {
+                    overview: {},
+                    permits: { amendments: [] },
+                    sources: [],
+                    treatment: { chemicals: [] },
+                    distribution: {},
+                    storage: [],
+                    pumps: [],
+                    monitoring: {},
+                    management: {},
+                    operators: { shiftOperators: [] },
+                    deficiencies: []
+                };
+            }
+            
+            updateHeader();
+            loadAllData();
+        });
+
+        // Data persistence
+        function loadData() {
+            const savedData = localStorage.getItem('ddwFieldInspectorV4');
+            if (savedData) {
+                appData = JSON.parse(savedData);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('ddwFieldInspectorV4', JSON.stringify(appData));
+        }
+
+        // Navigation
+        function updateHeader() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (system) {
+                document.getElementById('headerTitle').textContent = system.name;
+                document.getElementById('breadcrumb').textContent = 'System Data Management';
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'ddw_field_inspector.html';
+        }
+
+        // Tab switching
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update sections
+            document.querySelectorAll('.data-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(tab + '-section').classList.add('active');
+        }
+
+        // Load all data into forms
+        function loadAllData() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system || !system.systemData) return;
+            
+            const data = system.systemData;
+            
+            // Overview
+            if (data.overview) {
+                setValueIfExists('pws-number', data.overview.pwsNumber);
+                setValueIfExists('classification', data.overview.classification);
+                setValueIfExists('population', data.overview.population);
+                setValueIfExists('connections', data.overview.connections);
+                setValueIfExists('ownership', data.overview.ownership);
+                setValueIfExists('contact-name', data.overview.contactName);
+                setValueIfExists('contact-phone', data.overview.contactPhone);
+                setValueIfExists('contact-email', data.overview.contactEmail);
+                setValueIfExists('service-area', data.overview.serviceArea);
+                setValueIfExists('location', data.overview.location);
+                setValueIfExists('last-survey', data.overview.lastSurvey);
+                setValueIfExists('next-survey', data.overview.nextSurvey);
+            }
+            
+            // Permits
+            if (data.permits) {
+                setValueIfExists('permit-number', data.permits.permitNumber);
+                setValueIfExists('permit-date', data.permits.permitDate);
+                setValueIfExists('permit-status', data.permits.permitStatus);
+                setValueIfExists('permit-conditions', data.permits.permitConditions);
+                setValueIfExists('violations', data.permits.violations);
+                setValueIfExists('mcl-exceedances', data.permits.mclExceedances);
+                setValueIfExists('compliance-notes', data.permits.complianceNotes);
+                renderAmendments();
+            }
+            
+            // Sources
+            renderSources();
+            
+            // Treatment
+            if (data.treatment) {
+                setValueIfExists('treatment-class', data.treatment.classification);
+                setValueIfExists('treatment-capacity', data.treatment.capacity);
+                setValueIfExists('treatment-type', data.treatment.type);
+                setValueIfExists('treatment-processes', data.treatment.processes);
+                setValueIfExists('ops-plan-date', data.treatment.opsPlanDate);
+                setValueIfExists('treatment-notes', data.treatment.notes);
+                renderChemicals();
+            }
+            
+            // Distribution
+            if (data.distribution) {
+                setValueIfExists('dist-class', data.distribution.classification);
+                setValueIfExists('pipe-miles', data.distribution.pipeMiles);
+                setValueIfExists('pressure-zones', data.distribution.pressureZones);
+                setValueIfExists('pipe-materials', data.distribution.pipeMaterials);
+                setValueIfExists('valve-count', data.distribution.valveCount);
+                setValueIfExists('hydrant-count', data.distribution.hydrantCount);
+                setValueIfExists('valve-program', data.distribution.valveProgram);
+                setValueIfExists('flushing-program', data.distribution.flushingProgram);
+                setValueIfExists('main-breaks', data.distribution.mainBreaks);
+                setValueIfExists('ccc-coordinator', data.distribution.cccCoordinator);
+                setValueIfExists('ccc-survey-date', data.distribution.cccSurveyDate);
+                setValueIfExists('backflow-count', data.distribution.backflowCount);
+                setValueIfExists('test-compliance', data.distribution.testCompliance);
+            }
+            
+            // Storage
+            renderStorage();
+            
+            // Pumps
+            renderPumps();
+            
+            // Monitoring
+            if (data.monitoring) {
+                setValueIfExists('ioc-schedule', data.monitoring.iocSchedule);
+                setValueIfExists('nitrate-schedule', data.monitoring.nitrateSchedule);
+                setValueIfExists('voc-schedule', data.monitoring.vocSchedule);
+                setValueIfExists('soc-schedule', data.monitoring.socSchedule);
+                setValueIfExists('rad-schedule', data.monitoring.radSchedule);
+                setValueIfExists('waivers', data.monitoring.waivers);
+                setValueIfExists('tcr-samples', data.monitoring.tcrSamples);
+                setValueIfExists('bssp-date', data.monitoring.bsspDate);
+                setValueIfExists('last-tcr', data.monitoring.lastTcr);
+                setValueIfExists('assessments', data.monitoring.assessments);
+                setValueIfExists('dbp-freq', data.monitoring.dbpFreq);
+                setValueIfExists('dbp-locations', data.monitoring.dbpLocations);
+                setValueIfExists('lraa-values', data.monitoring.lraaValues);
+                setValueIfExists('lcr-schedule', data.monitoring.lcrSchedule);
+                setValueIfExists('lcr-date', data.monitoring.lcrDate);
+                setValueIfExists('lcr-90th', data.monitoring.lcr90th);
+                setValueIfExists('service-lines', data.monitoring.serviceLines);
+                setValueIfExists('ct-compliance', data.monitoring.ctCompliance);
+                setValueIfExists('turbidity-compliance', data.monitoring.turbidityCompliance);
+                setValueIfExists('swtr-reporting', data.monitoring.swtrReporting);
+                setValueIfExists('ear-status', data.monitoring.earStatus);
+                setValueIfExists('ccr-date', data.monitoring.ccrDate);
+                setValueIfExists('overdue-reports', data.monitoring.overdueReports);
+            }
+            
+            // Management
+            if (data.management) {
+                setValueIfExists('ownership-structure', data.management.ownershipStructure);
+                setValueIfExists('staffing', data.management.staffing);
+                setValueIfExists('emergency-contact', data.management.emergencyContact);
+                setValueIfExists('cip-date', data.management.cipDate);
+                setValueIfExists('uwmp-date', data.management.uwmpDate);
+                setValueIfExists('wscp-date', data.management.wscpDate);
+                setValueIfExists('erp-date', data.management.erpDate);
+                setValueIfExists('scada', data.management.scada);
+                setValueIfExists('alarms', data.management.alarms);
+                setValueIfExists('backup-power', data.management.backupPower);
+                setValueIfExists('redundancy', data.management.redundancy);
+                setValueIfExists('physical-security', data.management.physicalSecurity);
+                setValueIfExists('it-security', data.management.itSecurity);
+                setValueIfExists('rra-date', data.management.rraDate);
+                setValueIfExists('eprp-date', data.management.eprpDate);
+                setValueIfExists('climate-status', data.management.climateStatus);
+                setValueIfExists('vulnerabilities', data.management.vulnerabilities);
+                setValueIfExists('mitigation', data.management.mitigation);
+            }
+            
+            // Operators
+            if (data.operators) {
+                setValueIfExists('chief-treatment-name', data.operators.chiefTreatmentName);
+                setValueIfExists('chief-treatment-level', data.operators.chiefTreatmentLevel);
+                setValueIfExists('chief-treatment-cert', data.operators.chiefTreatmentCert);
+                setValueIfExists('chief-treatment-exp', data.operators.chiefTreatmentExp);
+                setValueIfExists('chief-dist-name', data.operators.chiefDistName);
+                setValueIfExists('chief-dist-level', data.operators.chiefDistLevel);
+                setValueIfExists('chief-dist-cert', data.operators.chiefDistCert);
+                setValueIfExists('chief-dist-exp', data.operators.chiefDistExp);
+                setValueIfExists('req-treatment-cert', data.operators.reqTreatmentCert);
+                setValueIfExists('req-dist-cert', data.operators.reqDistCert);
+                setValueIfExists('staffing-notes', data.operators.staffingNotes);
+                renderShiftOperators();
+            }
+            
+            // Deficiencies
+            renderDeficiencies();
+        }
+
+        function setValueIfExists(id, value) {
+            const element = document.getElementById(id);
+            if (element && value !== undefined && value !== null) {
+                element.value = value;
+            }
+        }
+
+        // Save all data
+        function saveAllData() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return;
+            
+            if (!system.systemData) {
+                system.systemData = {};
+            }
+            
+            // Overview
+            system.systemData.overview = {
+                pwsNumber: document.getElementById('pws-number').value,
+                classification: document.getElementById('classification').value,
+                population: document.getElementById('population').value,
+                connections: document.getElementById('connections').value,
+                ownership: document.getElementById('ownership').value,
+                contactName: document.getElementById('contact-name').value,
+                contactPhone: document.getElementById('contact-phone').value,
+                contactEmail: document.getElementById('contact-email').value,
+                serviceArea: document.getElementById('service-area').value,
+                location: document.getElementById('location').value,
+                lastSurvey: document.getElementById('last-survey').value,
+                nextSurvey: document.getElementById('next-survey').value
+            };
+            
+            // Permits
+            if (!system.systemData.permits) system.systemData.permits = { amendments: [] };
+            system.systemData.permits.permitNumber = document.getElementById('permit-number').value;
+            system.systemData.permits.permitDate = document.getElementById('permit-date').value;
+            system.systemData.permits.permitStatus = document.getElementById('permit-status').value;
+            system.systemData.permits.permitConditions = document.getElementById('permit-conditions').value;
+            system.systemData.permits.violations = document.getElementById('violations').value;
+            system.systemData.permits.mclExceedances = document.getElementById('mcl-exceedances').value;
+            system.systemData.permits.complianceNotes = document.getElementById('compliance-notes').value;
+            
+            // Treatment
+            if (!system.systemData.treatment) system.systemData.treatment = { chemicals: [] };
+            system.systemData.treatment.classification = document.getElementById('treatment-class').value;
+            system.systemData.treatment.capacity = document.getElementById('treatment-capacity').value;
+            system.systemData.treatment.type = document.getElementById('treatment-type').value;
+            system.systemData.treatment.processes = document.getElementById('treatment-processes').value;
+            system.systemData.treatment.opsPlanDate = document.getElementById('ops-plan-date').value;
+            system.systemData.treatment.notes = document.getElementById('treatment-notes').value;
+            
+            // Distribution
+            if (!system.systemData.distribution) system.systemData.distribution = {};
+            system.systemData.distribution.classification = document.getElementById('dist-class').value;
+            system.systemData.distribution.pipeMiles = document.getElementById('pipe-miles').value;
+            system.systemData.distribution.pressureZones = document.getElementById('pressure-zones').value;
+            system.systemData.distribution.pipeMaterials = document.getElementById('pipe-materials').value;
+            system.systemData.distribution.valveCount = document.getElementById('valve-count').value;
+            system.systemData.distribution.hydrantCount = document.getElementById('hydrant-count').value;
+            system.systemData.distribution.valveProgram = document.getElementById('valve-program').value;
+            system.systemData.distribution.flushingProgram = document.getElementById('flushing-program').value;
+            system.systemData.distribution.mainBreaks = document.getElementById('main-breaks').value;
+            system.systemData.distribution.cccCoordinator = document.getElementById('ccc-coordinator').value;
+            system.systemData.distribution.cccSurveyDate = document.getElementById('ccc-survey-date').value;
+            system.systemData.distribution.backflowCount = document.getElementById('backflow-count').value;
+            system.systemData.distribution.testCompliance = document.getElementById('test-compliance').value;
+            
+            // Monitoring
+            if (!system.systemData.monitoring) system.systemData.monitoring = {};
+            system.systemData.monitoring.iocSchedule = document.getElementById('ioc-schedule').value;
+            system.systemData.monitoring.nitrateSchedule = document.getElementById('nitrate-schedule').value;
+            system.systemData.monitoring.vocSchedule = document.getElementById('voc-schedule').value;
+            system.systemData.monitoring.socSchedule = document.getElementById('soc-schedule').value;
+            system.systemData.monitoring.radSchedule = document.getElementById('rad-schedule').value;
+            system.systemData.monitoring.waivers = document.getElementById('waivers').value;
+            system.systemData.monitoring.tcrSamples = document.getElementById('tcr-samples').value;
+            system.systemData.monitoring.bsspDate = document.getElementById('bssp-date').value;
+            system.systemData.monitoring.lastTcr = document.getElementById('last-tcr').value;
+            system.systemData.monitoring.assessments = document.getElementById('assessments').value;
+            system.systemData.monitoring.dbpFreq = document.getElementById('dbp-freq').value;
+            system.systemData.monitoring.dbpLocations = document.getElementById('dbp-locations').value;
+            system.systemData.monitoring.lraaValues = document.getElementById('lraa-values').value;
+            system.systemData.monitoring.lcrSchedule = document.getElementById('lcr-schedule').value;
+            system.systemData.monitoring.lcrDate = document.getElementById('lcr-date').value;
+            system.systemData.monitoring.lcr90th = document.getElementById('lcr-90th').value;
+            system.systemData.monitoring.serviceLines = document.getElementById('service-lines').value;
+            system.systemData.monitoring.ctCompliance = document.getElementById('ct-compliance').value;
+            system.systemData.monitoring.turbidityCompliance = document.getElementById('turbidity-compliance').value;
+            system.systemData.monitoring.swtrReporting = document.getElementById('swtr-reporting').value;
+            system.systemData.monitoring.earStatus = document.getElementById('ear-status').value;
+            system.systemData.monitoring.ccrDate = document.getElementById('ccr-date').value;
+            system.systemData.monitoring.overdueReports = document.getElementById('overdue-reports').value;
+            
+            // Management
+            if (!system.systemData.management) system.systemData.management = {};
+            system.systemData.management.ownershipStructure = document.getElementById('ownership-structure').value;
+            system.systemData.management.staffing = document.getElementById('staffing').value;
+            system.systemData.management.emergencyContact = document.getElementById('emergency-contact').value;
+            system.systemData.management.cipDate = document.getElementById('cip-date').value;
+            system.systemData.management.uwmpDate = document.getElementById('uwmp-date').value;
+            system.systemData.management.wscpDate = document.getElementById('wscp-date').value;
+            system.systemData.management.erpDate = document.getElementById('erp-date').value;
+            system.systemData.management.scada = document.getElementById('scada').value;
+            system.systemData.management.alarms = document.getElementById('alarms').value;
+            system.systemData.management.backupPower = document.getElementById('backup-power').value;
+            system.systemData.management.redundancy = document.getElementById('redundancy').value;
+            system.systemData.management.physicalSecurity = document.getElementById('physical-security').value;
+            system.systemData.management.itSecurity = document.getElementById('it-security').value;
+            system.systemData.management.rraDate = document.getElementById('rra-date').value;
+            system.systemData.management.eprpDate = document.getElementById('eprp-date').value;
+            system.systemData.management.climateStatus = document.getElementById('climate-status').value;
+            system.systemData.management.vulnerabilities = document.getElementById('vulnerabilities').value;
+            system.systemData.management.mitigation = document.getElementById('mitigation').value;
+            
+            // Operators
+            if (!system.systemData.operators) system.systemData.operators = { shiftOperators: [] };
+            system.systemData.operators.chiefTreatmentName = document.getElementById('chief-treatment-name').value;
+            system.systemData.operators.chiefTreatmentLevel = document.getElementById('chief-treatment-level').value;
+            system.systemData.operators.chiefTreatmentCert = document.getElementById('chief-treatment-cert').value;
+            system.systemData.operators.chiefTreatmentExp = document.getElementById('chief-treatment-exp').value;
+            system.systemData.operators.chiefDistName = document.getElementById('chief-dist-name').value;
+            system.systemData.operators.chiefDistLevel = document.getElementById('chief-dist-level').value;
+            system.systemData.operators.chiefDistCert = document.getElementById('chief-dist-cert').value;
+            system.systemData.operators.chiefDistExp = document.getElementById('chief-dist-exp').value;
+            system.systemData.operators.reqTreatmentCert = document.getElementById('req-treatment-cert').value;
+            system.systemData.operators.reqDistCert = document.getElementById('req-dist-cert').value;
+            system.systemData.operators.staffingNotes = document.getElementById('staffing-notes').value;
+            
+            saveData();
+            
+            // Visual feedback
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✓ Saved!';
+            btn.style.background = '#28a745';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }
+
+        // Placeholder render functions (to be implemented)
+        function renderAmendments() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            const container = document.getElementById('amendments-list');
+            if (!system.systemData.permits.amendments || system.systemData.permits.amendments.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No amendments added yet</div></div>';
+            } else {
+                // Will implement full rendering later
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px;">Amendments list (coming soon)</div>';
+            }
+        }
+
+        function renderSources() { document.getElementById('sources-list').innerHTML = '<div style="color: #8e8e93; padding: 20px;">Sources list (coming soon)</div>'; }
+        function renderChemicals() { document.getElementById('chemicals-list').innerHTML = '<div style="color: #8e8e93; padding: 20px;">Chemicals list (coming soon)</div>'; }
+        function renderStorage() { document.getElementById('storage-list').innerHTML = '<div style="color: #8e8e93; padding: 20px;">Storage tanks list (coming soon)</div>'; }
+        function renderPumps() { document.getElementById('pumps-list').innerHTML = '<div style="color: #8e8e93; padding: 20px;">Pump stations list (coming soon)</div>'; }
+        function renderShiftOperators() { document.getElementById('shift-operators-list').innerHTML = '<div style="color: #8e8e93; padding: 20px;">Shift operators list (coming soon)</div>'; }
+        function renderDeficiencies() { document.getElementById('deficiencies-list').innerHTML = '<div style="color: #8e8e93; padding: 20px;">Deficiencies list (coming soon)</div>'; }
+
+        // Placeholder add functions
+        function addAmendment() { alert('Add amendment form coming soon'); }
+        function addSource() { alert('Add source form coming soon'); }
+        function addChemical() { alert('Add chemical form coming soon'); }
+        function addStorage() { alert('Add storage tank form coming soon'); }
+        function addPump() { alert('Add pump station form coming soon'); }
+        function addShiftOperator() { alert('Add shift operator form coming soon'); }
+        function addDeficiency() { alert('Add deficiency form coming soon'); }
+    </script>
+</body>
+</html>
