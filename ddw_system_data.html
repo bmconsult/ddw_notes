@@ -287,106 +287,189 @@
             background: #17a2b8;
             color: white;
         }
-
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
+    
+        /* List Item Cards */
+        .list-item-card {
             background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 2px solid #e9ecef;
+        
+        .list-item-header {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2a5298;
+        
+        .list-item-body {
+            padding: 12px 16px;
         }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 2rem;
-            color: #6c757d;
-            cursor: pointer;
-            padding: 0;
-            width: 40px;
-            height: 40px;
+        
+        .list-item-body > div {
+            margin-bottom: 6px;
+        }
+        
+        .list-item-body > div:last-child {
+            margin-bottom: 0;
+        }
+        
+        .list-item-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 6px;
+            margin-left: auto;
         }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            gap: 12px;
-        }
-
-        .modal-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .modal-btn-primary {
-            background: #2a5298;
-            color: white;
-        }
-
-        .modal-btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .edit-btn {
-            background: #ffc107;
-            color: #000;
-            border: none;
+        
+        .btn-edit, .btn-delete, .btn-add {
             padding: 4px 12px;
+            border: none;
             border-radius: 6px;
             font-size: 0.85rem;
             cursor: pointer;
-            margin-right: 8px;
+            transition: all 0.2s;
         }
-    </style>
+        
+        .btn-edit {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .btn-edit:hover {
+            background: #ffb300;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .btn-add {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-add:hover {
+            background: #218838;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-green {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-red {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-orange {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-blue {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .badge-gray {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+        
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #000;
+        }
+        
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2a5298;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #6c757d;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .modal-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .modal-btn-primary {
+            background: #2a5298;
+        }
+        
+        .modal-btn-primary:hover {
+            background: #1e3c72;
+        }
+
+</style>
 </head>
 <body>
     <!-- Header -->
@@ -543,16 +626,43 @@
         <!-- Sources Section -->
         <div class="data-section" id="sources-section">
             <div class="form-section">
-                <div class="section-title">Water Sources</div>
+                <div class="section-title">Source Water Overview & Protection</div>
+                <div class="form-group">
+                    <label class="form-label">Overall Source Type</label>
+                    <select class="form-select" id="overall-source-type">
+                        <option value="">Select...</option>
+                        <option value="Groundwater Only">Groundwater Only</option>
+                        <option value="Surface Water Only">Surface Water Only</option>
+                        <option value="GWI">Groundwater Under Influence (GWI)</option>
+                        <option value="Mixed">Mixed Sources</option>
+                        <option value="Purchased">100% Purchased Water</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cross-Connection Control Program</label>
+                    <textarea class="form-textarea" id="ccc-program" placeholder="Describe the CCC program: coordinator, survey date, policies, backflow device testing compliance..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Source Water Protection Measures</label>
+                    <textarea class="form-textarea" id="swp-measures" placeholder="Wellhead protection programs, watershed management, source water assessments..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Watershed/Aquifer Concerns</label>
+                    <textarea class="form-textarea" id="source-concerns" placeholder="Known contaminants, threats, monitoring trends..."></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <div class="section-title">Individual Water Sources</div>
                 <div id="sources-list"></div>
-                <button class="add-item-btn" onclick="addSource()">+ Add Source</button>
+                <button class="add-item-btn" onclick="addSource()">+ Add Water Source</button>
             </div>
         </div>
 
         <!-- Treatment Section -->
         <div class="data-section" id="treatment-section">
             <div class="form-section">
-                <div class="section-title">Treatment Information</div>
+                <div class="section-title">Overall Treatment Classification & Capacity</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Treatment Classification</label>
@@ -567,30 +677,36 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Rated Capacity (MGD)</label>
+                        <label class="form-label">Total Rated Capacity (MGD)</label>
                         <input type="number" step="0.01" class="form-input" id="treatment-capacity" placeholder="0.00">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Treatment Type</label>
+                    <label class="form-label">General Treatment Type</label>
                     <input type="text" class="form-input" id="treatment-type" placeholder="e.g., Conventional, Membrane, Blending">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Treatment Processes</label>
-                    <textarea class="form-textarea" id="treatment-processes" placeholder="List all treatment processes (coagulation, sedimentation, filtration, disinfection, etc.)"></textarea>
+                    <label class="form-label">Treatment Processes Overview</label>
+                    <textarea class="form-textarea" id="treatment-processes" placeholder="List all treatment processes used across all facilities..."></textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Operations Plan Date</label>
                     <input type="date" class="form-input" id="ops-plan-date">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Treatment Challenges/Notes</label>
-                    <textarea class="form-textarea" id="treatment-notes" placeholder="Water quality challenges, seasonal issues, performance notes..."></textarea>
+                    <label class="form-label">Overall Treatment Challenges/Notes</label>
+                    <textarea class="form-textarea" id="treatment-notes" placeholder="System-wide water quality challenges, seasonal issues, performance notes..."></textarea>
                 </div>
             </div>
 
             <div class="form-section">
-                <div class="section-title">Chemical Storage</div>
+                <div class="section-title">Treatment Facilities</div>
+                <div id="treatment-facilities-list"></div>
+                <button class="add-item-btn" onclick="addTreatmentFacility()">+ Add Treatment Facility</button>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Chemical Storage (System-Wide)</div>
                 <div id="chemicals-list"></div>
                 <button class="add-item-btn" onclick="addChemical()">+ Add Chemical</button>
             </div>
@@ -675,7 +791,30 @@
         <!-- Storage Section -->
         <div class="data-section" id="storage-section">
             <div class="form-section">
-                <div class="section-title">Finished Water Storage Tanks</div>
+                <div class="section-title">Overall Storage Capacity & Adequacy</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Total Storage Capacity (MG)</label>
+                        <input type="number" step="0.01" class="form-input" id="total-storage-capacity" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Redundancy Adequate?</label>
+                        <select class="form-select" id="storage-redundancy">
+                            <option value="">Select...</option>
+                            <option value="Yes">Yes - Can meet demands with largest tank out of service</option>
+                            <option value="No">No - Insufficient redundancy</option>
+                            <option value="Marginal">Marginal - Depends on demand</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Overall Storage System Notes</label>
+                    <textarea class="form-textarea" id="storage-notes" placeholder="System-wide storage adequacy, turnover concerns, water age issues..."></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <div class="section-title">Individual Storage Tanks</div>
                 <div id="storage-list"></div>
                 <button class="add-item-btn" onclick="addStorage()">+ Add Storage Tank</button>
             </div>
@@ -684,9 +823,33 @@
         <!-- Pumps Section -->
         <div class="data-section" id="pumps-section">
             <div class="form-section">
-                <div class="section-title">Pump Stations</div>
+                <div class="section-title">Overall Pumping Capacity & Strategy</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Total System Pumping Capacity (GPM)</label>
+                        <input type="number" class="form-input" id="total-pump-capacity" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Backup Power Strategy</label>
+                        <select class="form-select" id="backup-power-strategy">
+                            <option value="">Select...</option>
+                            <option value="All Critical">All Critical Stations Have Backup</option>
+                            <option value="Partial">Partial Backup Coverage</option>
+                            <option value="None">No Backup Power</option>
+                            <option value="Grid Tied">Grid Tied with Manual Transfer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pumping System Notes</label>
+                    <textarea class="form-textarea" id="pumping-notes" placeholder="Overall system reliability, redundancy strategy, concerns..."></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <div class="section-title">Pump Stations & Equipment</div>
                 <div id="pumps-list"></div>
-                <button class="add-item-btn" onclick="addPump()">+ Add Pump Station</button>
+                <button class="add-item-btn" onclick="addPumpStation()">+ Add Pump Station</button>
             </div>
         </div>
 
@@ -1033,19 +1196,6 @@
     <!-- Save Button -->
     <button class="save-btn" onclick="saveAllData()">💾 Save All</button>
 
-    <!-- Modal Container -->
-    <div class="modal" id="modal" onclick="closeModalOnBackdrop(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle">Modal</div>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Dynamic content -->
-            </div>
-        </div>
-    </div>
-
     <script>
         // App State
         let appData = {
@@ -1081,14 +1231,39 @@
                 system.systemData = {
                     overview: {},
                     permits: { amendments: [] },
-                    sources: [],
-                    treatment: { chemicals: [] },
+                    sources: {
+                        overallType: '',
+                        cccProgram: '',
+                        swpMeasures: '',
+                        concerns: '',
+                        list: [] // Individual sources
+                    },
+                    treatment: { 
+                        classification: '',
+                        capacity: '',
+                        type: '',
+                        processes: '',
+                        opsPlanDate: '',
+                        notes: '',
+                        facilities: [], // Individual treatment facilities
+                        chemicals: [] // System-wide chemicals
+                    },
                     distribution: {},
-                    storage: [],
-                    pumps: [],
+                    storage: {
+                        totalCapacity: '',
+                        redundancyAdequate: '',
+                        notes: '',
+                        tanks: [] // Individual tanks
+                    },
+                    pumps: {
+                        totalCapacity: '',
+                        backupPowerStrategy: '',
+                        notes: '',
+                        stations: [] // Individual pump stations, each with pumps array
+                    },
                     monitoring: {},
                     management: {},
-                    operators: { shiftOperators: [] },
+                    operators: { chief: {}, shift: [] },
                     deficiencies: []
                 };
             }
@@ -1169,6 +1344,12 @@
             }
             
             // Sources
+            if (data.sources) {
+                setValueIfExists('overall-source-type', data.sources.overallType);
+                setValueIfExists('ccc-program', data.sources.cccProgram);
+                setValueIfExists('swp-measures', data.sources.swpMeasures);
+                setValueIfExists('source-concerns', data.sources.concerns);
+            }
             renderSources();
             
             // Treatment
@@ -1179,6 +1360,7 @@
                 setValueIfExists('treatment-processes', data.treatment.processes);
                 setValueIfExists('ops-plan-date', data.treatment.opsPlanDate);
                 setValueIfExists('treatment-notes', data.treatment.notes);
+                renderTreatmentFacilities();
                 renderChemicals();
             }
             
@@ -1200,9 +1382,19 @@
             }
             
             // Storage
+            if (data.storage) {
+                setValueIfExists('total-storage-capacity', data.storage.totalCapacity);
+                setValueIfExists('storage-redundancy', data.storage.redundancyAdequate);
+                setValueIfExists('storage-notes', data.storage.notes);
+            }
             renderStorage();
             
             // Pumps
+            if (data.pumps) {
+                setValueIfExists('total-pump-capacity', data.pumps.totalCapacity);
+                setValueIfExists('backup-power-strategy', data.pumps.backupPowerStrategy);
+                setValueIfExists('pumping-notes', data.pumps.notes);
+            }
             renderPumps();
             
             // Monitoring
@@ -1421,876 +1613,1511 @@
             if (!system.systemData.permits.amendments || system.systemData.permits.amendments.length === 0) {
                 container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No amendments added yet</div></div>';
             } else {
-                container.innerHTML = system.systemData.permits.amendments.map((amendment, idx) => `
-                    <div class="list-item">
-                        <div class="list-item-header">
-                            <div class="list-item-title">Amendment ${amendment.number || idx + 1}</div>
-                            <div>
-                                <button class="edit-btn" onclick="editAmendment(${idx})">Edit</button>
-                                <button class="delete-btn" onclick="deleteAmendment(${idx})">Delete</button>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
-                            <div><strong>Date:</strong> ${amendment.date || 'N/A'}</div>
-                            <div><strong>Purpose:</strong> ${amendment.purpose || 'N/A'}</div>
+                // Will implement full rendering later
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px;">Amendments list (coming soon)</div>';
+            }
+        }
+
+        // ========== RENDERING FUNCTIONS ==========
+        
+        // Amendments
+        function renderAmendments() {
+            const container = document.getElementById('amendments-list');
+            if (!currentSystemData.permits || !currentSystemData.permits.amendments || currentSystemData.permits.amendments.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No amendments added yet</div>';
+                return;
+            }
+            container.innerHTML = currentSystemData.permits.amendments.map((amend, i) => `
+                <div class="list-item-card">
+                    <div class="list-item-header">
+                        <strong>Amendment #${amend.number || i+1}</strong>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editAmendment(${i})">Edit</button>
+                            <button class="btn-delete" onclick="deleteAmendment(${i})">Delete</button>
                         </div>
                     </div>
-                `).join('');
-            }
-        }
-
-        function renderSources() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const container = document.getElementById('sources-list');
-            if (!system.systemData.sources || system.systemData.sources.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No sources added yet</div></div>';
-            } else {
-                container.innerHTML = system.systemData.sources.map((source, idx) => `
-                    <div class="list-item">
-                        <div class="list-item-header">
-                            <div class="list-item-title">${source.name || 'Unnamed Source'}</div>
-                            <div>
-                                <button class="edit-btn" onclick="editSource(${idx})">Edit</button>
-                                <button class="delete-btn" onclick="deleteSource(${idx})">Delete</button>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
-                            <div><strong>Type:</strong> ${source.type || 'N/A'} | <strong>Status:</strong> ${source.status || 'N/A'}</div>
-                            <div><strong>PS Code:</strong> ${source.psCode || 'N/A'} | <strong>Capacity:</strong> ${source.capacity || 'N/A'} MGD</div>
-                        </div>
+                    <div class="list-item-body">
+                        <div><strong>Date:</strong> ${amend.date || 'N/A'}</div>
+                        <div><strong>Purpose:</strong> ${amend.purpose || 'N/A'}</div>
                     </div>
-                `).join('');
-            }
+                </div>
+            `).join('');
         }
-
-        function renderChemicals() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const container = document.getElementById('chemicals-list');
-            if (!system.systemData.treatment.chemicals || system.systemData.treatment.chemicals.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No chemicals added yet</div></div>';
-            } else {
-                container.innerHTML = system.systemData.treatment.chemicals.map((chemical, idx) => `
-                    <div class="list-item">
-                        <div class="list-item-header">
-                            <div class="list-item-title">${chemical.name || 'Unnamed Chemical'}</div>
-                            <div>
-                                <button class="edit-btn" onclick="editChemical(${idx})">Edit</button>
-                                <button class="delete-btn" onclick="deleteChemical(${idx})">Delete</button>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
-                            <div><strong>NSF Cert:</strong> ${chemical.nsfCert || 'N/A'}</div>
-                            <div><strong>Dosage:</strong> ${chemical.dosage || 'N/A'} | <strong>Storage:</strong> ${chemical.storage || 'N/A'}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function renderStorage() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const container = document.getElementById('storage-list');
-            if (!system.systemData.storage || system.systemData.storage.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No storage tanks added yet</div></div>';
-            } else {
-                container.innerHTML = system.systemData.storage.map((tank, idx) => `
-                    <div class="list-item">
-                        <div class="list-item-header">
-                            <div class="list-item-title">${tank.name || 'Unnamed Tank'}</div>
-                            <div>
-                                <button class="edit-btn" onclick="editStorage(${idx})">Edit</button>
-                                <button class="delete-btn" onclick="deleteStorage(${idx})">Delete</button>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
-                            <div><strong>Type:</strong> ${tank.type || 'N/A'} | <strong>Material:</strong> ${tank.material || 'N/A'}</div>
-                            <div><strong>Capacity:</strong> ${tank.capacity || 'N/A'} MG | <strong>Zone:</strong> ${tank.zone || 'N/A'}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function renderPumps() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const container = document.getElementById('pumps-list');
-            if (!system.systemData.pumps || system.systemData.pumps.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No pump stations added yet</div></div>';
-            } else {
-                container.innerHTML = system.systemData.pumps.map((pump, idx) => `
-                    <div class="list-item">
-                        <div class="list-item-header">
-                            <div class="list-item-title">${pump.name || 'Unnamed Station'}</div>
-                            <div>
-                                <button class="edit-btn" onclick="editPump(${idx})">Edit</button>
-                                <button class="delete-btn" onclick="deletePump(${idx})">Delete</button>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
-                            <div><strong>Type:</strong> ${pump.type || 'N/A'} | <strong>Count:</strong> ${pump.count || 'N/A'}</div>
-                            <div><strong>Capacity:</strong> ${pump.capacity || 'N/A'} GPM | <strong>HP:</strong> ${pump.hp || 'N/A'}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function renderShiftOperators() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const container = document.getElementById('shift-operators-list');
-            if (!system.systemData.operators.shiftOperators || system.systemData.operators.shiftOperators.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No shift operators added yet</div></div>';
-            } else {
-                container.innerHTML = system.systemData.operators.shiftOperators.map((op, idx) => `
-                    <div class="list-item">
-                        <div class="list-item-header">
-                            <div class="list-item-title">${op.name || 'Unnamed Operator'}</div>
-                            <div>
-                                <button class="edit-btn" onclick="editShiftOperator(${idx})">Edit</button>
-                                <button class="delete-btn" onclick="deleteShiftOperator(${idx})">Delete</button>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
-                            <div><strong>Cert:</strong> ${op.certLevel || 'N/A'} - ${op.certNumber || 'N/A'}</div>
-                            <div><strong>Expires:</strong> ${op.certExp || 'N/A'}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function renderDeficiencies() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const container = document.getElementById('deficiencies-list');
-            if (!system.systemData.deficiencies || system.systemData.deficiencies.length === 0) {
-                container.innerHTML = '<div class="empty-state" style="padding: 20px;"><div style="color: #8e8e93;">No deficiencies recorded yet</div></div>';
-            } else {
-                container.innerHTML = system.systemData.deficiencies.map((def, idx) => `
-                    <div class="list-item">
-                        <div class="list-item-header">
-                            <div class="list-item-title">Element ${def.element || 'N/A'}: ${def.description ? def.description.substring(0, 50) + '...' : 'No description'}</div>
-                            <div>
-                                <button class="edit-btn" onclick="editDeficiency(${idx})">Edit</button>
-                                <button class="delete-btn" onclick="deleteDeficiency(${idx})">Delete</button>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.85rem; margin-top: 8px;">
-                            <span class="status-badge type-${def.type || 'recommendation'}">${def.type || 'N/A'}</span>
-                            <span class="status-badge status-${def.status || 'open'}">${def.status || 'Open'}</span>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #6c757d; margin-top: 4px;">
-                            <div><strong>Due:</strong> ${def.dueDate || 'N/A'} | <strong>Citation:</strong> ${def.citation || 'N/A'}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Modal functions
-        function showModal(title, bodyHTML) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalBody').innerHTML = bodyHTML;
-            document.getElementById('modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-
-        function closeModalOnBackdrop(event) {
-            if (event.target.id === 'modal') {
-                closeModal();
-            }
-        }
-
-        // Amendment functions
-        let editingAmendmentIdx = null;
 
         function addAmendment() {
-            editingAmendmentIdx = null;
-            showAmendmentForm();
-        }
-
-        function editAmendment(idx) {
-            editingAmendmentIdx = idx;
-            showAmendmentForm();
-        }
-
-        function showAmendmentForm() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const amendment = editingAmendmentIdx !== null ? system.systemData.permits.amendments[editingAmendmentIdx] : {};
-            
-            const html = `
+            showModal(`
+                <h3>Add Amendment</h3>
                 <div class="form-group">
-                    <label class="form-label">Amendment Number</label>
-                    <input type="text" class="form-input" id="amendment-number" value="${amendment.number || ''}" placeholder="e.g., Amendment 1">
+                    <label>Amendment Number</label>
+                    <input type="text" id="modal-amend-number" class="form-input" placeholder="e.g., 1, 2, 3">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Issue Date</label>
-                    <input type="date" class="form-input" id="amendment-date" value="${amendment.date || ''}">
+                    <label>Date Issued</label>
+                    <input type="date" id="modal-amend-date" class="form-input">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Purpose/Reason</label>
-                    <textarea class="form-textarea" id="amendment-purpose" placeholder="Describe the purpose of this amendment...">${amendment.purpose || ''}</textarea>
+                    <label>Purpose</label>
+                    <textarea id="modal-amend-purpose" class="form-textarea" rows="3" placeholder="Reason for amendment..."></textarea>
                 </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary" onclick="saveAmendment()">Save</button>
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveAmendment()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
                 </div>
-            `;
-            
-            showModal(editingAmendmentIdx !== null ? 'Edit Amendment' : 'Add Amendment', html);
+            `);
         }
 
-        function saveAmendment() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            
+        function saveAmendment(index = null) {
             const amendment = {
-                number: document.getElementById('amendment-number').value,
-                date: document.getElementById('amendment-date').value,
-                purpose: document.getElementById('amendment-purpose').value
+                number: document.getElementById('modal-amend-number').value,
+                date: document.getElementById('modal-amend-date').value,
+                purpose: document.getElementById('modal-amend-purpose').value
             };
             
-            if (editingAmendmentIdx !== null) {
-                system.systemData.permits.amendments[editingAmendmentIdx] = amendment;
+            if (!currentSystemData.permits) currentSystemData.permits = {};
+            if (!currentSystemData.permits.amendments) currentSystemData.permits.amendments = [];
+            
+            if (index !== null) {
+                currentSystemData.permits.amendments[index] = amendment;
             } else {
-                if (!system.systemData.permits.amendments) system.systemData.permits.amendments = [];
-                system.systemData.permits.amendments.push(amendment);
+                currentSystemData.permits.amendments.push(amendment);
             }
             
-            saveData();
-            closeModal();
+            hideModal();
             renderAmendments();
+            saveData();
         }
 
-        function deleteAmendment(idx) {
-            if (!confirm('Delete this amendment?')) return;
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            system.systemData.permits.amendments.splice(idx, 1);
-            saveData();
-            renderAmendments();
+        function editAmendment(index) {
+            const amend = currentSystemData.permits.amendments[index];
+            showModal(`
+                <h3>Edit Amendment</h3>
+                <div class="form-group">
+                    <label>Amendment Number</label>
+                    <input type="text" id="modal-amend-number" class="form-input" value="${amend.number || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Date Issued</label>
+                    <input type="date" id="modal-amend-date" class="form-input" value="${amend.date || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Purpose</label>
+                    <textarea id="modal-amend-purpose" class="form-textarea" rows="3">${amend.purpose || ''}</textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveAmendment(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        // Source functions
-        let editingSourceIdx = null;
+        function deleteAmendment(index) {
+            if (confirm('Delete this amendment?')) {
+                currentSystemData.permits.amendments.splice(index, 1);
+                renderAmendments();
+                saveData();
+            }
+        }
+
+        // Sources (with well construction details)
+        function renderSources() {
+            const container = document.getElementById('sources-list');
+            if (!currentSystemData.sources || !currentSystemData.sources.list || currentSystemData.sources.list.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No sources added yet</div>';
+                return;
+            }
+            container.innerHTML = currentSystemData.sources.list.map((src, i) => `
+                <div class="list-item-card">
+                    <div class="list-item-header">
+                        <strong>${src.name || 'Unnamed Source'}</strong> 
+                        <span class="badge badge-${src.status === 'Active' ? 'green' : 'gray'}">${src.status || 'Unknown'}</span>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editSource(${i})">Edit</button>
+                            <button class="btn-delete" onclick="deleteSource(${i})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="list-item-body">
+                        <div><strong>PS Code:</strong> ${src.psCode || 'N/A'}</div>
+                        <div><strong>Type:</strong> ${src.type || 'N/A'} | <strong>Capacity:</strong> ${src.capacity || 'N/A'} MGD</div>
+                        ${src.constructionDate ? `<div><strong>Construction:</strong> ${src.constructionDate}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
         function addSource() {
-            editingSourceIdx = null;
-            showSourceForm();
-        }
-
-        function editSource(idx) {
-            editingSourceIdx = idx;
-            showSourceForm();
-        }
-
-        function showSourceForm() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const source = editingSourceIdx !== null ? system.systemData.sources[editingSourceIdx] : {};
-            
-            const html = `
+            showModal(`
+                <h3>Add Water Source</h3>
                 <div class="form-group">
-                    <label class="form-label">Source Name</label>
-                    <input type="text" class="form-input" id="source-name" value="${source.name || ''}" placeholder="e.g., Well #1">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">PS Code</label>
-                    <input type="text" class="form-input" id="source-ps-code" value="${source.psCode || ''}" placeholder="CA0000000_001_001">
+                    <label>Source Name *</label>
+                    <input type="text" id="modal-src-name" class="form-input" placeholder="e.g., Well #1, Surface Water Intake">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Source Type</label>
-                        <select class="form-select" id="source-type">
-                            <option value="">Select...</option>
-                            <option value="Groundwater" ${source.type === 'Groundwater' ? 'selected' : ''}>Groundwater</option>
-                            <option value="Surface Water" ${source.type === 'Surface Water' ? 'selected' : ''}>Surface Water</option>
-                            <option value="Purchased" ${source.type === 'Purchased' ? 'selected' : ''}>Purchased</option>
-                            <option value="Emergency" ${source.type === 'Emergency' ? 'selected' : ''}>Emergency</option>
-                        </select>
+                        <label>PS Code</label>
+                        <input type="text" id="modal-src-ps" class="form-input" placeholder="CA#######_###_###">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="source-status">
+                        <label>Type</label>
+                        <select id="modal-src-type" class="form-select">
                             <option value="">Select...</option>
-                            <option value="Active" ${source.status === 'Active' ? 'selected' : ''}>Active</option>
-                            <option value="Standby" ${source.status === 'Standby' ? 'selected' : ''}>Standby</option>
-                            <option value="Inactive" ${source.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                            <option>Groundwater</option>
+                            <option>Surface Water</option>
+                            <option>Purchased</option>
+                            <option>Emergency</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Capacity (MGD)</label>
-                        <input type="number" step="0.01" class="form-input" id="source-capacity" value="${source.capacity || ''}" placeholder="0.00">
+                        <label>Status</label>
+                        <select id="modal-src-status" class="form-select">
+                            <option>Active</option>
+                            <option>Standby</option>
+                            <option>Inactive</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Construction Date</label>
-                        <input type="date" class="form-input" id="source-construction" value="${source.constructionDate || ''}">
+                        <label>Capacity (MGD)</label>
+                        <input type="number" step="0.01" id="modal-src-capacity" class="form-input">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Well Details (if GW)</label>
-                    <textarea class="form-textarea" id="source-well-details" placeholder="Casing depth, diameter, material, screen depth...">${source.wellDetails || ''}</textarea>
+                    <label>Construction Date</label>
+                    <input type="date" id="modal-src-date" class="form-input">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">DWSAP Evaluation Date</label>
-                    <input type="date" class="form-input" id="source-dwsap" value="${source.dwsapDate || ''}">
+                    <label>Well Details (if GW)</label>
+                    <textarea id="modal-src-well" class="form-textarea" rows="3" placeholder="Casing depth, diameter, material; Annular seal depth; Screen depth and slot size"></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Notes</label>
-                    <textarea class="form-textarea" id="source-notes" placeholder="Water quality issues, PCAs, vulnerabilities...">${source.notes || ''}</textarea>
+                    <label>DWSAP Evaluation Date</label>
+                    <input type="date" id="modal-src-dwsap" class="form-input">
                 </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary" onclick="saveSource()">Save</button>
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-src-notes" class="form-textarea" rows="2"></textarea>
                 </div>
-            `;
-            
-            showModal(editingSourceIdx !== null ? 'Edit Source' : 'Add Source', html);
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveSource()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        function saveSource() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            
+        function saveSource(index = null) {
             const source = {
-                name: document.getElementById('source-name').value,
-                psCode: document.getElementById('source-ps-code').value,
-                type: document.getElementById('source-type').value,
-                status: document.getElementById('source-status').value,
-                capacity: document.getElementById('source-capacity').value,
-                constructionDate: document.getElementById('source-construction').value,
-                wellDetails: document.getElementById('source-well-details').value,
-                dwsapDate: document.getElementById('source-dwsap').value,
-                notes: document.getElementById('source-notes').value
+                name: document.getElementById('modal-src-name').value,
+                psCode: document.getElementById('modal-src-ps').value,
+                type: document.getElementById('modal-src-type').value,
+                status: document.getElementById('modal-src-status').value,
+                capacity: document.getElementById('modal-src-capacity').value,
+                constructionDate: document.getElementById('modal-src-date').value,
+                wellDetails: document.getElementById('modal-src-well').value,
+                dwsapDate: document.getElementById('modal-src-dwsap').value,
+                notes: document.getElementById('modal-src-notes').value
             };
             
-            if (editingSourceIdx !== null) {
-                system.systemData.sources[editingSourceIdx] = source;
+            if (!currentSystemData.sources) currentSystemData.sources = { list: [] };
+            if (!currentSystemData.sources.list) currentSystemData.sources.list = [];
+            
+            if (index !== null) {
+                currentSystemData.sources.list[index] = source;
             } else {
-                if (!system.systemData.sources) system.systemData.sources = [];
-                system.systemData.sources.push(source);
+                currentSystemData.sources.list.push(source);
             }
             
-            saveData();
-            closeModal();
+            hideModal();
             renderSources();
+            saveData();
         }
 
-        function deleteSource(idx) {
-            if (!confirm('Delete this source?')) return;
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            system.systemData.sources.splice(idx, 1);
-            saveData();
-            renderSources();
+        function editSource(index) {
+            const src = currentSystemData.sources.list[index];
+            showModal(`
+                <h3>Edit Water Source</h3>
+                <div class="form-group">
+                    <label>Source Name *</label>
+                    <input type="text" id="modal-src-name" class="form-input" value="${src.name || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PS Code</label>
+                        <input type="text" id="modal-src-ps" class="form-input" value="${src.psCode || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="modal-src-type" class="form-select">
+                            <option value="">Select...</option>
+                            <option ${src.type === 'Groundwater' ? 'selected' : ''}>Groundwater</option>
+                            <option ${src.type === 'Surface Water' ? 'selected' : ''}>Surface Water</option>
+                            <option ${src.type === 'Purchased' ? 'selected' : ''}>Purchased</option>
+                            <option ${src.type === 'Emergency' ? 'selected' : ''}>Emergency</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="modal-src-status" class="form-select">
+                            <option ${src.status === 'Active' ? 'selected' : ''}>Active</option>
+                            <option ${src.status === 'Standby' ? 'selected' : ''}>Standby</option>
+                            <option ${src.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacity (MGD)</label>
+                        <input type="number" step="0.01" id="modal-src-capacity" class="form-input" value="${src.capacity || ''}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Construction Date</label>
+                    <input type="date" id="modal-src-date" class="form-input" value="${src.constructionDate || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Well Details (if GW)</label>
+                    <textarea id="modal-src-well" class="form-textarea" rows="3">${src.wellDetails || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>DWSAP Evaluation Date</label>
+                    <input type="date" id="modal-src-dwsap" class="form-input" value="${src.dwsapDate || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-src-notes" class="form-textarea" rows="2">${src.notes || ''}</textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveSource(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        // Chemical functions
-        let editingChemicalIdx = null;
+        function deleteSource(index) {
+            if (confirm('Delete this source?')) {
+                currentSystemData.sources.list.splice(index, 1);
+                renderSources();
+                saveData();
+            }
+        }
+
+        // ========== TREATMENT FACILITIES ==========
+        function renderTreatmentFacilities() {
+            const container = document.getElementById('treatment-facilities-list');
+            if (!currentSystemData.treatment || !currentSystemData.treatment.facilities || currentSystemData.treatment.facilities.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No treatment facilities added yet</div>';
+                return;
+            }
+            container.innerHTML = currentSystemData.treatment.facilities.map((facility, i) => `
+                <div class="list-item-card" style="border-left: 4px solid #28a745;">
+                    <div class="list-item-header" style="background: #f0fff0;">
+                        <strong style="color: #28a745;">🏭 ${facility.name || 'Unnamed Facility'}</strong>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editTreatmentFacility(${i})">Edit</button>
+                            <button class="btn-delete" onclick="deleteTreatmentFacility(${i})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="list-item-body">
+                        <div><strong>Capacity:</strong> ${facility.capacity || 'N/A'} MGD | <strong>Classification:</strong> ${facility.classification || 'N/A'}</div>
+                        <div><strong>Processes:</strong> ${facility.processes || 'N/A'}</div>
+                        ${facility.location ? `<div><strong>Location:</strong> ${facility.location}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addTreatmentFacility() {
+            showModal(`
+                <h3>Add Treatment Facility</h3>
+                <div class="form-group">
+                    <label>Facility Name *</label>
+                    <input type="text" id="modal-facility-name" class="form-input" placeholder="e.g., Main WTP, Well #1 Chlorination">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="modal-facility-location" class="form-input" placeholder="Address or description">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Capacity (MGD)</label>
+                        <input type="number" step="0.01" id="modal-facility-capacity" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Classification</label>
+                        <select id="modal-facility-class" class="form-select">
+                            <option value="">Select...</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Treatment Processes</label>
+                    <textarea id="modal-facility-processes" class="form-textarea" rows="3" placeholder="e.g., Coagulation, Sedimentation, Filtration, Disinfection"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-facility-notes" class="form-textarea" rows="2"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveTreatmentFacility()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
+        }
+
+        function saveTreatmentFacility(index = null) {
+            const facility = {
+                name: document.getElementById('modal-facility-name').value,
+                location: document.getElementById('modal-facility-location').value,
+                capacity: document.getElementById('modal-facility-capacity').value,
+                classification: document.getElementById('modal-facility-class').value,
+                processes: document.getElementById('modal-facility-processes').value,
+                notes: document.getElementById('modal-facility-notes').value
+            };
+            
+            if (!currentSystemData.treatment.facilities) {
+                currentSystemData.treatment.facilities = [];
+            }
+            
+            if (index !== null) {
+                currentSystemData.treatment.facilities[index] = facility;
+            } else {
+                currentSystemData.treatment.facilities.push(facility);
+            }
+            
+            hideModal();
+            renderTreatmentFacilities();
+            saveData();
+        }
+
+        function editTreatmentFacility(index) {
+            const facility = currentSystemData.treatment.facilities[index];
+            showModal(`
+                <h3>Edit Treatment Facility</h3>
+                <div class="form-group">
+                    <label>Facility Name *</label>
+                    <input type="text" id="modal-facility-name" class="form-input" value="${facility.name || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="modal-facility-location" class="form-input" value="${facility.location || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Capacity (MGD)</label>
+                        <input type="number" step="0.01" id="modal-facility-capacity" class="form-input" value="${facility.capacity || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Classification</label>
+                        <select id="modal-facility-class" class="form-select">
+                            <option value="">Select...</option>
+                            <option value="T1" ${facility.classification === 'T1' ? 'selected' : ''}>T1</option>
+                            <option value="T2" ${facility.classification === 'T2' ? 'selected' : ''}>T2</option>
+                            <option value="T3" ${facility.classification === 'T3' ? 'selected' : ''}>T3</option>
+                            <option value="T4" ${facility.classification === 'T4' ? 'selected' : ''}>T4</option>
+                            <option value="T5" ${facility.classification === 'T5' ? 'selected' : ''}>T5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Treatment Processes</label>
+                    <textarea id="modal-facility-processes" class="form-textarea" rows="3">${facility.processes || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-facility-notes" class="form-textarea" rows="2">${facility.notes || ''}</textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveTreatmentFacility(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
+        }
+
+        function deleteTreatmentFacility(index) {
+            if (confirm('Delete this treatment facility?')) {
+                currentSystemData.treatment.facilities.splice(index, 1);
+                renderTreatmentFacilities();
+                saveData();
+            }
+        }
+
+        // Chemicals
+        function renderChemicals() {
+            const container = document.getElementById('chemicals-list');
+            if (!currentSystemData.treatment || !currentSystemData.treatment.chemicals || currentSystemData.treatment.chemicals.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No chemicals added yet</div>';
+                return;
+            }
+            container.innerHTML = currentSystemData.treatment.chemicals.map((chem, i) => `
+                <div class="list-item-card">
+                    <div class="list-item-header">
+                        <strong>${chem.name || 'Unnamed Chemical'}</strong>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editChemical(${i})">Edit</button>
+                            <button class="btn-delete" onclick="deleteChemical(${i})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="list-item-body">
+                        <div><strong>NSF 60 Cert:</strong> ${chem.nsfCert || 'N/A'}</div>
+                        <div><strong>Dosage:</strong> ${chem.dosage || 'N/A'} | <strong>Storage:</strong> ${chem.storage || 'N/A'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
         function addChemical() {
-            editingChemicalIdx = null;
-            showChemicalForm();
+            showModal(`
+                <h3>Add Chemical</h3>
+                <div class="form-group">
+                    <label>Chemical Name *</label>
+                    <input type="text" id="modal-chem-name" class="form-input" placeholder="e.g., Chlorine, Sodium Hydroxide">
+                </div>
+                <div class="form-group">
+                    <label>NSF 60 Certification #</label>
+                    <input type="text" id="modal-chem-nsf" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Dosage Rate</label>
+                    <input type="text" id="modal-chem-dosage" class="form-input" placeholder="e.g., 2-4 mg/L">
+                </div>
+                <div class="form-group">
+                    <label>Storage Volume</label>
+                    <input type="text" id="modal-chem-storage" class="form-input" placeholder="e.g., 5000 gallons">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveChemical()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        function editChemical(idx) {
-            editingChemicalIdx = idx;
-            showChemicalForm();
-        }
-
-        function showChemicalForm() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const chemical = editingChemicalIdx !== null ? system.systemData.treatment.chemicals[editingChemicalIdx] : {};
-            
-            const html = `
-                <div class="form-group">
-                    <label class="form-label">Chemical Name</label>
-                    <input type="text" class="form-input" id="chemical-name" value="${chemical.name || ''}" placeholder="e.g., Sodium Hypochlorite">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">NSF 60 Certification #</label>
-                    <input type="text" class="form-input" id="chemical-nsf" value="${chemical.nsfCert || ''}" placeholder="NSF cert number">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Dosage Rate</label>
-                    <input type="text" class="form-input" id="chemical-dosage" value="${chemical.dosage || ''}" placeholder="e.g., 2-5 mg/L">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Storage Volume</label>
-                    <input type="text" class="form-input" id="chemical-storage" value="${chemical.storage || ''}" placeholder="e.g., 500 gallons">
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary" onclick="saveChemical()">Save</button>
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
-                </div>
-            `;
-            
-            showModal(editingChemicalIdx !== null ? 'Edit Chemical' : 'Add Chemical', html);
-        }
-
-        function saveChemical() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            
+        function saveChemical(index = null) {
             const chemical = {
-                name: document.getElementById('chemical-name').value,
-                nsfCert: document.getElementById('chemical-nsf').value,
-                dosage: document.getElementById('chemical-dosage').value,
-                storage: document.getElementById('chemical-storage').value
+                name: document.getElementById('modal-chem-name').value,
+                nsfCert: document.getElementById('modal-chem-nsf').value,
+                dosage: document.getElementById('modal-chem-dosage').value,
+                storage: document.getElementById('modal-chem-storage').value
             };
             
-            if (editingChemicalIdx !== null) {
-                system.systemData.treatment.chemicals[editingChemicalIdx] = chemical;
+            if (!currentSystemData.treatment) currentSystemData.treatment = {};
+            if (!currentSystemData.treatment.chemicals) currentSystemData.treatment.chemicals = [];
+            
+            if (index !== null) {
+                currentSystemData.treatment.chemicals[index] = chemical;
             } else {
-                if (!system.systemData.treatment.chemicals) system.systemData.treatment.chemicals = [];
-                system.systemData.treatment.chemicals.push(chemical);
+                currentSystemData.treatment.chemicals.push(chemical);
             }
             
-            saveData();
-            closeModal();
+            hideModal();
             renderChemicals();
+            saveData();
         }
 
-        function deleteChemical(idx) {
-            if (!confirm('Delete this chemical?')) return;
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            system.systemData.treatment.chemicals.splice(idx, 1);
-            saveData();
-            renderChemicals();
+        function editChemical(index) {
+            const chem = currentSystemData.treatment.chemicals[index];
+            showModal(`
+                <h3>Edit Chemical</h3>
+                <div class="form-group">
+                    <label>Chemical Name *</label>
+                    <input type="text" id="modal-chem-name" class="form-input" value="${chem.name || ''}">
+                </div>
+                <div class="form-group">
+                    <label>NSF 60 Certification #</label>
+                    <input type="text" id="modal-chem-nsf" class="form-input" value="${chem.nsfCert || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Dosage Rate</label>
+                    <input type="text" id="modal-chem-dosage" class="form-input" value="${chem.dosage || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Storage Volume</label>
+                    <input type="text" id="modal-chem-storage" class="form-input" value="${chem.storage || ''}">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveChemical(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        // Storage functions
-        let editingStorageIdx = null;
+        function deleteChemical(index) {
+            if (confirm('Delete this chemical?')) {
+                currentSystemData.treatment.chemicals.splice(index, 1);
+                renderChemicals();
+                saveData();
+            }
+        }
+
+        // Storage
+        function renderStorage() {
+            const container = document.getElementById('storage-list');
+            if (!currentSystemData.storage || !currentSystemData.storage.tanks || currentSystemData.storage.tanks.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No storage tanks added yet</div>';
+                return;
+            }
+            container.innerHTML = currentSystemData.storage.tanks.map((tank, i) => `
+                <div class="list-item-card">
+                    <div class="list-item-header">
+                        <strong>${tank.name || 'Unnamed Tank'}</strong>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editStorage(${i})">Edit</button>
+                            <button class="btn-delete" onclick="deleteStorage(${i})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="list-item-body">
+                        <div><strong>Type:</strong> ${tank.type || 'N/A'} | <strong>Material:</strong> ${tank.material || 'N/A'}</div>
+                        <div><strong>Capacity:</strong> ${tank.capacity || 'N/A'} MG | <strong>Zone:</strong> ${tank.zone || 'N/A'}</div>
+                        <div><strong>Year Built:</strong> ${tank.year || 'N/A'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
         function addStorage() {
-            editingStorageIdx = null;
-            showStorageForm();
-        }
-
-        function editStorage(idx) {
-            editingStorageIdx = idx;
-            showStorageForm();
-        }
-
-        function showStorageForm() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const tank = editingStorageIdx !== null ? system.systemData.storage[editingStorageIdx] : {};
-            
-            const html = `
+            showModal(`
+                <h3>Add Storage Tank</h3>
                 <div class="form-group">
-                    <label class="form-label">Tank Name/ID</label>
-                    <input type="text" class="form-input" id="tank-name" value="${tank.name || ''}" placeholder="e.g., Reservoir R-1">
+                    <label>Tank Name *</label>
+                    <input type="text" id="modal-tank-name" class="form-input" placeholder="e.g., Reservoir #1">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Type</label>
-                        <select class="form-select" id="tank-type">
+                        <label>Type</label>
+                        <select id="modal-tank-type" class="form-select">
                             <option value="">Select...</option>
-                            <option value="Elevated" ${tank.type === 'Elevated' ? 'selected' : ''}>Elevated</option>
-                            <option value="Ground" ${tank.type === 'Ground' ? 'selected' : ''}>Ground</option>
-                            <option value="Standby" ${tank.type === 'Standby' ? 'selected' : ''}>Standby</option>
+                            <option>Elevated</option>
+                            <option>Ground</option>
+                            <option>Standby</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Material</label>
-                        <select class="form-select" id="tank-material">
+                        <label>Material</label>
+                        <select id="modal-tank-material" class="form-select">
                             <option value="">Select...</option>
-                            <option value="Steel" ${tank.material === 'Steel' ? 'selected' : ''}>Steel</option>
-                            <option value="Concrete" ${tank.material === 'Concrete' ? 'selected' : ''}>Concrete</option>
-                            <option value="Other" ${tank.material === 'Other' ? 'selected' : ''}>Other</option>
+                            <option>Steel</option>
+                            <option>Concrete</option>
+                            <option>Other</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Capacity (MG)</label>
-                        <input type="number" step="0.1" class="form-input" id="tank-capacity" value="${tank.capacity || ''}" placeholder="0.0">
+                        <label>Capacity (MG)</label>
+                        <input type="number" step="0.1" id="modal-tank-capacity" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Construction Year</label>
-                        <input type="number" class="form-input" id="tank-year" value="${tank.year || ''}" placeholder="YYYY">
+                        <label>Pressure Zone</label>
+                        <input type="text" id="modal-tank-zone" class="form-input">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Pressure Zone Served</label>
-                    <input type="text" class="form-input" id="tank-zone" value="${tank.zone || ''}" placeholder="e.g., Zone 1">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Last Inspection</label>
-                        <input type="date" class="form-input" id="tank-inspection" value="${tank.lastInspection || ''}">
+                        <label>Year Built</label>
+                        <input type="number" id="modal-tank-year" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Last Cleaning</label>
-                        <input type="date" class="form-input" id="tank-cleaning" value="${tank.lastCleaning || ''}">
+                        <label>Last Inspection</label>
+                        <input type="date" id="modal-tank-insp" class="form-input">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Condition Notes</label>
-                    <textarea class="form-textarea" id="tank-notes" placeholder="Overall condition, maintenance needs...">${tank.notes || ''}</textarea>
+                    <label>Last Cleaning</label>
+                    <input type="date" id="modal-tank-clean" class="form-input">
                 </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary" onclick="saveStorage()">Save</button>
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-tank-notes" class="form-textarea" rows="2"></textarea>
                 </div>
-            `;
-            
-            showModal(editingStorageIdx !== null ? 'Edit Storage Tank' : 'Add Storage Tank', html);
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveStorage()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        function saveStorage() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            
+        function saveStorage(index = null) {
             const tank = {
-                name: document.getElementById('tank-name').value,
-                type: document.getElementById('tank-type').value,
-                material: document.getElementById('tank-material').value,
-                capacity: document.getElementById('tank-capacity').value,
-                year: document.getElementById('tank-year').value,
-                zone: document.getElementById('tank-zone').value,
-                lastInspection: document.getElementById('tank-inspection').value,
-                lastCleaning: document.getElementById('tank-cleaning').value,
-                notes: document.getElementById('tank-notes').value
+                name: document.getElementById('modal-tank-name').value,
+                type: document.getElementById('modal-tank-type').value,
+                material: document.getElementById('modal-tank-material').value,
+                capacity: document.getElementById('modal-tank-capacity').value,
+                zone: document.getElementById('modal-tank-zone').value,
+                year: document.getElementById('modal-tank-year').value,
+                lastInspection: document.getElementById('modal-tank-insp').value,
+                lastCleaning: document.getElementById('modal-tank-clean').value,
+                notes: document.getElementById('modal-tank-notes').value
             };
             
-            if (editingStorageIdx !== null) {
-                system.systemData.storage[editingStorageIdx] = tank;
+            if (!currentSystemData.storage) currentSystemData.storage = { tanks: [] };
+            if (!currentSystemData.storage.tanks) currentSystemData.storage.tanks = [];
+            
+            if (index !== null) {
+                currentSystemData.storage.tanks[index] = tank;
             } else {
-                if (!system.systemData.storage) system.systemData.storage = [];
-                system.systemData.storage.push(tank);
+                currentSystemData.storage.tanks.push(tank);
             }
             
-            saveData();
-            closeModal();
+            hideModal();
             renderStorage();
-        }
-
-        function deleteStorage(idx) {
-            if (!confirm('Delete this storage tank?')) return;
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            system.systemData.storage.splice(idx, 1);
             saveData();
-            renderStorage();
         }
 
-        // Pump functions
-        let editingPumpIdx = null;
-
-        function addPump() {
-            editingPumpIdx = null;
-            showPumpForm();
-        }
-
-        function editPump(idx) {
-            editingPumpIdx = idx;
-            showPumpForm();
-        }
-
-        function showPumpForm() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const pump = editingPumpIdx !== null ? system.systemData.pumps[editingPumpIdx] : {};
-            
-            const html = `
+        function editStorage(index) {
+            const tank = currentSystemData.storage.tanks[index];
+            showModal(`
+                <h3>Edit Storage Tank</h3>
                 <div class="form-group">
-                    <label class="form-label">Station Name/Location</label>
-                    <input type="text" class="form-input" id="pump-name" value="${pump.name || ''}" placeholder="e.g., Pump Station 1">
+                    <label>Tank Name *</label>
+                    <input type="text" id="modal-tank-name" class="form-input" value="${tank.name || ''}">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Pump Count</label>
-                        <input type="number" class="form-input" id="pump-count" value="${pump.count || ''}" placeholder="0">
+                        <label>Type</label>
+                        <select id="modal-tank-type" class="form-select">
+                            <option value="">Select...</option>
+                            <option ${tank.type === 'Elevated' ? 'selected' : ''}>Elevated</option>
+                            <option ${tank.type === 'Ground' ? 'selected' : ''}>Ground</option>
+                            <option ${tank.type === 'Standby' ? 'selected' : ''}>Standby</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Pump Type</label>
-                        <select class="form-select" id="pump-type">
+                        <label>Material</label>
+                        <select id="modal-tank-material" class="form-select">
                             <option value="">Select...</option>
-                            <option value="Vertical Turbine" ${pump.type === 'Vertical Turbine' ? 'selected' : ''}>Vertical Turbine</option>
-                            <option value="Submersible" ${pump.type === 'Submersible' ? 'selected' : ''}>Submersible</option>
-                            <option value="Booster" ${pump.type === 'Booster' ? 'selected' : ''}>Booster</option>
+                            <option ${tank.material === 'Steel' ? 'selected' : ''}>Steel</option>
+                            <option ${tank.material === 'Concrete' ? 'selected' : ''}>Concrete</option>
+                            <option ${tank.material === 'Other' ? 'selected' : ''}>Other</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Total Capacity (GPM)</label>
-                        <input type="number" class="form-input" id="pump-capacity" value="${pump.capacity || ''}" placeholder="0">
+                        <label>Capacity (MG)</label>
+                        <input type="number" step="0.1" id="modal-tank-capacity" class="form-input" value="${tank.capacity || ''}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Horsepower</label>
-                        <input type="number" class="form-input" id="pump-hp" value="${pump.hp || ''}" placeholder="0">
+                        <label>Pressure Zone</label>
+                        <input type="text" id="modal-tank-zone" class="form-input" value="${tank.zone || ''}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Year Built</label>
+                        <input type="number" id="modal-tank-year" class="form-input" value="${tank.year || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Inspection</label>
+                        <input type="date" id="modal-tank-insp" class="form-input" value="${tank.lastInspection || ''}">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Service Type</label>
-                    <select class="form-select" id="pump-service">
-                        <option value="">Select...</option>
-                        <option value="Raw Water" ${pump.service === 'Raw Water' ? 'selected' : ''}>Raw Water</option>
-                        <option value="Finished Water" ${pump.service === 'Finished Water' ? 'selected' : ''}>Finished Water</option>
-                        <option value="Booster" ${pump.service === 'Booster' ? 'selected' : ''}>Booster</option>
-                    </select>
+                    <label>Last Cleaning</label>
+                    <input type="date" id="modal-tank-clean" class="form-input" value="${tank.lastCleaning || ''}">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Pressure Zone</label>
-                    <input type="text" class="form-input" id="pump-zone" value="${pump.zone || ''}" placeholder="e.g., Zone 2">
+                    <label>Notes</label>
+                    <textarea id="modal-tank-notes" class="form-textarea" rows="2">${tank.notes || ''}</textarea>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Backup Power</label>
-                    <select class="form-select" id="pump-backup">
-                        <option value="">Select...</option>
-                        <option value="Yes - Generator" ${pump.backupPower === 'Yes - Generator' ? 'selected' : ''}>Yes - Generator</option>
-                        <option value="Yes - Portable" ${pump.backupPower === 'Yes - Portable' ? 'selected' : ''}>Yes - Portable</option>
-                        <option value="No" ${pump.backupPower === 'No' ? 'selected' : ''}>No</option>
-                    </select>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveStorage(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Condition Notes</label>
-                    <textarea class="form-textarea" id="pump-notes" placeholder="Maintenance schedule, condition, issues...">${pump.notes || ''}</textarea>
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary" onclick="savePump()">Save</button>
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
-                </div>
-            `;
-            
-            showModal(editingPumpIdx !== null ? 'Edit Pump Station' : 'Add Pump Station', html);
+            `);
         }
 
-        function savePump() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            
-            const pump = {
-                name: document.getElementById('pump-name').value,
-                count: document.getElementById('pump-count').value,
-                type: document.getElementById('pump-type').value,
-                capacity: document.getElementById('pump-capacity').value,
-                hp: document.getElementById('pump-hp').value,
-                service: document.getElementById('pump-service').value,
-                zone: document.getElementById('pump-zone').value,
-                backupPower: document.getElementById('pump-backup').value,
-                notes: document.getElementById('pump-notes').value
+        function deleteStorage(index) {
+            if (confirm('Delete this storage tank?')) {
+                currentSystemData.storage.tanks.splice(index, 1);
+                renderStorage();
+                saveData();
+            }
+        }
+
+        // ========== PUMP STATIONS WITH NESTED INDIVIDUAL PUMPS ==========
+        function renderPumps() {
+            const container = document.getElementById('pumps-list');
+            if (!currentSystemData.pumps || !currentSystemData.pumps.stations || currentSystemData.pumps.stations.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No pump stations added yet</div>';
+                return;
+            }
+            container.innerHTML = currentSystemData.pumps.stations.map((station, i) => `
+                <div class="list-item-card" style="border-left: 4px solid #fd7e14;">
+                    <div class="list-item-header" style="background: #fff8f2;">
+                        <strong style="color: #fd7e14;">🔧 ${station.name || 'Unnamed Station'}</strong>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editPumpStation(${i})">Edit Station</button>
+                            <button class="btn-delete" onclick="deletePumpStation(${i})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="list-item-body">
+                        <div><strong>Location:</strong> ${station.location || 'N/A'}</div>
+                        <div><strong>Service:</strong> ${station.serviceType || 'N/A'} | <strong>Zone:</strong> ${station.zone || 'N/A'}</div>
+                        <div><strong>Backup Power:</strong> ${station.backupPower || 'N/A'}</div>
+                        
+                        <div style="margin-top: 15px; padding: 10px; background: white; border-radius: 6px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong>Individual Pumps (${(station.pumps || []).length})</strong>
+                                <button class="btn-add" style="font-size: 0.85rem; padding: 4px 12px;" onclick="addIndividualPump(${i})">+ Add Pump</button>
+                            </div>
+                            ${(station.pumps || []).length === 0 ? 
+                                '<div style="color: #8e8e93; text-align: center; padding: 10px;">No pumps added</div>' :
+                                station.pumps.map((pump, j) => `
+                                    <div style="border: 1px solid #e9ecef; padding: 8px; margin: 5px 0; border-radius: 4px; background: #fafafa;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <strong>${pump.name || `Pump #${j+1}`}</strong>
+                                                ${pump.type ? ` | ${pump.type}` : ''}
+                                                ${pump.hp ? ` | ${pump.hp} HP` : ''}
+                                                ${pump.capacity ? ` | ${pump.capacity} GPM` : ''}
+                                            </div>
+                                            <div>
+                                                <button class="btn-edit" style="font-size: 0.8rem; padding: 2px 8px;" onclick="editIndividualPump(${i}, ${j})">Edit</button>
+                                                <button class="btn-delete" style="font-size: 0.8rem; padding: 2px 8px;" onclick="deleteIndividualPump(${i}, ${j})">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addPumpStation() {
+            showModal(`
+                <h3>Add Pump Station</h3>
+                <div class="form-group">
+                    <label>Station Name *</label>
+                    <input type="text" id="modal-station-name" class="form-input" placeholder="e.g., Wellhead PS, Zone 2 Booster">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="modal-station-location" class="form-input" placeholder="e.g., 123 Main St">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Service Type</label>
+                        <select id="modal-station-service" class="form-select">
+                            <option value="">Select...</option>
+                            <option>Raw Water</option>
+                            <option>Finished Water</option>
+                            <option>Booster</option>
+                            <option>High Service</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pressure Zone</label>
+                        <input type="text" id="modal-station-zone" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Backup Power</label>
+                    <select id="modal-station-backup" class="form-select">
+                        <option value="">Select...</option>
+                        <option>Generator</option>
+                        <option>Portable Generator</option>
+                        <option>None</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-station-notes" class="form-textarea" rows="2"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="savePumpStation()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
+        }
+
+        function savePumpStation(index = null) {
+            const station = {
+                name: document.getElementById('modal-station-name').value,
+                location: document.getElementById('modal-station-location').value,
+                serviceType: document.getElementById('modal-station-service').value,
+                zone: document.getElementById('modal-station-zone').value,
+                backupPower: document.getElementById('modal-station-backup').value,
+                notes: document.getElementById('modal-station-notes').value,
+                pumps: []
             };
             
-            if (editingPumpIdx !== null) {
-                system.systemData.pumps[editingPumpIdx] = pump;
+            if (!currentSystemData.pumps) currentSystemData.pumps = { stations: [] };
+            if (!currentSystemData.pumps.stations) currentSystemData.pumps.stations = [];
+            
+            if (index !== null) {
+                station.pumps = currentSystemData.pumps.stations[index].pumps || [];
+                currentSystemData.pumps.stations[index] = station;
             } else {
-                if (!system.systemData.pumps) system.systemData.pumps = [];
-                system.systemData.pumps.push(pump);
+                currentSystemData.pumps.stations.push(station);
             }
             
-            saveData();
-            closeModal();
+            hideModal();
             renderPumps();
+            saveData();
         }
 
-        function deletePump(idx) {
-            if (!confirm('Delete this pump station?')) return;
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            system.systemData.pumps.splice(idx, 1);
-            saveData();
-            renderPumps();
+        function editPumpStation(index) {
+            const station = currentSystemData.pumps.stations[index];
+            showModal(`
+                <h3>Edit Pump Station</h3>
+                <div class="form-group">
+                    <label>Station Name *</label>
+                    <input type="text" id="modal-station-name" class="form-input" value="${station.name || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="modal-station-location" class="form-input" value="${station.location || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Service Type</label>
+                        <select id="modal-station-service" class="form-select">
+                            <option value="">Select...</option>
+                            <option ${station.serviceType === 'Raw Water' ? 'selected' : ''}>Raw Water</option>
+                            <option ${station.serviceType === 'Finished Water' ? 'selected' : ''}>Finished Water</option>
+                            <option ${station.serviceType === 'Booster' ? 'selected' : ''}>Booster</option>
+                            <option ${station.serviceType === 'High Service' ? 'selected' : ''}>High Service</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pressure Zone</label>
+                        <input type="text" id="modal-station-zone" class="form-input" value="${station.zone || ''}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Backup Power</label>
+                    <select id="modal-station-backup" class="form-select">
+                        <option value="">Select...</option>
+                        <option ${station.backupPower === 'Generator' ? 'selected' : ''}>Generator</option>
+                        <option ${station.backupPower === 'Portable Generator' ? 'selected' : ''}>Portable Generator</option>
+                        <option ${station.backupPower === 'None' ? 'selected' : ''}>None</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-station-notes" class="form-textarea" rows="2">${station.notes || ''}</textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="savePumpStation(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        // Shift Operator functions
-        let editingOperatorIdx = null;
+        function deletePumpStation(index) {
+            if (confirm('Delete this pump station and all its pumps?')) {
+                currentSystemData.pumps.stations.splice(index, 1);
+                renderPumps();
+                saveData();
+            }
+        }
+
+        // Individual Pumps (nested within stations)
+        function addIndividualPump(stationIndex) {
+            showModal(`
+                <h3>Add Individual Pump</h3>
+                <p style="color: #666; margin-bottom: 15px;">Adding pump to: <strong>${currentSystemData.pumpStations[stationIndex].name}</strong></p>
+                <div class="form-group">
+                    <label>Pump Name/ID *</label>
+                    <input type="text" id="modal-pump-name" class="form-input" placeholder="e.g., Pump A, Pump #1">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="modal-pump-type" class="form-select">
+                            <option value="">Select...</option>
+                            <option>Vertical Turbine</option>
+                            <option>Submersible</option>
+                            <option>Centrifugal</option>
+                            <option>Booster</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Horsepower (HP)</label>
+                        <input type="number" id="modal-pump-hp" class="form-input">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Capacity (GPM)</label>
+                        <input type="number" id="modal-pump-capacity" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="modal-pump-status" class="form-select">
+                            <option>Active</option>
+                            <option>Standby</option>
+                            <option>Out of Service</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-pump-notes" class="form-textarea" rows="2"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveIndividualPump(${stationIndex})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
+        }
+
+        function saveIndividualPump(stationIndex, pumpIndex = null) {
+            const pump = {
+                name: document.getElementById('modal-pump-name').value,
+                type: document.getElementById('modal-pump-type').value,
+                hp: document.getElementById('modal-pump-hp').value,
+                capacity: document.getElementById('modal-pump-capacity').value,
+                status: document.getElementById('modal-pump-status').value,
+                notes: document.getElementById('modal-pump-notes').value
+            };
+            
+            if (!currentSystemData.pumps.stations[stationIndex].pumps) {
+                currentSystemData.pumps.stations[stationIndex].pumps = [];
+            }
+            
+            if (pumpIndex !== null) {
+                currentSystemData.pumps.stations[stationIndex].pumps[pumpIndex] = pump;
+            } else {
+                currentSystemData.pumps.stations[stationIndex].pumps.push(pump);
+            }
+            
+            hideModal();
+            renderPumps();
+            saveData();
+        }
+
+        function editIndividualPump(stationIndex, pumpIndex) {
+            const pump = currentSystemData.pumps.stations[stationIndex].pumps[pumpIndex];
+            showModal(`
+                <h3>Edit Individual Pump</h3>
+                <p style="color: #666; margin-bottom: 15px;">Editing pump in: <strong>${currentSystemData.pumps.stations[stationIndex].name}</strong></p>
+                <div class="form-group">
+                    <label>Pump Name/ID *</label>
+                    <input type="text" id="modal-pump-name" class="form-input" value="${pump.name || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="modal-pump-type" class="form-select">
+                            <option value="">Select...</option>
+                            <option ${pump.type === 'Vertical Turbine' ? 'selected' : ''}>Vertical Turbine</option>
+                            <option ${pump.type === 'Submersible' ? 'selected' : ''}>Submersible</option>
+                            <option ${pump.type === 'Centrifugal' ? 'selected' : ''}>Centrifugal</option>
+                            <option ${pump.type === 'Booster' ? 'selected' : ''}>Booster</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Horsepower (HP)</label>
+                        <input type="number" id="modal-pump-hp" class="form-input" value="${pump.hp || ''}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Capacity (GPM)</label>
+                        <input type="number" id="modal-pump-capacity" class="form-input" value="${pump.capacity || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="modal-pump-status" class="form-select">
+                            <option ${pump.status === 'Active' ? 'selected' : ''}>Active</option>
+                            <option ${pump.status === 'Standby' ? 'selected' : ''}>Standby</option>
+                            <option ${pump.status === 'Out of Service' ? 'selected' : ''}>Out of Service</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="modal-pump-notes" class="form-textarea" rows="2">${pump.notes || ''}</textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveIndividualPump(${stationIndex}, ${pumpIndex})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
+        }
+
+        function deleteIndividualPump(stationIndex, pumpIndex) {
+            if (confirm('Delete this pump?')) {
+                currentSystemData.pumps.stations[stationIndex].pumps.splice(pumpIndex, 1);
+                renderPumps();
+                saveData();
+            }
+        }
+
+        // Shift Operators
+        function renderShiftOperators() {
+            const container = document.getElementById('shift-operators-list');
+            if (!currentSystemData.operators || !currentSystemData.operators.shift || currentSystemData.operators.shift.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No shift operators added yet</div>';
+                return;
+            }
+            container.innerHTML = currentSystemData.operators.shift.map((op, i) => `
+                <div class="list-item-card">
+                    <div class="list-item-header">
+                        <strong>${op.name || 'Unnamed Operator'}</strong>
+                        <span class="badge badge-blue">${op.certLevel || 'N/A'}</span>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editShiftOperator(${i})">Edit</button>
+                            <button class="btn-delete" onclick="deleteShiftOperator(${i})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="list-item-body">
+                        <div><strong>Cert #:</strong> ${op.certNumber || 'N/A'} | <strong>Expires:</strong> ${op.expiration || 'N/A'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
         function addShiftOperator() {
-            editingOperatorIdx = null;
-            showOperatorForm();
-        }
-
-        function editShiftOperator(idx) {
-            editingOperatorIdx = idx;
-            showOperatorForm();
-        }
-
-        function showOperatorForm() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const op = editingOperatorIdx !== null ? system.systemData.operators.shiftOperators[editingOperatorIdx] : {};
-            
-            const html = `
+            showModal(`
+                <h3>Add Shift Operator</h3>
                 <div class="form-group">
-                    <label class="form-label">Name</label>
-                    <input type="text" class="form-input" id="op-name" value="${op.name || ''}" placeholder="Full Name">
+                    <label>Name *</label>
+                    <input type="text" id="modal-op-name" class="form-input" placeholder="Full Name">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Cert Level</label>
-                        <select class="form-select" id="op-level">
+                        <label>Cert Level</label>
+                        <select id="modal-op-level" class="form-select">
                             <option value="">Select...</option>
-                            <option value="T1" ${op.certLevel === 'T1' ? 'selected' : ''}>T1</option>
-                            <option value="T2" ${op.certLevel === 'T2' ? 'selected' : ''}>T2</option>
-                            <option value="T3" ${op.certLevel === 'T3' ? 'selected' : ''}>T3</option>
-                            <option value="T4" ${op.certLevel === 'T4' ? 'selected' : ''}>T4</option>
-                            <option value="T5" ${op.certLevel === 'T5' ? 'selected' : ''}>T5</option>
-                            <option value="D1" ${op.certLevel === 'D1' ? 'selected' : ''}>D1</option>
-                            <option value="D2" ${op.certLevel === 'D2' ? 'selected' : ''}>D2</option>
-                            <option value="D3" ${op.certLevel === 'D3' ? 'selected' : ''}>D3</option>
-                            <option value="D4" ${op.certLevel === 'D4' ? 'selected' : ''}>D4</option>
-                            <option value="D5" ${op.certLevel === 'D5' ? 'selected' : ''}>D5</option>
+                            <option>T1</option>
+                            <option>T2</option>
+                            <option>T3</option>
+                            <option>T4</option>
+                            <option>T5</option>
+                            <option>D1</option>
+                            <option>D2</option>
+                            <option>D3</option>
+                            <option>D4</option>
+                            <option>D5</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Cert Number</label>
-                        <input type="text" class="form-input" id="op-cert" value="${op.certNumber || ''}" placeholder="XXXXX">
+                        <label>Cert Number</label>
+                        <input type="text" id="modal-op-cert" class="form-input">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Cert Expiration</label>
-                    <input type="date" class="form-input" id="op-exp" value="${op.certExp || ''}">
+                    <label>Expiration Date</label>
+                    <input type="date" id="modal-op-exp" class="form-input">
                 </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary" onclick="saveOperator()">Save</button>
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveShiftOperator()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
                 </div>
-            `;
-            
-            showModal(editingOperatorIdx !== null ? 'Edit Shift Operator' : 'Add Shift Operator', html);
+            `);
         }
 
-        function saveOperator() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            
-            const op = {
-                name: document.getElementById('op-name').value,
-                certLevel: document.getElementById('op-level').value,
-                certNumber: document.getElementById('op-cert').value,
-                certExp: document.getElementById('op-exp').value
+        function saveShiftOperator(index = null) {
+            const operator = {
+                name: document.getElementById('modal-op-name').value,
+                certLevel: document.getElementById('modal-op-level').value,
+                certNumber: document.getElementById('modal-op-cert').value,
+                expiration: document.getElementById('modal-op-exp').value
             };
             
-            if (editingOperatorIdx !== null) {
-                system.systemData.operators.shiftOperators[editingOperatorIdx] = op;
+            if (!currentSystemData.operators) currentSystemData.operators = {};
+            if (!currentSystemData.operators.shift) currentSystemData.operators.shift = [];
+            
+            if (index !== null) {
+                currentSystemData.operators.shift[index] = operator;
             } else {
-                if (!system.systemData.operators.shiftOperators) system.systemData.operators.shiftOperators = [];
-                system.systemData.operators.shiftOperators.push(op);
+                currentSystemData.operators.shift.push(operator);
             }
             
-            saveData();
-            closeModal();
+            hideModal();
             renderShiftOperators();
+            saveData();
         }
 
-        function deleteShiftOperator(idx) {
-            if (!confirm('Delete this operator?')) return;
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            system.systemData.operators.shiftOperators.splice(idx, 1);
-            saveData();
-            renderShiftOperators();
+        function editShiftOperator(index) {
+            const op = currentSystemData.operators.shift[index];
+            showModal(`
+                <h3>Edit Shift Operator</h3>
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="modal-op-name" class="form-input" value="${op.name || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cert Level</label>
+                        <select id="modal-op-level" class="form-select">
+                            <option value="">Select...</option>
+                            <option ${op.certLevel === 'T1' ? 'selected' : ''}>T1</option>
+                            <option ${op.certLevel === 'T2' ? 'selected' : ''}>T2</option>
+                            <option ${op.certLevel === 'T3' ? 'selected' : ''}>T3</option>
+                            <option ${op.certLevel === 'T4' ? 'selected' : ''}>T4</option>
+                            <option ${op.certLevel === 'T5' ? 'selected' : ''}>T5</option>
+                            <option ${op.certLevel === 'D1' ? 'selected' : ''}>D1</option>
+                            <option ${op.certLevel === 'D2' ? 'selected' : ''}>D2</option>
+                            <option ${op.certLevel === 'D3' ? 'selected' : ''}>D3</option>
+                            <option ${op.certLevel === 'D4' ? 'selected' : ''}>D4</option>
+                            <option ${op.certLevel === 'D5' ? 'selected' : ''}>D5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cert Number</label>
+                        <input type="text" id="modal-op-cert" class="form-input" value="${op.certNumber || ''}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Expiration Date</label>
+                    <input type="date" id="modal-op-exp" class="form-input" value="${op.expiration || ''}">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveShiftOperator(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
 
-        // Deficiency functions
-        let editingDeficiencyIdx = null;
+        function deleteShiftOperator(index) {
+            if (confirm('Delete this shift operator?')) {
+                currentSystemData.operators.shift.splice(index, 1);
+                renderShiftOperators();
+                saveData();
+            }
+        }
+
+        // Deficiencies
+        function renderDeficiencies() {
+            const container = document.getElementById('deficiencies-list');
+            if (!currentSystemData.deficiencies || currentSystemData.deficiencies.length === 0) {
+                container.innerHTML = '<div style="color: #8e8e93; padding: 20px; text-align: center;">No deficiencies added yet</div>';
+                return;
+            }
+            
+            const typeColors = { 'Significant': 'red', 'Minor': 'orange', 'Recommendation': 'blue' };
+            const statusColors = { 'Open': 'red', 'In Progress': 'orange', 'Closed': 'green' };
+            
+            container.innerHTML = currentSystemData.deficiencies.map((def, i) => `
+                <div class="list-item-card">
+                    <div class="list-item-header">
+                        <strong>Element ${def.element || '?'}</strong>
+                        <span class="badge badge-${typeColors[def.type] || 'gray'}">${def.type || 'N/A'}</span>
+                        <span class="badge badge-${statusColors[def.status] || 'gray'}">${def.status || 'Unknown'}</span>
+                        <div class="list-item-actions">
+                            <button class="btn-edit" onclick="editDeficiency(${i})">Edit</button>
+                            <button class="btn-delete" onclick="deleteDeficiency(${i})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="list-item-body">
+                        <div><strong>Description:</strong> ${def.description || 'N/A'}</div>
+                        ${def.citation ? `<div><strong>Citation:</strong> ${def.citation}</div>` : ''}
+                        ${def.dueDate ? `<div><strong>Due:</strong> ${def.dueDate}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
         function addDeficiency() {
-            editingDeficiencyIdx = null;
-            showDeficiencyForm();
-        }
-
-        function editDeficiency(idx) {
-            editingDeficiencyIdx = idx;
-            showDeficiencyForm();
-        }
-
-        function showDeficiencyForm() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            const def = editingDeficiencyIdx !== null ? system.systemData.deficiencies[editingDeficiencyIdx] : {};
-            
-            const html = `
+            showModal(`
+                <h3>Add Deficiency</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Element (1-8)</label>
-                        <select class="form-select" id="def-element">
+                        <label>Element (1-8) *</label>
+                        <select id="modal-def-element" class="form-select">
                             <option value="">Select...</option>
-                            <option value="1 - Sources" ${def.element === '1 - Sources' ? 'selected' : ''}>1 - Sources</option>
-                            <option value="2 - Treatment" ${def.element === '2 - Treatment' ? 'selected' : ''}>2 - Treatment</option>
-                            <option value="3 - Distribution" ${def.element === '3 - Distribution' ? 'selected' : ''}>3 - Distribution</option>
-                            <option value="4 - Storage" ${def.element === '4 - Storage' ? 'selected' : ''}>4 - Storage</option>
-                            <option value="5 - Pumps" ${def.element === '5 - Pumps' ? 'selected' : ''}>5 - Pumps</option>
-                            <option value="6 - Monitoring" ${def.element === '6 - Monitoring' ? 'selected' : ''}>6 - Monitoring</option>
-                            <option value="7 - Management" ${def.element === '7 - Management' ? 'selected' : ''}>7 - Management</option>
-                            <option value="8 - Operators" ${def.element === '8 - Operators' ? 'selected' : ''}>8 - Operators</option>
+                            <option value="1">1 - Sources</option>
+                            <option value="2">2 - Treatment</option>
+                            <option value="3">3 - Distribution</option>
+                            <option value="4">4 - Storage</option>
+                            <option value="5">5 - Pumps</option>
+                            <option value="6">6 - Monitoring</option>
+                            <option value="7">7 - Management</option>
+                            <option value="8">8 - Operators</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Type</label>
-                        <select class="form-select" id="def-type">
+                        <label>Type *</label>
+                        <select id="modal-def-type" class="form-select">
                             <option value="">Select...</option>
-                            <option value="significant" ${def.type === 'significant' ? 'selected' : ''}>Significant</option>
-                            <option value="minor" ${def.type === 'minor' ? 'selected' : ''}>Minor</option>
-                            <option value="recommendation" ${def.type === 'recommendation' ? 'selected' : ''}>Recommendation</option>
+                            <option>Significant</option>
+                            <option>Minor</option>
+                            <option>Recommendation</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="def-description" placeholder="Detailed description of the deficiency...">${def.description || ''}</textarea>
+                    <label>Description *</label>
+                    <textarea id="modal-def-desc" class="form-textarea" rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Regulatory Citation</label>
-                    <input type="text" class="form-input" id="def-citation" value="${def.citation || ''}" placeholder="e.g., 22 CCR §64560(c)(1)">
+                    <label>Regulatory Citation</label>
+                    <input type="text" id="modal-def-citation" class="form-input" placeholder="e.g., 22 CCR §64560">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Date Identified</label>
-                        <input type="date" class="form-input" id="def-date" value="${def.dateIdentified || ''}">
+                        <label>Date Identified</label>
+                        <input type="date" id="modal-def-date" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Correction Due Date</label>
-                        <input type="date" class="form-input" id="def-due" value="${def.dueDate || ''}">
+                        <label>Due Date</label>
+                        <input type="date" id="modal-def-due" class="form-input">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" id="def-status">
-                        <option value="">Select...</option>
-                        <option value="open" ${def.status === 'open' ? 'selected' : ''}>Open</option>
-                        <option value="progress" ${def.status === 'progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="closed" ${def.status === 'closed' ? 'selected' : ''}>Closed</option>
+                    <label>Status *</label>
+                    <select id="modal-def-status" class="form-select">
+                        <option>Open</option>
+                        <option>In Progress</option>
+                        <option>Closed</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Resolution Notes</label>
-                    <textarea class="form-textarea" id="def-resolution" placeholder="Actions taken, date resolved...">${def.resolution || ''}</textarea>
+                    <label>Resolution Notes</label>
+                    <textarea id="modal-def-resolution" class="form-textarea" rows="2"></textarea>
                 </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary" onclick="saveDeficiency()">Save</button>
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveDeficiency()" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
                 </div>
-            `;
-            
-            showModal(editingDeficiencyIdx !== null ? 'Edit Deficiency' : 'Add Deficiency', html);
+            `);
         }
 
-        function saveDeficiency() {
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            
-            const def = {
-                element: document.getElementById('def-element').value,
-                type: document.getElementById('def-type').value,
-                description: document.getElementById('def-description').value,
-                citation: document.getElementById('def-citation').value,
-                dateIdentified: document.getElementById('def-date').value,
-                dueDate: document.getElementById('def-due').value,
-                status: document.getElementById('def-status').value,
-                resolution: document.getElementById('def-resolution').value
+        function saveDeficiency(index = null) {
+            const deficiency = {
+                element: document.getElementById('modal-def-element').value,
+                type: document.getElementById('modal-def-type').value,
+                description: document.getElementById('modal-def-desc').value,
+                citation: document.getElementById('modal-def-citation').value,
+                dateIdentified: document.getElementById('modal-def-date').value,
+                dueDate: document.getElementById('modal-def-due').value,
+                status: document.getElementById('modal-def-status').value,
+                resolution: document.getElementById('modal-def-resolution').value
             };
             
-            if (editingDeficiencyIdx !== null) {
-                system.systemData.deficiencies[editingDeficiencyIdx] = def;
+            if (!currentSystemData.deficiencies) currentSystemData.deficiencies = [];
+            
+            if (index !== null) {
+                currentSystemData.deficiencies[index] = deficiency;
             } else {
-                if (!system.systemData.deficiencies) system.systemData.deficiencies = [];
-                system.systemData.deficiencies.push(def);
+                currentSystemData.deficiencies.push(deficiency);
             }
             
-            saveData();
-            closeModal();
+            hideModal();
             renderDeficiencies();
+            saveData();
         }
 
-        function deleteDeficiency(idx) {
-            if (!confirm('Delete this deficiency?')) return;
-            const system = appData.systems.find(s => s.id === currentSystemId);
-            system.systemData.deficiencies.splice(idx, 1);
-            saveData();
-            renderDeficiencies();
+        function editDeficiency(index) {
+            const def = currentSystemData.deficiencies[index];
+            showModal(`
+                <h3>Edit Deficiency</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Element (1-8) *</label>
+                        <select id="modal-def-element" class="form-select">
+                            <option value="">Select...</option>
+                            <option value="1" ${def.element === '1' ? 'selected' : ''}>1 - Sources</option>
+                            <option value="2" ${def.element === '2' ? 'selected' : ''}>2 - Treatment</option>
+                            <option value="3" ${def.element === '3' ? 'selected' : ''}>3 - Distribution</option>
+                            <option value="4" ${def.element === '4' ? 'selected' : ''}>4 - Storage</option>
+                            <option value="5" ${def.element === '5' ? 'selected' : ''}>5 - Pumps</option>
+                            <option value="6" ${def.element === '6' ? 'selected' : ''}>6 - Monitoring</option>
+                            <option value="7" ${def.element === '7' ? 'selected' : ''}>7 - Management</option>
+                            <option value="8" ${def.element === '8' ? 'selected' : ''}>8 - Operators</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Type *</label>
+                        <select id="modal-def-type" class="form-select">
+                            <option value="">Select...</option>
+                            <option ${def.type === 'Significant' ? 'selected' : ''}>Significant</option>
+                            <option ${def.type === 'Minor' ? 'selected' : ''}>Minor</option>
+                            <option ${def.type === 'Recommendation' ? 'selected' : ''}>Recommendation</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="modal-def-desc" class="form-textarea" rows="3">${def.description || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Regulatory Citation</label>
+                    <input type="text" id="modal-def-citation" class="form-input" value="${def.citation || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date Identified</label>
+                        <input type="date" id="modal-def-date" class="form-input" value="${def.dateIdentified || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="modal-def-due" class="form-input" value="${def.dueDate || ''}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="modal-def-status" class="form-select">
+                        <option ${def.status === 'Open' ? 'selected' : ''}>Open</option>
+                        <option ${def.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option ${def.status === 'Closed' ? 'selected' : ''}>Closed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Resolution Notes</label>
+                    <textarea id="modal-def-resolution" class="form-textarea" rows="2">${def.resolution || ''}</textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveDeficiency(${index})" class="modal-btn modal-btn-primary">Save</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
         }
+
+        function deleteDeficiency(index) {
+            if (confirm('Delete this deficiency?')) {
+                currentSystemData.deficiencies.splice(index, 1);
+                renderDeficiencies();
+                saveData();
+            }
+        }
+        
+        // ========== MODAL FUNCTIONS ==========
+        
+        function showModal(content) {
+            const modal = document.getElementById('globalModal');
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = content;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideModal() {
+            const modal = document.getElementById('globalModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('globalModal');
+            if (event.target === modal) {
+                hideModal();
+            }
+        }
+        
+        // ========== HELPER FUNCTION FOR CURRENT SYSTEM DATA ==========
+        
+        function getCurrentSystemData() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system) return null;
+            
+            if (!system.systemData) {
+                system.systemData = {
+                    overview: {},
+                    permits: { amendments: [] },
+                    sources: {
+                        overallType: '',
+                        cccProgram: '',
+                        swpMeasures: '',
+                        concerns: '',
+                        list: []
+                    },
+                    treatment: {
+                        classification: '',
+                        capacity: '',
+                        type: '',
+                        processes: '',
+                        opsPlanDate: '',
+                        notes: '',
+                        facilities: [],
+                        chemicals: []
+                    },
+                    distribution: {},
+                    storage: {
+                        totalCapacity: '',
+                        redundancyAdequate: '',
+                        notes: '',
+                        tanks: []
+                    },
+                    pumps: {
+                        totalCapacity: '',
+                        backupPowerStrategy: '',
+                        notes: '',
+                        stations: []
+                    },
+                    monitoring: {},
+                    management: {},
+                    operators: { chief: {}, shift: [] },
+                    deficiencies: []
+                };
+            }
+            
+            // Migration: Convert old data structures to new ones
+            if (system.systemData.sources && Array.isArray(system.systemData.sources)) {
+                system.systemData.sources = {
+                    overallType: '',
+                    cccProgram: '',
+                    swpMeasures: '',
+                    concerns: '',
+                    list: system.systemData.sources
+                };
+            }
+            
+            if (system.systemData.storage && Array.isArray(system.systemData.storage)) {
+                system.systemData.storage = {
+                    totalCapacity: '',
+                    redundancyAdequate: '',
+                    notes: '',
+                    tanks: system.systemData.storage
+                };
+            }
+            
+            if (system.systemData.pumps && Array.isArray(system.systemData.pumps)) {
+                system.systemData.pumps = {
+                    totalCapacity: '',
+                    backupPowerStrategy: '',
+                    notes: '',
+                    stations: system.systemData.pumps
+                };
+            }
+            
+            if (system.systemData.pumpStations) {
+                if (!system.systemData.pumps || Array.isArray(system.systemData.pumps)) {
+                    system.systemData.pumps = {
+                        totalCapacity: '',
+                        backupPowerStrategy: '',
+                        notes: '',
+                        stations: system.systemData.pumpStations
+                    };
+                }
+                delete system.systemData.pumpStations;
+            }
+            
+            // Ensure nested structures exist
+            if (!system.systemData.sources.list) system.systemData.sources.list = [];
+            if (!system.systemData.storage.tanks) system.systemData.storage.tanks = [];
+            if (!system.systemData.pumps.stations) system.systemData.pumps.stations = [];
+            if (!system.systemData.treatment.facilities) system.systemData.treatment.facilities = [];
+            
+            return system.systemData;
+        }
+        
+        // Create a proxy for easy access
+        Object.defineProperty(window, 'currentSystemData', {
+            get: function() {
+                return getCurrentSystemData();
+            }
+        });
+        
     </script>
+    
+    <!-- Global Modal -->
+    <div id="globalModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="hideModal()">&times;</span>
+            <div id="modalBody">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
 </body>
 </html>
