@@ -1912,7 +1912,7 @@
                     <div class="list-item-header" style="background: #f0fff0;">
                         <strong style="color: #28a745;">🏭 ${facility.name || 'Unnamed Facility'}</strong>
                         <div class="list-item-actions">
-                            <button class="btn-edit" onclick="editTreatmentFacility(${i})">Edit</button>
+                            <button class="btn-edit" onclick="editTreatmentFacility(${i})">Edit Facility</button>
                             <button class="btn-delete" onclick="deleteTreatmentFacility(${i})">Delete</button>
                         </div>
                     </div>
@@ -1920,6 +1920,32 @@
                         <div><strong>Capacity:</strong> ${facility.capacity || 'N/A'} MGD | <strong>Classification:</strong> ${facility.classification || 'N/A'}</div>
                         <div><strong>Processes:</strong> ${facility.processes || 'N/A'}</div>
                         ${facility.location ? `<div><strong>Location:</strong> ${facility.location}</div>` : ''}
+                        
+                        <div style="margin-top: 15px; padding: 10px; background: white; border-radius: 6px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong>Individual Filters/Processes (${(facility.filters || []).length})</strong>
+                                <button class="btn-add" style="font-size: 0.85rem; padding: 4px 12px;" onclick="addIndividualFilter(${i})">+ Add Filter</button>
+                            </div>
+                            ${(facility.filters || []).length === 0 ? 
+                                '<div style="color: #8e8e93; text-align: center; padding: 10px;">No filters/processes added</div>' :
+                                facility.filters.map((filter, j) => `
+                                    <div style="border: 1px solid #e9ecef; padding: 8px; margin: 5px 0; border-radius: 4px; background: #fafafa;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <strong>${filter.name || `Filter #${j+1}`}</strong>
+                                                ${filter.type ? ` | ${filter.type}` : ''}
+                                                ${filter.capacity ? ` | ${filter.capacity} MGD` : ''}
+                                                ${filter.media ? ` | ${filter.media}` : ''}
+                                            </div>
+                                            <div>
+                                                <button class="btn-edit" style="font-size: 0.8rem; padding: 2px 8px;" onclick="editIndividualFilter(${i}, ${j})">Edit</button>
+                                                <button class="btn-delete" style="font-size: 0.8rem; padding: 2px 8px;" onclick="deleteIndividualFilter(${i}, ${j})">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -1975,7 +2001,8 @@
                 capacity: document.getElementById('modal-facility-capacity').value,
                 classification: document.getElementById('modal-facility-class').value,
                 processes: document.getElementById('modal-facility-processes').value,
-                notes: document.getElementById('modal-facility-notes').value
+                notes: document.getElementById('modal-facility-notes').value,
+                filters: []
             };
             
             if (!currentSystemData.treatment.facilities) {
@@ -1983,6 +2010,8 @@
             }
             
             if (index !== null) {
+                // Preserve existing filters when editing facility
+                facility.filters = currentSystemData.treatment.facilities[index].filters || [];
                 currentSystemData.treatment.facilities[index] = facility;
             } else {
                 currentSystemData.treatment.facilities.push(facility);
@@ -2038,8 +2067,184 @@
         }
 
         function deleteTreatmentFacility(index) {
-            if (confirm('Delete this treatment facility?')) {
+            if (confirm('Delete this treatment facility and all its filters?')) {
                 currentSystemData.treatment.facilities.splice(index, 1);
+                renderTreatmentFacilities();
+                saveData();
+            }
+        }
+
+        // Individual Filters (nested within treatment facilities)
+        function addIndividualFilter(facilityIndex) {
+            showModal(`
+                <h3>Add Individual Filter/Process</h3>
+                <p style="color: #666; margin-bottom: 15px;">Adding to: <strong>${currentSystemData.treatment.facilities[facilityIndex].name}</strong></p>
+                <div class="form-group">
+                    <label>Filter Name/ID *</label>
+                    <input type="text" id="modal-filter-name" class="form-input" placeholder="e.g., Filter #1, Rapid Sand Filter A">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="modal-filter-type" class="form-select">
+                            <option value="">Select...</option>
+                            <option value="Rapid Sand">Rapid Sand Filter</option>
+                            <option value="Dual Media">Dual Media Filter</option>
+                            <option value="Pressure Filter">Pressure Filter</option>
+                            <option value="Membrane">Membrane (UF/MF)</option>
+                            <option value="Slow Sand">Slow Sand Filter</option>
+                            <option value="Cartridge">Cartridge Filter</option>
+                            <option value="Bag Filter">Bag Filter</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacity (MGD)</label>
+                        <input type="number" step="0.001" id="modal-filter-capacity" class="form-input" placeholder="0.000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Filter Media</label>
+                    <input type="text" id="modal-filter-media" class="form-input" placeholder="e.g., 24 in sand / 12 in anthracite">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Turbidity (NTU)</label>
+                        <input type="number" step="0.01" id="modal-filter-turbidity" class="form-input" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Condition</label>
+                        <select id="modal-filter-condition" class="form-select">
+                            <option value="">Select...</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                            <option value="Out of Service">Out of Service</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Backwash Frequency (days)</label>
+                        <input type="number" id="modal-filter-backwash" class="form-input" placeholder="e.g., 3">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Media Replacement</label>
+                        <input type="date" id="modal-filter-media-date" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Performance Notes</label>
+                    <textarea id="modal-filter-notes" class="form-textarea" rows="2" placeholder="Filter performance, issues, maintenance needs..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveIndividualFilter(${facilityIndex})" class="modal-btn modal-btn-primary">Save Filter</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
+        }
+
+        function saveIndividualFilter(facilityIndex, filterIndex = null) {
+            const filter = {
+                name: document.getElementById('modal-filter-name').value,
+                type: document.getElementById('modal-filter-type').value,
+                capacity: document.getElementById('modal-filter-capacity').value,
+                media: document.getElementById('modal-filter-media').value,
+                turbidity: document.getElementById('modal-filter-turbidity').value,
+                condition: document.getElementById('modal-filter-condition').value,
+                backwashFrequency: document.getElementById('modal-filter-backwash').value,
+                lastMediaReplacement: document.getElementById('modal-filter-media-date').value,
+                notes: document.getElementById('modal-filter-notes').value
+            };
+            
+            if (!currentSystemData.treatment.facilities[facilityIndex].filters) {
+                currentSystemData.treatment.facilities[facilityIndex].filters = [];
+            }
+            
+            if (filterIndex !== null) {
+                currentSystemData.treatment.facilities[facilityIndex].filters[filterIndex] = filter;
+            } else {
+                currentSystemData.treatment.facilities[facilityIndex].filters.push(filter);
+            }
+            
+            hideModal();
+            renderTreatmentFacilities();
+            saveData();
+        }
+
+        function editIndividualFilter(facilityIndex, filterIndex) {
+            const filter = currentSystemData.treatment.facilities[facilityIndex].filters[filterIndex];
+            showModal(`
+                <h3>Edit Individual Filter/Process</h3>
+                <p style="color: #666; margin-bottom: 15px;">Editing filter in: <strong>${currentSystemData.treatment.facilities[facilityIndex].name}</strong></p>
+                <div class="form-group">
+                    <label>Filter Name/ID *</label>
+                    <input type="text" id="modal-filter-name" class="form-input" value="${filter.name || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="modal-filter-type" class="form-select">
+                            <option value="">Select...</option>
+                            <option value="Rapid Sand" ${filter.type === 'Rapid Sand' ? 'selected' : ''}>Rapid Sand Filter</option>
+                            <option value="Dual Media" ${filter.type === 'Dual Media' ? 'selected' : ''}>Dual Media Filter</option>
+                            <option value="Pressure Filter" ${filter.type === 'Pressure Filter' ? 'selected' : ''}>Pressure Filter</option>
+                            <option value="Membrane" ${filter.type === 'Membrane' ? 'selected' : ''}>Membrane (UF/MF)</option>
+                            <option value="Slow Sand" ${filter.type === 'Slow Sand' ? 'selected' : ''}>Slow Sand Filter</option>
+                            <option value="Cartridge" ${filter.type === 'Cartridge' ? 'selected' : ''}>Cartridge Filter</option>
+                            <option value="Bag Filter" ${filter.type === 'Bag Filter' ? 'selected' : ''}>Bag Filter</option>
+                            <option value="Other" ${filter.type === 'Other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacity (MGD)</label>
+                        <input type="number" step="0.001" id="modal-filter-capacity" class="form-input" value="${filter.capacity || ''}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Filter Media</label>
+                    <input type="text" id="modal-filter-media" class="form-input" value="${filter.media || ''}">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Turbidity (NTU)</label>
+                        <input type="number" step="0.01" id="modal-filter-turbidity" class="form-input" value="${filter.turbidity || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Condition</label>
+                        <select id="modal-filter-condition" class="form-select">
+                            <option value="">Select...</option>
+                            <option value="Good" ${filter.condition === 'Good' ? 'selected' : ''}>Good</option>
+                            <option value="Fair" ${filter.condition === 'Fair' ? 'selected' : ''}>Fair</option>
+                            <option value="Poor" ${filter.condition === 'Poor' ? 'selected' : ''}>Poor</option>
+                            <option value="Out of Service" ${filter.condition === 'Out of Service' ? 'selected' : ''}>Out of Service</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Backwash Frequency (days)</label>
+                        <input type="number" id="modal-filter-backwash" class="form-input" value="${filter.backwashFrequency || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Media Replacement</label>
+                        <input type="date" id="modal-filter-media-date" class="form-input" value="${filter.lastMediaReplacement || ''}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Performance Notes</label>
+                    <textarea id="modal-filter-notes" class="form-textarea" rows="2">${filter.notes || ''}</textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="saveIndividualFilter(${facilityIndex}, ${filterIndex})" class="modal-btn modal-btn-primary">Save Changes</button>
+                    <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                </div>
+            `);
+        }
+
+        function deleteIndividualFilter(facilityIndex, filterIndex) {
+            if (confirm('Delete this filter?')) {
+                currentSystemData.treatment.facilities[facilityIndex].filters.splice(filterIndex, 1);
                 renderTreatmentFacilities();
                 saveData();
             }
@@ -3097,6 +3302,13 @@
             if (!system.systemData.storage.tanks) system.systemData.storage.tanks = [];
             if (!system.systemData.pumps.stations) system.systemData.pumps.stations = [];
             if (!system.systemData.treatment.facilities) system.systemData.treatment.facilities = [];
+            
+            // Ensure each treatment facility has a filters array
+            if (system.systemData.treatment.facilities) {
+                system.systemData.treatment.facilities.forEach(facility => {
+                    if (!facility.filters) facility.filters = [];
+                });
+            }
             
             return system.systemData;
         }
