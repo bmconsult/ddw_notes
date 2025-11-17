@@ -494,6 +494,7 @@
         <button class="tab-btn" onclick="switchTab('management')">Management</button>
         <button class="tab-btn" onclick="switchTab('operators')">Operators</button>
         <button class="tab-btn" onclick="switchTab('deficiencies')">Deficiencies</button>
+        <button class="tab-btn" onclick="switchTab('inspection')">Inspection History</button>
     </div>
 
     <!-- Content -->
@@ -567,6 +568,22 @@
                         <label class="form-label">Next Survey Due</label>
                         <input type="date" class="form-input" id="next-survey">
                     </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <div class="section-title">System History & Context</div>
+                <div class="form-group">
+                    <label class="form-label">System History Summary</label>
+                    <textarea class="form-textarea" id="system-history" rows="4" placeholder="When was the system built? Major expansions or modifications? Significant events (contamination incidents, failures, emergencies)? How has the system evolved over time?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Known Vulnerabilities & Challenges</label>
+                    <textarea class="form-textarea" id="known-vulnerabilities" rows="3" placeholder="Known problem areas, aging infrastructure concerns, capacity limitations, water quality challenges, geographical constraints, etc."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Area Characteristics</label>
+                    <textarea class="form-textarea" id="service-area-characteristics" rows="3" placeholder="Community demographics, growth trends, seasonal population changes, development plans, economic factors affecting the system..."></textarea>
                 </div>
             </div>
         </div>
@@ -696,6 +713,14 @@
                 <div class="form-group">
                     <label class="form-label">Overall Treatment Challenges/Notes</label>
                     <textarea class="form-textarea" id="treatment-notes" placeholder="System-wide water quality challenges, seasonal issues, performance notes..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Treatment Performance Assessment</label>
+                    <textarea class="form-textarea" id="treatment-performance" rows="3" placeholder="How is treatment performing? Compliance trends? Areas of excellence? Areas needing improvement? Process optimization efforts?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Recent Improvements & Upgrades</label>
+                    <textarea class="form-textarea" id="treatment-improvements" rows="3" placeholder="Recent modifications, equipment installations, process changes, capital projects completed, performance enhancements..."></textarea>
                 </div>
             </div>
 
@@ -1096,6 +1121,30 @@
                     <textarea class="form-textarea" id="mitigation" placeholder="Actions taken or planned to address vulnerabilities..."></textarea>
                 </div>
             </div>
+            
+            <div class="form-section">
+                <div class="section-title">System Performance & Operational Context</div>
+                <div class="form-group">
+                    <label class="form-label">Overall System Performance Assessment</label>
+                    <textarea class="form-textarea" id="performance-assessment" rows="4" placeholder="How is the system performing overall? Trends (improving/declining)? Areas of excellence? Areas of concern? Reliability issues? Water quality performance?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Operator Comments & Concerns</label>
+                    <textarea class="form-textarea" id="operator-comments" rows="3" placeholder="Staff observations, recurring problems, resource limitations, training needs, operational challenges, maintenance concerns..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Recent System Changes & Improvements</label>
+                    <textarea class="form-textarea" id="recent-improvements" rows="3" placeholder="Recent modifications, equipment installations, process changes, capital projects completed in the last 2-3 years..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Future Plans & Goals</label>
+                    <textarea class="form-textarea" id="future-plans" rows="3" placeholder="System vision, planned initiatives, major challenges to address, long-term goals, anticipated capital improvements..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Outstanding Issues & Actions</label>
+                    <textarea class="form-textarea" id="outstanding-issues" rows="3" placeholder="Prior deficiencies and current status, compliance orders, ongoing projects, items needing follow-up..."></textarea>
+                </div>
+            </div>
         </div>
 
         <!-- Operators Section -->
@@ -1189,6 +1238,73 @@
                 <div class="section-title">Previous Deficiencies</div>
                 <div id="deficiencies-list"></div>
                 <button class="add-item-btn" onclick="addDeficiency()">+ Add Deficiency</button>
+            </div>
+        </div>
+
+        <!-- Inspection History Section -->
+        <div class="data-section" id="inspection-section">
+            <div class="form-section">
+                <div class="section-title">Prior Sanitary Survey</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Previous Survey Date</label>
+                        <input type="date" class="form-input" id="prior-survey-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Inspector Name</label>
+                        <input type="text" class="form-input" id="prior-inspector" placeholder="Name of inspector">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Key Findings from Prior Survey</label>
+                    <textarea class="form-textarea" id="prior-findings" rows="4" placeholder="Significant findings, deficiencies identified, major recommendations from the previous sanitary survey..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Resolution of Prior Issues</label>
+                    <textarea class="form-textarea" id="prior-resolutions" rows="3" placeholder="What was done to address previous findings? Status of prior deficiencies? Actions taken since last survey?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Continuing Issues</label>
+                    <textarea class="form-textarea" id="continuing-issues" rows="3" placeholder="Any issues from prior surveys that remain unresolved or are recurring concerns?"></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Current Inspection Planning</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Current Inspection Date</label>
+                        <input type="date" class="form-input" id="current-inspection-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Inspector(s)</label>
+                        <input type="text" class="form-input" id="current-inspectors" placeholder="Name(s) of inspector(s)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pre-Inspection Notes</label>
+                    <textarea class="form-textarea" id="pre-inspection-notes" rows="3" placeholder="Items to focus on, areas of concern to investigate, follow-up from prior survey, questions to ask..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Follow-Up Items</label>
+                    <textarea class="form-textarea" id="follow-up-items" rows="3" placeholder="Items requiring follow-up after this inspection, scheduled re-inspections, outstanding information requests..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Compliance History Context</div>
+                <div class="form-group">
+                    <label class="form-label">Historical Violations</label>
+                    <textarea class="form-textarea" id="historical-violations" rows="3" placeholder="Summary of significant violations from past 5-10 years, patterns, trends, resolutions..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Enforcement Actions</label>
+                    <textarea class="form-textarea" id="enforcement-actions" rows="3" placeholder="Prior enforcement actions (ACOs, CAOs, etc.), current compliance orders, enforcement history..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">System Responsiveness</label>
+                    <textarea class="form-textarea" id="system-responsiveness" rows="3" placeholder="How responsive is the system to regulatory requirements? Track record of addressing issues? Quality of communication with DDW?"></textarea>
+                </div>
             </div>
         </div>
     </div>
@@ -1329,6 +1445,9 @@
                 setValueIfExists('location', data.overview.location);
                 setValueIfExists('last-survey', data.overview.lastSurvey);
                 setValueIfExists('next-survey', data.overview.nextSurvey);
+                setValueIfExists('system-history', data.overview.systemHistory);
+                setValueIfExists('known-vulnerabilities', data.overview.knownVulnerabilities);
+                setValueIfExists('service-area-characteristics', data.overview.serviceAreaCharacteristics);
             }
             
             // Permits
@@ -1360,6 +1479,8 @@
                 setValueIfExists('treatment-processes', data.treatment.processes);
                 setValueIfExists('ops-plan-date', data.treatment.opsPlanDate);
                 setValueIfExists('treatment-notes', data.treatment.notes);
+                setValueIfExists('treatment-performance', data.treatment.performance);
+                setValueIfExists('treatment-improvements', data.treatment.improvements);
                 renderTreatmentFacilities();
                 renderChemicals();
             }
@@ -1444,6 +1565,11 @@
                 setValueIfExists('climate-status', data.management.climateStatus);
                 setValueIfExists('vulnerabilities', data.management.vulnerabilities);
                 setValueIfExists('mitigation', data.management.mitigation);
+                setValueIfExists('performance-assessment', data.management.performanceAssessment);
+                setValueIfExists('operator-comments', data.management.operatorComments);
+                setValueIfExists('recent-improvements', data.management.recentImprovements);
+                setValueIfExists('future-plans', data.management.futurePlans);
+                setValueIfExists('outstanding-issues', data.management.outstandingIssues);
             }
             
             // Operators
@@ -1464,6 +1590,22 @@
             
             // Deficiencies
             renderDeficiencies();
+            
+            // Inspection History
+            if (data.inspectionHistory) {
+                setValueIfExists('prior-survey-date', data.inspectionHistory.priorSurveyDate);
+                setValueIfExists('prior-inspector', data.inspectionHistory.priorInspector);
+                setValueIfExists('prior-findings', data.inspectionHistory.priorFindings);
+                setValueIfExists('prior-resolutions', data.inspectionHistory.priorResolutions);
+                setValueIfExists('continuing-issues', data.inspectionHistory.continuingIssues);
+                setValueIfExists('current-inspection-date', data.inspectionHistory.currentInspectionDate);
+                setValueIfExists('current-inspectors', data.inspectionHistory.currentInspectors);
+                setValueIfExists('pre-inspection-notes', data.inspectionHistory.preInspectionNotes);
+                setValueIfExists('follow-up-items', data.inspectionHistory.followUpItems);
+                setValueIfExists('historical-violations', data.inspectionHistory.historicalViolations);
+                setValueIfExists('enforcement-actions', data.inspectionHistory.enforcementActions);
+                setValueIfExists('system-responsiveness', data.inspectionHistory.systemResponsiveness);
+            }
         }
 
         function setValueIfExists(id, value) {
@@ -3072,12 +3214,28 @@
                     <select id="modal-def-status" class="form-select">
                         <option>Open</option>
                         <option>In Progress</option>
+                        <option>Resolved</option>
                         <option>Closed</option>
+                        <option>Ongoing</option>
                     </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Target Completion Date</label>
+                        <input type="date" id="modal-def-target" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Actual Completion Date</label>
+                        <input type="date" id="modal-def-completed" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Corrective Action Taken</label>
+                    <textarea id="modal-def-action" class="form-textarea" rows="2" placeholder="What was done to address this deficiency?"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Resolution Notes</label>
-                    <textarea id="modal-def-resolution" class="form-textarea" rows="2"></textarea>
+                    <textarea id="modal-def-resolution" class="form-textarea" rows="2" placeholder="Additional notes on resolution, verification, follow-up needed..."></textarea>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button onclick="saveDeficiency()" class="modal-btn modal-btn-primary">Save</button>
@@ -3095,6 +3253,9 @@
                 dateIdentified: document.getElementById('modal-def-date').value,
                 dueDate: document.getElementById('modal-def-due').value,
                 status: document.getElementById('modal-def-status').value,
+                targetCompletion: document.getElementById('modal-def-target').value,
+                actualCompletion: document.getElementById('modal-def-completed').value,
+                correctiveAction: document.getElementById('modal-def-action').value,
                 resolution: document.getElementById('modal-def-resolution').value
             };
             
@@ -3163,8 +3324,24 @@
                     <select id="modal-def-status" class="form-select">
                         <option ${def.status === 'Open' ? 'selected' : ''}>Open</option>
                         <option ${def.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option ${def.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
                         <option ${def.status === 'Closed' ? 'selected' : ''}>Closed</option>
+                        <option ${def.status === 'Ongoing' ? 'selected' : ''}>Ongoing</option>
                     </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Target Completion Date</label>
+                        <input type="date" id="modal-def-target" class="form-input" value="${def.targetCompletion || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Actual Completion Date</label>
+                        <input type="date" id="modal-def-completed" class="form-input" value="${def.actualCompletion || ''}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Corrective Action Taken</label>
+                    <textarea id="modal-def-action" class="form-textarea" rows="2">${def.correctiveAction || ''}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Resolution Notes</label>
@@ -3252,7 +3429,8 @@
                     monitoring: {},
                     management: {},
                     operators: { chief: {}, shift: [] },
-                    deficiencies: []
+                    deficiencies: [],
+                    inspectionHistory: {}
                 };
             }
             
