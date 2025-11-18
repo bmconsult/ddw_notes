@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>DDW System Data Manager</title>
+    <title>DDW System Data Manager - AI Autofill</title>
     <style>
         * {
             margin: 0;
@@ -44,7 +44,13 @@
             font-weight: 600;
         }
 
-        .back-btn {
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .back-btn, .import-btn {
             background: rgba(255,255,255,0.2);
             border: 1px solid rgba(255,255,255,0.3);
             color: white;
@@ -57,10 +63,43 @@
             gap: 6px;
         }
 
+        .import-btn {
+            background: rgba(40, 167, 69, 0.3);
+            border-color: rgba(40, 167, 69, 0.5);
+        }
+
+        .import-btn:hover {
+            background: rgba(40, 167, 69, 0.4);
+        }
+
         .breadcrumb {
             margin-top: 8px;
             font-size: 0.85rem;
             opacity: 0.9;
+        }
+
+        /* Import Status Banner */
+        .import-status {
+            display: none;
+            padding: 12px 20px;
+            background: #28a745;
+            color: white;
+            text-align: center;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+        }
+
+        .import-status.error {
+            background: #dc3545;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #jsonFileInput {
+            display: none;
         }
 
         /* Tabs */
@@ -93,6 +132,19 @@
         .tab-btn.active {
             background: #2a5298;
             color: white;
+        }
+
+        .tab-btn.has-data::after {
+            content: '●';
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 0.6rem;
+            color: #28a745;
+        }
+
+        .tab-btn.active.has-data::after {
+            color: #90ee90;
         }
 
         /* Content */
@@ -152,6 +204,11 @@
             border-color: #2a5298;
         }
 
+        .form-input.autofilled, .form-select.autofilled, .form-textarea.autofilled {
+            background: #e8f5e9;
+            border-color: #28a745;
+        }
+
         .form-textarea {
             min-height: 100px;
             resize: vertical;
@@ -196,6 +253,11 @@
             padding: 12px;
             margin-bottom: 8px;
             border-left: 4px solid #2a5298;
+        }
+
+        .list-item.autofilled {
+            background: #e8f5e9;
+            border-left-color: #28a745;
         }
 
         .list-item-header {
@@ -469,14 +531,72 @@
             background: #1e3c72;
         }
 
+        /* Import Preview Modal Styles */
+        .preview-section {
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .preview-section-title {
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 8px;
+        }
+
+        .preview-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview-stat {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .preview-stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2a5298;
+        }
+
+        .preview-stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .import-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 16px 0;
+            color: #856404;
+        }
+
 </style>
 </head>
 <body>
+    <!-- Hidden file input -->
+    <input type="file" id="jsonFileInput" accept=".json" />
+
+    <!-- Import Status Banner -->
+    <div id="importStatus" class="import-status"></div>
+
     <!-- Header -->
     <div class="header">
         <div class="header-content">
             <h1 id="headerTitle">📊 System Data</h1>
-            <button class="back-btn" onclick="goBack()">← Back</button>
+            <div class="header-actions">
+                <button class="import-btn" onclick="triggerFileUpload()">🤖 AI Import Data</button>
+                <button class="back-btn" onclick="goBack()">← Back</button>
+            </div>
         </div>
         <div class="breadcrumb" id="breadcrumb">Loading...</div>
     </div>
@@ -1413,6 +1533,869 @@
             window.location.href = 'ddw_field_inspector.html';
         }
 
+        // ========== FILE UPLOAD & AUTOFILL FUNCTIONS ==========
+        
+        // Setup file input handler
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('jsonFileInput').addEventListener('change', handleFileUpload);
+            updateTabIndicators();
+        });
+        
+        function triggerFileUpload() {
+            document.getElementById('jsonFileInput').click();
+        }
+        
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                showImportStatus('Please select a JSON file', true);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importData = JSON.parse(e.target.result);
+                    showImportPreview(importData);
+                } catch (error) {
+                    showImportStatus('Error reading JSON file: ' + error.message, true);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+        
+        function showImportPreview(importData) {
+            const stats = {
+                sections: 0,
+                sources: importData.sources?.list?.length || 0,
+                facilities: importData.treatment?.facilities?.length || 0,
+                tanks: importData.storage?.tanks?.length || 0,
+                stations: importData.pumps?.stations?.length || 0,
+                deficiencies: importData.deficiencies?.length || 0,
+                totalFields: 0,
+                filledFields: 0
+            };
+            
+            const sections = ['overview', 'permits', 'distribution', 'monitoring', 'management', 'operators', 'inspectionHistory'];
+            sections.forEach(section => {
+                if (importData[section]) {
+                    stats.sections++;
+                    Object.values(importData[section]).forEach(val => {
+                        if (typeof val === 'string' || typeof val === 'number') {
+                            stats.totalFields++;
+                            if (val && val !== '') stats.filledFields++;
+                        }
+                    });
+                }
+            });
+            
+            const completeness = stats.totalFields > 0 ? Math.round((stats.filledFields / stats.totalFields) * 100) : 0;
+            
+            // Detect if this is a non-standard format (like SDWIS)
+            const isNonStandard = completeness === 0 && (
+                importData.meta || 
+                importData.locations || 
+                importData.samples ||
+                (Object.keys(importData).length > 0 && !importData.overview)
+            );
+            
+            let previewContent = '';
+            
+            if (isNonStandard) {
+                // Non-standard format detected - show encouraging message
+                previewContent = `
+                    <h2 class="modal-title">🤖 AI Import Preview</h2>
+                    
+                    <div class="import-warning" style="background: #e7f3ff; border-color: #2a5298; color: #1e3a6b;">
+                        <strong>🎯 Non-Standard Format Detected!</strong><br>
+                        This appears to be raw data (like SDWIS, monitoring data, or custom format). 
+                        <strong>The AI can still extract and map this data intelligently!</strong>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <div class="preview-section-title">AI Will Analyze:</div>
+                        <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                            <li>✅ <strong>Water quality data</strong> → Monitoring schedules and results</li>
+                            <li>✅ <strong>Sample locations</strong> → Source names (wells, intakes)</li>
+                            <li>✅ <strong>Dates and values</strong> → Last sampling dates, compliance data</li>
+                            <li>✅ <strong>Structured extraction</strong> → Pulls relevant info from complex data</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="preview-section" style="background: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 8px;">
+                        <strong>💡 Note:</strong> The AI is designed to understand semantic meaning, not just structure. 
+                        Even if the preview shows 0%, the AI can extract relevant data from your file!
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 24px;">
+                        <button onclick="executeImport(window.importDataTemp)" class="modal-btn modal-btn-primary" style="flex: 1;">
+                            🤖 Let AI Extract Data
+                        </button>
+                        <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                    </div>
+                `;
+            } else {
+                // Standard format
+                previewContent = `
+                    <h2 class="modal-title">📥 Import Preview</h2>
+                    
+                    <div class="import-warning">
+                        🤖 <strong>AI-Powered Import:</strong> Claude will intelligently analyze your data and map it to the correct form fields, handling field name variations and extracting structured data. Empty fields only will be populated.
+                    </div>
+                    
+                    <div class="preview-section">
+                        <div class="preview-section-title">Data Quality</div>
+                        <div class="preview-stats">
+                            <div class="preview-stat">
+                                <div class="preview-stat-value">${completeness}%</div>
+                                <div class="preview-stat-label">Completeness</div>
+                            </div>
+                            <div class="preview-stat">
+                                <div class="preview-stat-value">${stats.sections}/12</div>
+                                <div class="preview-stat-label">Sections</div>
+                            </div>
+                            <div class="preview-stat">
+                                <div class="preview-stat-value">${stats.filledFields}</div>
+                                <div class="preview-stat-label">Fields to Fill</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <div class="preview-section-title">Items to Import</div>
+                        <div class="preview-stats">
+                            ${stats.sources > 0 ? `<div class="preview-stat"><div class="preview-stat-value">${stats.sources}</div><div class="preview-stat-label">Sources</div></div>` : ''}
+                            ${stats.facilities > 0 ? `<div class="preview-stat"><div class="preview-stat-value">${stats.facilities}</div><div class="preview-stat-label">Facilities</div></div>` : ''}
+                            ${stats.tanks > 0 ? `<div class="preview-stat"><div class="preview-stat-value">${stats.tanks}</div><div class="preview-stat-label">Tanks</div></div>` : ''}
+                            ${stats.stations > 0 ? `<div class="preview-stat"><div class="preview-stat-value">${stats.stations}</div><div class="preview-stat-label">Pump Stations</div></div>` : ''}
+                            ${stats.deficiencies > 0 ? `<div class="preview-stat"><div class="preview-stat-value">${stats.deficiencies}</div><div class="preview-stat-label">Deficiencies</div></div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 24px;">
+                        <button onclick="executeImport(window.importDataTemp)" class="modal-btn modal-btn-primary" style="flex: 1;">🤖 AI Import Data</button>
+                        <button onclick="hideModal()" class="modal-btn">Cancel</button>
+                    </div>
+                `;
+            }
+            
+            showModal(previewContent);
+            
+            window.importDataTemp = importData;
+        }
+        
+        async function executeImport(importData) {
+            hideModal();
+            showImportStatus('🤖 Analyzing data with Claude AI...', false);
+            
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system.systemData) {
+                system.systemData = getCurrentSystemData();
+            }
+            
+            // Extract form schema from actual HTML
+            const formSchema = extractFormSchema();
+            
+            // Use Claude to intelligently map the data
+            await intelligentDataMapping(importData, formSchema, system);
+            
+            delete window.importDataTemp;
+        }
+        
+        function extractFormSchema() {
+            const schema = {};
+            
+            // Define sections to extract
+            const sections = ['overview', 'permits', 'sources', 'treatment', 'distribution', 
+                            'storage', 'pumps', 'monitoring', 'management', 'operators', 'inspection'];
+            
+            sections.forEach(section => {
+                const sectionEl = document.getElementById(section + '-section');
+                if (!sectionEl) return;
+                
+                const fields = [];
+                sectionEl.querySelectorAll('input, select, textarea').forEach(field => {
+                    if (field.id) {
+                        const label = field.closest('.form-group')?.querySelector('label')?.textContent || field.id;
+                        fields.push({
+                            id: field.id,
+                            label: label.trim(),
+                            type: field.tagName.toLowerCase() === 'select' ? 'select' : (field.type || 'text')
+                        });
+                    }
+                });
+                
+                if (fields.length > 0) {
+                    schema[section] = fields;
+                }
+            });
+            
+            return schema;
+        }
+        
+        async function intelligentDataMapping(importData, formSchema, system) {
+            try {
+                const prompt = `You are a data mapping expert for water system inspection data. I need you to intelligently map imported JSON data to form fields.
+
+IMPORTED DATA:
+${JSON.stringify(importData, null, 2)}
+
+TARGET FORM SCHEMA (by section):
+${JSON.stringify(formSchema, null, 2)}
+
+TASK:
+Analyze the imported data and create mappings to form field IDs. For each piece of data:
+1. Understand what the data represents (e.g., "pwsNumber" is a PWS system number, "locations" might contain water source names)
+2. Find the best matching form field by comparing data field names/values to form field labels/IDs
+3. Handle variations (e.g., "pipeMiles", "totalMiles", "total-miles" all map to pipe length field)
+4. Extract values from nested objects when needed
+5. Handle non-standard formats (SDWIS, monitoring data, etc.) - look for semantic meaning:
+   - "Copper Sample Results" or "Lead Sample Results" → LCR monitoring data
+   - Location names with "WELL", "INTAKE", "SOURCE" → water sources
+   - Sample dates and analyte data → monitoring schedules
+   - Calculate values if needed (e.g., 90th percentile from sample arrays)
+6. For arrays (sources.list, treatment.facilities, etc.), note them separately
+7. Create source entries from location names if applicable
+
+OUTPUT FORMAT (JSON only, no other text):
+{
+  "fieldMappings": {
+    "section-name": {
+      "form-field-id": {
+        "value": "data value to map",
+        "confidence": "high|medium|low",
+        "dataPath": "path in import data (e.g., 'overview.pwsNumber')"
+      }
+    }
+  },
+  "arrayMappings": {
+    "sources": ["importData.sources.list"],
+    "facilities": ["importData.treatment.facilities"],
+    "tanks": ["importData.storage.tanks"],
+    "stations": ["importData.pumps.stations"],
+    "deficiencies": ["importData.deficiencies"],
+    "amendments": ["importData.permits.amendments"]
+  },
+  "summary": {
+    "totalMappings": 0,
+    "highConfidence": 0,
+    "mediumConfidence": 0,
+    "lowConfidence": 0
+  }
+}
+
+Rules:
+- Only map to empty form fields
+- Match based on semantic meaning, not just exact field names
+- High confidence: exact match or obvious mapping
+- Medium confidence: reasonable inference needed
+- Low confidence: best guess but uncertain
+- Skip fields where no reasonable mapping exists
+- For SDWIS/monitoring data: Extract well/source names from location names and create source entries
+- For sample data: Use most recent dates for "last sampling" fields
+- For LCR data: Calculate 90th percentile if multiple samples present
+- Return ONLY valid JSON, no markdown, no explanations
+- Low confidence: best guess but uncertain
+- Skip fields where no reasonable mapping exists
+- Return ONLY valid JSON, no markdown, no explanations`;
+
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 4000,
+                        messages: [{
+                            role: "user",
+                            content: prompt
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Claude API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let responseText = data.content[0].text;
+                
+                // Clean markdown if present
+                responseText = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+                
+                const mappings = JSON.parse(responseText);
+                
+                // Apply the mappings
+                applyIntelligentMappings(mappings, importData, system);
+                
+            } catch (error) {
+                console.error('LLM mapping error:', error);
+                showImportStatus('❌ Error: ' + error.message, true);
+                
+                // Fallback to basic mapping
+                showImportStatus('⚠️ Falling back to basic mapping...', false);
+                executeBasicImport(importData, system);
+            }
+        }
+        
+        function applyIntelligentMappings(mappings, importData, system) {
+            let fieldsUpdated = 0;
+            let itemsAdded = 0;
+            
+            // Apply field mappings
+            if (mappings.fieldMappings) {
+                Object.keys(mappings.fieldMappings).forEach(section => {
+                    if (!system.systemData[section]) {
+                        system.systemData[section] = {};
+                    }
+                    
+                    Object.keys(mappings.fieldMappings[section]).forEach(fieldId => {
+                        const mapping = mappings.fieldMappings[section][fieldId];
+                        const field = document.getElementById(fieldId);
+                        
+                        if (field && mapping.value && (!field.value || field.value === '')) {
+                            field.value = mapping.value;
+                            field.classList.add('autofilled');
+                            
+                            // Also save to systemData using the data path
+                            const pathParts = mapping.dataPath.split('.');
+                            const dataKey = pathParts[pathParts.length - 1];
+                            system.systemData[section][dataKey] = mapping.value;
+                            
+                            fieldsUpdated++;
+                        }
+                    });
+                });
+            }
+            
+            // Apply array mappings
+            if (mappings.arrayMappings) {
+                // Sources
+                if (mappings.arrayMappings.sources && importData.sources?.list) {
+                    if (!system.systemData.sources) system.systemData.sources = { list: [] };
+                    importData.sources.list.forEach(source => {
+                        source.imported = true;
+                        system.systemData.sources.list.push(source);
+                        itemsAdded++;
+                    });
+                }
+                
+                // Treatment facilities
+                if (mappings.arrayMappings.facilities && importData.treatment?.facilities) {
+                    if (!system.systemData.treatment.facilities) system.systemData.treatment.facilities = [];
+                    importData.treatment.facilities.forEach(facility => {
+                        facility.imported = true;
+                        system.systemData.treatment.facilities.push(facility);
+                        itemsAdded++;
+                    });
+                }
+                
+                // Storage tanks
+                if (mappings.arrayMappings.tanks && importData.storage?.tanks) {
+                    if (!system.systemData.storage.tanks) system.systemData.storage.tanks = [];
+                    importData.storage.tanks.forEach(tank => {
+                        tank.imported = true;
+                        system.systemData.storage.tanks.push(tank);
+                        itemsAdded++;
+                    });
+                }
+                
+                // Pump stations
+                if (mappings.arrayMappings.stations && importData.pumps?.stations) {
+                    if (!system.systemData.pumps.stations) system.systemData.pumps.stations = [];
+                    importData.pumps.stations.forEach(station => {
+                        station.imported = true;
+                        system.systemData.pumps.stations.push(station);
+                        itemsAdded++;
+                    });
+                }
+                
+                // Deficiencies
+                if (mappings.arrayMappings.deficiencies && importData.deficiencies) {
+                    if (!system.systemData.deficiencies) system.systemData.deficiencies = [];
+                    importData.deficiencies.forEach(def => {
+                        def.imported = true;
+                        system.systemData.deficiencies.push(def);
+                        itemsAdded++;
+                    });
+                }
+                
+                // Amendments
+                if (mappings.arrayMappings.amendments && importData.permits?.amendments) {
+                    if (!system.systemData.permits.amendments) system.systemData.permits.amendments = [];
+                    importData.permits.amendments.forEach(amend => {
+                        amend.imported = true;
+                        system.systemData.permits.amendments.push(amend);
+                        itemsAdded++;
+                    });
+                }
+            }
+            
+            // Save and update
+            saveData();
+            loadAllData();
+            updateTabIndicators();
+            
+            const summary = mappings.summary || {};
+            showImportStatus(
+                `✅ AI Import Complete! ${fieldsUpdated} fields populated, ${itemsAdded} items added. ` +
+                `(${summary.highConfidence || 0} high confidence, ${summary.mediumConfidence || 0} medium, ${summary.lowConfidence || 0} low)`,
+                false
+            );
+        }
+        
+        // ========== DATA CLEANING UTILITIES ==========
+        
+        function cleanValue(value, fieldType = 'text') {
+            if (!value || value === '') return '';
+            
+            // Convert to string for cleaning
+            let cleaned = String(value).trim();
+            
+            // Clean based on field type
+            if (fieldType === 'date') {
+                return normalizeDate(cleaned);
+            } else if (fieldType === 'number') {
+                return extractNumber(cleaned);
+            } else {
+                return cleaned;
+            }
+        }
+        
+        function normalizeDate(dateStr) {
+            if (!dateStr) return '';
+            
+            // Try to parse various date formats and convert to YYYY-MM-DD
+            const formats = [
+                // MM/DD/YYYY or M/D/YYYY
+                /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+                // YYYY-MM-DD (already correct)
+                /^(\d{4})-(\d{2})-(\d{2})$/,
+                // MM-DD-YYYY
+                /^(\d{1,2})-(\d{1,2})-(\d{4})$/,
+                // ISO format with time
+                /^(\d{4})-(\d{2})-(\d{2})T/
+            ];
+            
+            dateStr = dateStr.trim();
+            
+            // Check if already in correct format
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                return dateStr;
+            }
+            
+            // Handle ISO format with time
+            if (dateStr.includes('T')) {
+                return dateStr.split('T')[0];
+            }
+            
+            // Try MM/DD/YYYY format
+            const slashMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (slashMatch) {
+                const [_, month, day, year] = slashMatch;
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+            
+            // Try MM-DD-YYYY format
+            const dashMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+            if (dashMatch) {
+                const [_, month, day, year] = dashMatch;
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+            
+            // If we can't parse it, return original (better than empty)
+            console.warn('Could not normalize date:', dateStr);
+            return dateStr;
+        }
+        
+        function extractNumber(value) {
+            if (!value) return '';
+            
+            // Convert to string
+            let str = String(value).trim();
+            
+            // Remove common units and extract just the number
+            // e.g., "1.5 MG" -> "1.5", "500 GPM" -> "500"
+            const numberMatch = str.match(/^([\d,.]+)/);
+            if (numberMatch) {
+                // Remove commas and return
+                return numberMatch[1].replace(/,/g, '');
+            }
+            
+            return str;
+        }
+        
+        function getFieldType(fieldId) {
+            // Determine field type from ID
+            if (fieldId.includes('date') || fieldId.includes('exp') || fieldId.includes('survey')) {
+                return 'date';
+            }
+            if (fieldId.includes('count') || fieldId.includes('capacity') || 
+                fieldId.includes('population') || fieldId.includes('connections') ||
+                fieldId.includes('miles')) {
+                return 'number';
+            }
+            return 'text';
+        }
+        
+        function findDataValue(importData, section, possibleKeys) {
+            // Try to find a value using multiple possible key variations
+            if (!importData[section]) return null;
+            
+            const sectionData = importData[section];
+            
+            // Try each possible key
+            for (const key of possibleKeys) {
+                if (sectionData[key] !== undefined && sectionData[key] !== null && sectionData[key] !== '') {
+                    return sectionData[key];
+                }
+            }
+            
+            return null;
+        }
+        
+        function createFlexibleMappings() {
+            // Enhanced mappings with multiple possible data keys for each field
+            return {
+                'overview': {
+                    'pws-number': ['pwsNumber', 'pws_number', 'pwsId', 'systemNumber', 'system_id'],
+                    'classification': ['classification', 'systemClassification', 'class', 'system_class'],
+                    'population': ['population', 'populationServed', 'pop', 'population_served'],
+                    'connections': ['connections', 'serviceConnections', 'conn', 'service_connections', 'connectionCount'],
+                    'ownership': ['ownership', 'ownershipType', 'owner', 'ownership_type'],
+                    'contact-name': ['contactName', 'contact_name', 'primaryContact', 'contact'],
+                    'contact-phone': ['contactPhone', 'contact_phone', 'phone', 'phoneNumber'],
+                    'contact-email': ['contactEmail', 'contact_email', 'email', 'emailAddress'],
+                    'service-area': ['serviceArea', 'service_area', 'area', 'serviceRegion'],
+                    'location': ['location', 'address', 'systemLocation', 'system_location'],
+                    'last-survey': ['lastSurvey', 'last_survey', 'lastSurveyDate', 'priorSurveyDate', 'prior_survey_date'],
+                    'next-survey': ['nextSurvey', 'next_survey', 'nextSurveyDate', 'upcoming_survey']
+                },
+                'permits': {
+                    'permit-number': ['permitNumber', 'permit_number', 'permit', 'permitId'],
+                    'permit-date': ['permitDate', 'permit_date', 'dateIssued', 'issue_date'],
+                    'permit-status': ['permitStatus', 'permit_status', 'status'],
+                    'permit-conditions': ['permitConditions', 'permit_conditions', 'conditions'],
+                    'violations': ['violations', 'violationHistory', 'violation_history'],
+                    'mcl-exceedances': ['mclExceedances', 'mcl_exceedances', 'exceedances', 'mclViolations'],
+                    'compliance-notes': ['complianceNotes', 'compliance_notes', 'notes', 'complianceHistory']
+                },
+                'treatment': {
+                    'treatment-class': ['classification', 'class', 'treatmentClass', 'treatment_class'],
+                    'treatment-capacity': ['capacity', 'treatmentCapacity', 'treatment_capacity', 'maxCapacity'],
+                    'treatment-type': ['type', 'treatmentType', 'treatment_type', 'processType'],
+                    'treatment-processes': ['processes', 'treatmentProcesses', 'treatment_processes', 'processList'],
+                    'ops-plan-date': ['opsPlanDate', 'ops_plan_date', 'operationsPlanDate', 'planDate'],
+                    'treatment-notes': ['notes', 'treatmentNotes', 'treatment_notes', 'additionalInfo']
+                },
+                'distribution': {
+                    'dist-class': ['classification', 'class', 'distClass', 'dist_class'],
+                    'total-miles': ['pipeMiles', 'totalMiles', 'total_miles', 'pipelineMiles', 'miles', 'mains_miles'],
+                    'pressure-zones': ['pressureZones', 'pressure_zones', 'zones', 'numberOfZones'],
+                    'pipe-types': ['pipeMaterials', 'pipe_materials', 'pipeTypes', 'materials', 'pipe_types'],
+                    'valve-count': ['valveCount', 'valve_count', 'valves', 'numberOfValves'],
+                    'hydrant-count': ['hydrantCount', 'hydrant_count', 'hydrants', 'numberOfHydrants'],
+                    'valve-program': ['valveProgram', 'valve_program', 'valveMaintenance'],
+                    'flushing-program': ['flushingProgram', 'flushing_program', 'mainFlushing'],
+                    'main-breaks': ['mainBreaks', 'main_breaks', 'breaks', 'breakHistory'],
+                    'ccc-coordinator': ['cccCoordinator', 'ccc_coordinator', 'coordinator'],
+                    'ccc-survey-date': ['cccSurveyDate', 'ccc_survey_date', 'cccDate', 'surveyDate'],
+                    'backflow-count': ['backflowCount', 'backflow_count', 'backflows', 'assemblies'],
+                    'test-compliance': ['testCompliance', 'test_compliance', 'compliance', 'testingCompliance']
+                },
+                'storage': {
+                    'total-storage-capacity': ['totalCapacity', 'total_capacity', 'capacity', 'storageCapacity'],
+                    'storage-redundancy': ['redundancyAdequate', 'redundancy_adequate', 'redundancy', 'hasRedundancy'],
+                    'storage-notes': ['notes', 'storageNotes', 'storage_notes', 'additionalInfo']
+                },
+                'pumps': {
+                    'total-pump-capacity': ['totalCapacity', 'total_capacity', 'capacity', 'pumpCapacity'],
+                    'backup-power-strategy': ['backupPowerStrategy', 'backup_power_strategy', 'backupPower', 'emergencyPower'],
+                    'pumping-notes': ['notes', 'pumpingNotes', 'pumping_notes', 'additionalInfo']
+                },
+                'monitoring': {
+                    'ioc-schedule': ['iocSchedule', 'ioc_schedule', 'ioc', 'inorganics'],
+                    'nitrate-schedule': ['nitrateSchedule', 'nitrate_schedule', 'nitrate'],
+                    'voc-schedule': ['vocSchedule', 'voc_schedule', 'voc', 'volatiles'],
+                    'soc-schedule': ['socSchedule', 'soc_schedule', 'soc', 'synthetics'],
+                    'rad-schedule': ['radSchedule', 'rad_schedule', 'radionuclides', 'rad'],
+                    'waivers': ['waivers', 'waiver', 'waiverStatus'],
+                    'tcr-samples': ['tcrSamples', 'tcr_samples', 'tcr', 'bacteriaSamples'],
+                    'bssp-date': ['bsspDate', 'bssp_date', 'sampleSitingPlan'],
+                    'last-tcr': ['lastTcr', 'last_tcr', 'lastTcrDate', 'recentTcr'],
+                    'assessments': ['assessments', 'assessment', 'levelAssessments'],
+                    'dbp-frequency': ['dbpFreq', 'dbp_freq', 'dbpFrequency', 'dbp_frequency'],
+                    'dbp-locations': ['dbpLocations', 'dbp_locations', 'dbpSites'],
+                    'lraa-values': ['lraaValues', 'lraa_values', 'lraa'],
+                    'lcr-schedule': ['lcrSchedule', 'lcr_schedule', 'lcr', 'leadCopper'],
+                    'lcr-date': ['lcrDate', 'lcr_date', 'lastLcrDate', 'lcrSampleDate'],
+                    'lcr-90th': ['lcr90th', 'lcr_90th', 'ninetiethPercentile', '90thPercentile'],
+                    'service-lines': ['serviceLines', 'service_lines', 'leadLines', 'lineInventory'],
+                    'ct-compliance': ['ctCompliance', 'ct_compliance', 'contactTime'],
+                    'turbidity-compliance': ['turbidityCompliance', 'turbidity_compliance', 'turbidity'],
+                    'swtr-reporting': ['swtrReporting', 'swtr_reporting', 'swtr'],
+                    'ear-status': ['earStatus', 'ear_status', 'ear', 'electronicReporting'],
+                    'ccr-date': ['ccrDate', 'ccr_date', 'consumerReport', 'reportDate'],
+                    'overdue-reports': ['overdueReports', 'overdue_reports', 'overdue', 'lateReports']
+                },
+                'management': {
+                    'ownership-structure': ['ownershipStructure', 'ownership_structure', 'structure'],
+                    'staffing': ['staffing', 'staff', 'staffingLevels'],
+                    'emergency-contact': ['emergencyContact', 'emergency_contact', 'emergencyPhone'],
+                    'cip-date': ['cipDate', 'cip_date', 'capitalPlan', 'improvementPlan'],
+                    'uwmp-date': ['uwmpDate', 'uwmp_date', 'waterManagementPlan'],
+                    'wscp-date': ['wscpDate', 'wscp_date', 'contingencyPlan'],
+                    'erp-date': ['erpDate', 'erp_date', 'emergencyPlan'],
+                    'scada': ['scada', 'scadaSystem', 'automation'],
+                    'alarms': ['alarms', 'alarmSystem', 'monitoring'],
+                    'backup-power': ['backupPower', 'backup_power', 'emergencyPower'],
+                    'redundancy': ['redundancy', 'systemRedundancy', 'backupSystems'],
+                    'physical-security': ['physicalSecurity', 'physical_security', 'facilitySecurity'],
+                    'it-security': ['itSecurity', 'it_security', 'cyberSecurity'],
+                    'rra-date': ['rraDate', 'rra_date', 'riskAssessment'],
+                    'eprp-date': ['eprpDate', 'eprp_date', 'preparedness'],
+                    'climate-status': ['climateStatus', 'climate_status', 'climateAdaptation'],
+                    'vulnerabilities': ['vulnerabilities', 'vulnerability', 'riskFactors'],
+                    'mitigation': ['mitigation', 'mitigationStrategies', 'riskMitigation']
+                },
+                'operators': {
+                    'chief-treatment-name': ['chiefTreatmentName', 'chief_treatment_name', 'treatmentOperator'],
+                    'chief-treatment-level': ['chiefTreatmentLevel', 'chief_treatment_level', 'treatmentLevel'],
+                    'chief-treatment-cert': ['chiefTreatmentCert', 'chief_treatment_cert', 'treatmentCert'],
+                    'chief-treatment-exp': ['chiefTreatmentExp', 'chief_treatment_exp', 'treatmentExpiration'],
+                    'chief-dist-name': ['chiefDistName', 'chief_dist_name', 'distOperator'],
+                    'chief-dist-level': ['chiefDistLevel', 'chief_dist_level', 'distLevel'],
+                    'chief-dist-cert': ['chiefDistCert', 'chief_dist_cert', 'distCert'],
+                    'chief-dist-exp': ['chiefDistExp', 'chief_dist_exp', 'distExpiration'],
+                    'req-treatment-cert': ['reqTreatmentCert', 'req_treatment_cert', 'requiredTreatmentCert'],
+                    'req-dist-cert': ['reqDistCert', 'req_dist_cert', 'requiredDistCert'],
+                    'staffing-notes': ['staffingNotes', 'staffing_notes', 'notes']
+                },
+                'inspectionHistory': {
+                    'prior-survey-date': ['priorSurveyDate', 'prior_survey_date', 'lastInspection'],
+                    'prior-inspector': ['priorInspector', 'prior_inspector', 'inspector'],
+                    'prior-findings': ['priorFindings', 'prior_findings', 'findings', 'lastFindings'],
+                    'prior-resolutions': ['priorResolutions', 'prior_resolutions', 'resolutions'],
+                    'continuing-issues': ['continuingIssues', 'continuing_issues', 'openIssues'],
+                    'current-inspection-date': ['currentInspectionDate', 'current_inspection_date', 'inspectionDate'],
+                    'current-inspectors': ['currentInspectors', 'current_inspectors', 'inspectors'],
+                    'pre-inspection-notes': ['preInspectionNotes', 'pre_inspection_notes', 'notes'],
+                    'follow-up-items': ['followUpItems', 'follow_up_items', 'followUp'],
+                    'historical-violations': ['historicalViolations', 'historical_violations', 'violations'],
+                    'enforcement-actions': ['enforcementActions', 'enforcement_actions', 'enforcement'],
+                    'system-responsiveness': ['systemResponsiveness', 'system_responsiveness', 'responsiveness']
+                }
+            };
+        }
+        
+        // ========== ENHANCED BASIC IMPORT ==========
+        
+        function executeBasicImport(importData, system) {
+            // Fallback basic mapping with flexible data cleaning
+            let fieldsUpdated = 0;
+            let itemsAdded = 0;
+            
+            console.log('Using basic fallback import with flexible data cleaning...');
+            
+            // Use the flexible mappings
+            const fieldMappings = createFlexibleMappings();
+            
+            // Import fields for each section
+            Object.keys(fieldMappings).forEach(section => {
+                if (importData[section]) {
+                    if (!system.systemData[section]) {
+                        system.systemData[section] = {};
+                    }
+                    
+                    Object.keys(fieldMappings[section]).forEach(htmlId => {
+                        const possibleKeys = fieldMappings[section][htmlId];
+                        const currentValue = system.systemData[section][possibleKeys[0]]; // Use first key as storage key
+                        
+                        // Try to find value using any of the possible keys
+                        let importValue = findDataValue(importData, section, possibleKeys);
+                        
+                        if ((!currentValue || currentValue === '') && importValue && importValue !== '') {
+                            // Determine field type for cleaning
+                            const fieldType = getFieldType(htmlId);
+                            
+                            // Clean the value based on type
+                            const cleanedValue = cleanValue(importValue, fieldType);
+                            
+                            if (cleanedValue !== '') {
+                                // Save to system data using first key as standard
+                                system.systemData[section][possibleKeys[0]] = cleanedValue;
+                                
+                                // Update form field if it exists
+                                const field = document.getElementById(htmlId);
+                                if (field) {
+                                    field.value = cleanedValue;
+                                    field.classList.add('autofilled');
+                                }
+                                fieldsUpdated++;
+                                console.log(`✓ Mapped ${section}.${possibleKeys[0]}: ${cleanedValue}`);
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // Import sources overview
+            if (importData.sources) {
+                if (!system.systemData.sources) {
+                    system.systemData.sources = { list: [] };
+                }
+                ['overallType', 'cccProgram', 'swpMeasures', 'concerns'].forEach(field => {
+                    if ((!system.systemData.sources[field] || system.systemData.sources[field] === '') && importData.sources[field]) {
+                        system.systemData.sources[field] = importData.sources[field];
+                        fieldsUpdated++;
+                    }
+                });
+            }
+            
+            // Import arrays
+            if (importData.sources?.list && Array.isArray(importData.sources.list)) {
+                importData.sources.list.forEach(source => {
+                    source.imported = true; // Mark as imported
+                    system.systemData.sources.list.push(source);
+                    itemsAdded++;
+                });
+            }
+            
+            if (importData.treatment?.facilities && Array.isArray(importData.treatment.facilities)) {
+                if (!system.systemData.treatment.facilities) {
+                    system.systemData.treatment.facilities = [];
+                }
+                importData.treatment.facilities.forEach(facility => {
+                    facility.imported = true;
+                    system.systemData.treatment.facilities.push(facility);
+                    itemsAdded++;
+                });
+            }
+            
+            if (importData.treatment?.chemicals && Array.isArray(importData.treatment.chemicals)) {
+                if (!system.systemData.treatment.chemicals) {
+                    system.systemData.treatment.chemicals = [];
+                }
+                importData.treatment.chemicals.forEach(chemical => {
+                    chemical.imported = true;
+                    system.systemData.treatment.chemicals.push(chemical);
+                    itemsAdded++;
+                });
+            }
+            
+            if (importData.storage?.tanks && Array.isArray(importData.storage.tanks)) {
+                if (!system.systemData.storage.tanks) {
+                    system.systemData.storage.tanks = [];
+                }
+                importData.storage.tanks.forEach(tank => {
+                    tank.imported = true;
+                    system.systemData.storage.tanks.push(tank);
+                    itemsAdded++;
+                });
+            }
+            
+            if (importData.pumps?.stations && Array.isArray(importData.pumps.stations)) {
+                if (!system.systemData.pumps.stations) {
+                    system.systemData.pumps.stations = [];
+                }
+                importData.pumps.stations.forEach(station => {
+                    station.imported = true;
+                    system.systemData.pumps.stations.push(station);
+                    itemsAdded++;
+                });
+            }
+            
+            if (importData.deficiencies && Array.isArray(importData.deficiencies)) {
+                if (!system.systemData.deficiencies) {
+                    system.systemData.deficiencies = [];
+                }
+                importData.deficiencies.forEach(def => {
+                    def.imported = true;
+                    system.systemData.deficiencies.push(def);
+                    itemsAdded++;
+                });
+            }
+            
+            if (importData.permits?.amendments && Array.isArray(importData.permits.amendments)) {
+                if (!system.systemData.permits.amendments) {
+                    system.systemData.permits.amendments = [];
+                }
+                importData.permits.amendments.forEach(amend => {
+                    amend.imported = true;
+                    system.systemData.permits.amendments.push(amend);
+                    itemsAdded++;
+                });
+            }
+            
+            // Save and update
+            saveData();
+            loadAllData();
+            updateTabIndicators();
+            hideModal();
+            showImportStatus(`✅ Import Complete! ${fieldsUpdated} fields populated, ${itemsAdded} items added.`, false);
+            
+            delete window.importDataTemp;
+        }
+        
+        function showImportStatus(message, isError = false) {
+            const statusEl = document.getElementById('importStatus');
+            statusEl.textContent = message;
+            statusEl.className = 'import-status' + (isError ? ' error' : '');
+            statusEl.style.display = 'block';
+            
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        function updateTabIndicators() {
+            const system = appData.systems.find(s => s.id === currentSystemId);
+            if (!system?.systemData) return;
+            
+            const tabs = {
+                'overview': hasData(system.systemData.overview),
+                'permits': hasData(system.systemData.permits) || (system.systemData.permits?.amendments?.length > 0),
+                'sources': (system.systemData.sources?.list?.length > 0) || hasData(system.systemData.sources),
+                'treatment': (system.systemData.treatment?.facilities?.length > 0) || hasData(system.systemData.treatment),
+                'distribution': hasData(system.systemData.distribution),
+                'storage': (system.systemData.storage?.tanks?.length > 0) || hasData(system.systemData.storage),
+                'pumps': (system.systemData.pumps?.stations?.length > 0) || hasData(system.systemData.pumps),
+                'monitoring': hasData(system.systemData.monitoring),
+                'management': hasData(system.systemData.management),
+                'operators': hasData(system.systemData.operators),
+                'deficiencies': (system.systemData.deficiencies?.length > 0),
+                'inspection': hasData(system.systemData.inspectionHistory)
+            };
+            
+            Object.keys(tabs).forEach(tabName => {
+                const tabBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`);
+                if (tabBtn) {
+                    if (tabs[tabName]) {
+                        tabBtn.classList.add('has-data');
+                    } else {
+                        tabBtn.classList.remove('has-data');
+                    }
+                }
+            });
+        }
+        
+        function hasData(obj) {
+            if (!obj) return false;
+            return Object.values(obj).some(val => {
+                if (Array.isArray(val)) return val.length > 0;
+                return val && val !== '';
+            });
+        }
+        
+        // ========== END AUTOFILL FUNCTIONS ==========
+
+
         // Tab switching
         function switchTab(tab) {
             // Update tab buttons
@@ -1868,7 +2851,7 @@
                 return;
             }
             container.innerHTML = currentSystemData.sources.list.map((src, i) => `
-                <div class="list-item-card">
+                <div class="list-item-card ${src.imported ? 'autofilled' : ''}">
                     <div class="list-item-header">
                         <strong>${src.name || 'Unnamed Source'}</strong> 
                         <span class="badge badge-${src.status === 'Active' ? 'green' : 'gray'}">${src.status || 'Unknown'}</span>
